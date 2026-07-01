@@ -31,6 +31,10 @@ class PHSG_Plugin {
 		$ajax = new PHSG_Ajax();
 		$ajax->register();
 
+		// תבנית עמוד נחיתה מלאה.
+		$template = new PHSG_Template();
+		$template->register();
+
 		// ממשק ניהול (בגב האתר בלבד).
 		if ( is_admin() ) {
 			$admin = new PHSG_Admin();

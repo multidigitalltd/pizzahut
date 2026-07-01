@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,12 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 דוגמה: `[pizza_hut_slice_game title="פסטיבל המשולשים" subtitle="האט אנד יו נואו איט"]`
 
+== Landing Page Template ==
+
+התוסף מוסיף לעורך העמודים תבנית עמוד בשם "Pizza Hut – דף נחיתה מלא":
+עמוד נקי במסך מלא, ללא ה-header/footer של התבנית הפעילה – אידיאלי לנחיתה מבאנרים.
+בחרו את התבנית בהגדרות העמוד (Template) והוסיפו את השורטקוד לתוכן העמוד.
+
 == Privacy ==
 
 הפלאגין אוסף פרטי משתתף (שם, טלפון, אימייל) בהסכמה מפורשת (checkbox חובה).
@@ -63,6 +69,10 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 1.1.0 =
+* תבנית עמוד נחיתה מלאה ("Pizza Hut – דף נחיתה מלא") ללא header/footer.
+* אבטחה: נטרול הזרקת נוסחאות (CSV Formula Injection) בייצוא ה-CSV.
 
 = 1.0.0 =
 * גרסה ראשונה.

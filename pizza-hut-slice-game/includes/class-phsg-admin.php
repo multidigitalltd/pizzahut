@@ -184,11 +184,32 @@ class PHSG_Admin {
 
 		if ( $rows ) {
 			foreach ( $rows as $r ) {
-				fputcsv( $output, $r );
+				fputcsv( $output, array_map( array( $this, 'neutralize_csv_value' ), $r ) );
 			}
 		}
 
 		fclose( $output );
 		exit;
+	}
+
+	/**
+	 * נטרול הזרקת נוסחאות ב-CSV (CSV Formula Injection).
+	 *
+	 * ערכים בשליטת משתמש (שם, UTM) שמתחילים ב-=, +, -, @ או תווי בקרה
+	 * עלולים להתפרש כנוסחה ב-Excel/Sheets. מוסיפים גרש מוביל לנטרול.
+	 *
+	 * @param mixed $value ערך התא.
+	 * @return mixed
+	 */
+	private function neutralize_csv_value( $value ) {
+		if ( ! is_string( $value ) || '' === $value ) {
+			return $value;
+		}
+
+		if ( preg_match( '/^[=+\-@\t\r]/', $value ) ) {
+			return "'" . $value;
+		}
+
+		return $value;
 	}
 }
