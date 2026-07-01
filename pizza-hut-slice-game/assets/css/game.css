@@ -444,6 +444,11 @@
 	background: rgba(240, 239, 221, 0.7);
 }
 
+/* display:flex דורס את ברירת המחדל של hidden – מחזירים את ההסתרה במפורש. */
+.phsg-loader[hidden] {
+	display: none;
+}
+
 .phsg-loader__spinner {
 	width: 46px;
 	height: 46px;

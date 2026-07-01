@@ -16,10 +16,6 @@
 	var GAME_DURATION = parseInt(CFG.gameDuration, 10) || 60; // שניות.
 	var SLICE_TIMEOUT = parseInt(CFG.sliceTimeout, 10) || 10; // שניות.
 
-	document.querySelectorAll('.phsg-app').forEach(function (root) {
-		new PizzaHutGame(root);
-	});
-
 	/**
 	 * מופע משחק בודד (תומך במספר שורטקודים בעמוד).
 	 *
@@ -486,5 +482,20 @@
 				"'": '&#39;'
 			}[c];
 		});
+	}
+
+	/**
+	 * אתחול – לאחר הגדרת כל מתודות ה-prototype.
+	 */
+	function init() {
+		document.querySelectorAll('.phsg-app').forEach(function (root) {
+			new PizzaHutGame(root);
+		});
+	}
+
+	if ('loading' === document.readyState) {
+		document.addEventListener('DOMContentLoaded', init);
+	} else {
+		init();
 	}
 })();
