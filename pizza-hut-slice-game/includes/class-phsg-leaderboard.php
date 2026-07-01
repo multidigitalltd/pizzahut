@@ -17,11 +17,12 @@ class PHSG_Leaderboard {
 	/**
 	 * החזרת טבלת המובילים כמבנה מוכן להצגה/JSON (ללא פרטים אישיים).
 	 *
-	 * @param int $limit מספר שורות.
+	 * @param int  $limit מספר שורות.
+	 * @param bool $daily true = לוח יומי (לפרס היומי).
 	 * @return array
 	 */
-	public static function get_public( $limit = 10 ) {
-		$rows   = PHSG_DB::get_leaderboard( $limit );
+	public static function get_public( $limit = 10, $daily = false ) {
+		$rows   = PHSG_DB::get_leaderboard( $limit, $daily );
 		$output = array();
 		$rank   = 0;
 

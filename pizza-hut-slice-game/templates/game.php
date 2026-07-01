@@ -32,6 +32,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div class="phsg-stage">
 
+		<?php // ===== לוגו המותג – מוצג בכל המסכים ===== ?>
+		<div class="phsg-brand">
+			<?php if ( ! empty( $atts['logo'] ) ) : ?>
+				<img class="phsg-brand__img" src="<?php echo esc_url( $atts['logo'] ); ?>" alt="Pizza Hut">
+			<?php else : ?>
+				<?php echo phsg_logo_svg(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+			<?php endif; ?>
+		</div>
+
 		<?php // ===== מסך פתיחה ===== ?>
 		<section class="phsg-screen phsg-screen--intro is-active" data-screen="intro">
 			<div class="phsg-card">
@@ -41,8 +50,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<h1 class="phsg-title"><?php echo esc_html( $atts['title'] ); ?></h1>
 				<p class="phsg-subtitle"><?php echo esc_html( $atts['subtitle'] ); ?></p>
 				<p class="phsg-lead">
-					<?php esc_html_e( 'תפסו כמה שיותר משולשי פיצה תוך 60 שניות. כל משולש נעלם אחרי 10 שניות – אז תהיו מהירים!', 'pizza-hut-slice-game' ); ?>
+					<?php esc_html_e( 'תפסו כמה שיותר משולשי פיצה תוך 60 שניות. המשולש בורח מהר – ורק נהיה קטן ומהיר יותר! זהב = 3 נקודות, ירוק = מלכודת שמורידה נקודה.', 'pizza-hut-slice-game' ); ?>
 				</p>
+				<?php if ( ! empty( $atts['daily_prize'] ) ) : ?>
+					<p class="phsg-prize-banner">🏆 <?php echo esc_html( $atts['daily_prize'] ); ?></p>
+				<?php endif; ?>
 				<button type="button" class="phsg-btn phsg-btn--primary" data-action="go-form">
 					<?php esc_html_e( 'יאללה, מתחילים', 'pizza-hut-slice-game' ); ?>
 				</button>
@@ -102,9 +114,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<button type="button" class="phsg-sound" data-action="toggle-sound" aria-pressed="false" aria-label="<?php echo esc_attr__( 'הפעלה/השתקה של צלילים', 'pizza-hut-slice-game' ); ?>">🔊</button>
 			</div>
+			<?php // בר זמן מלחיץ – מתרוקן לאורך המשחק. ?>
+			<div class="phsg-timebar" aria-hidden="true">
+				<div class="phsg-timebar__fill" data-timebar></div>
+			</div>
 			<div class="phsg-arena" data-arena tabindex="0" aria-label="<?php echo esc_attr__( 'אזור משחק – לחצו על משולש הפיצה', 'pizza-hut-slice-game' ); ?>">
-				<button type="button" class="phsg-slice" data-slice hidden aria-label="<?php echo esc_attr__( 'משולש פיצה – לחצו!', 'pizza-hut-slice-game' ); ?>">
-					<?php echo phsg_slice_svg(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+				<button type="button" class="phsg-slice" data-slice data-type="normal" hidden aria-label="<?php echo esc_attr__( 'משולש פיצה – לחצו!', 'pizza-hut-slice-game' ); ?>">
+					<span class="phsg-slice__skin phsg-slice__skin--normal"><?php echo phsg_slice_svg(); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+					<span class="phsg-slice__skin phsg-slice__skin--gold"><?php echo phsg_slice_svg( 'gold' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+					<span class="phsg-slice__skin phsg-slice__skin--trap"><?php echo phsg_slice_svg( 'trap' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 				</button>
 				<?php // שכבת אפקטים (חלקיקים, גלי הדף, טקסט מרחף) – ללא אינטראקציה. ?>
 				<div class="phsg-fx" data-fx aria-hidden="true"></div>
@@ -144,14 +162,36 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<p class="phsg-result__msg" data-result="msg" role="status"></p>
 
-				<button type="button" class="phsg-btn phsg-btn--primary" data-action="play-again">
-					<?php esc_html_e( 'עוד סיבוב', 'pizza-hut-slice-game' ); ?>
-				</button>
+				<?php // באנר שיאן היום – מוצג ב-JS כשהשחקן ראשון בלוח היומי. ?>
+				<p class="phsg-daily-champ" data-daily-champ hidden></p>
+
+				<?php // קופון – מוצג ב-JS כשעוברים את רף הניקוד. ?>
+				<?php if ( ! empty( $atts['coupon_code'] ) ) : ?>
+					<div class="phsg-coupon" data-coupon data-coupon-code="<?php echo esc_attr( $atts['coupon_code'] ); ?>" data-coupon-min="<?php echo esc_attr( (int) $atts['coupon_min'] ); ?>" hidden>
+						<span class="phsg-coupon__label"><?php esc_html_e( 'מגיע לך! קוד הטבה:', 'pizza-hut-slice-game' ); ?></span>
+						<button type="button" class="phsg-coupon__code" data-action="copy-coupon" title="<?php echo esc_attr__( 'לחצו להעתקה', 'pizza-hut-slice-game' ); ?>">
+							<?php echo esc_html( $atts['coupon_code'] ); ?> 📋
+						</button>
+					</div>
+				<?php endif; ?>
+
+				<div class="phsg-actions">
+					<button type="button" class="phsg-btn phsg-btn--primary" data-action="play-again">
+						<?php esc_html_e( 'עוד סיבוב', 'pizza-hut-slice-game' ); ?>
+					</button>
+					<button type="button" class="phsg-btn phsg-btn--whatsapp" data-action="share-whatsapp">
+						<?php esc_html_e( 'שתפו בוואטסאפ', 'pizza-hut-slice-game' ); ?> 💬
+					</button>
+				</div>
 			</div>
 
-			<?php // טבלת מובילים ?>
+			<?php // טבלת מובילים – יומי / כל הזמנים ?>
 			<div class="phsg-card phsg-card--board">
 				<h3 class="phsg-board__title"><?php esc_html_e( 'טבלת המובילים', 'pizza-hut-slice-game' ); ?></h3>
+				<div class="phsg-board-tabs" role="tablist">
+					<button type="button" class="phsg-board-tab is-active" data-action="board-daily" role="tab" aria-selected="true"><?php esc_html_e( 'היום', 'pizza-hut-slice-game' ); ?></button>
+					<button type="button" class="phsg-board-tab" data-action="board-alltime" role="tab" aria-selected="false"><?php esc_html_e( 'כל הזמנים', 'pizza-hut-slice-game' ); ?></button>
+				</div>
 				<div class="phsg-board" data-leaderboard>
 					<?php echo phsg_render_leaderboard_rows( $leaderboard ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</div>

@@ -61,6 +61,7 @@ class PHSG_Ajax {
 		$consent   = isset( $_POST['consent'] ) && in_array( wp_unslash( $_POST['consent'] ), array( '1', 'true', 'on', 'yes' ), true ) ? 1 : 0;
 
 		$score        = isset( $_POST['score'] ) ? absint( wp_unslash( $_POST['score'] ) ) : 0;
+		$clicks       = isset( $_POST['clicks'] ) ? absint( wp_unslash( $_POST['clicks'] ) ) : 0;
 		$duration     = isset( $_POST['duration'] ) ? (float) wp_unslash( $_POST['duration'] ) : 0;
 		$avg_reaction = isset( $_POST['avg_reaction'] ) ? (float) wp_unslash( $_POST['avg_reaction'] ) : 0;
 
@@ -100,6 +101,7 @@ class PHSG_Ajax {
 		$check = PHSG_Anti_Cheat::validate(
 			array(
 				'score'        => $score,
+				'clicks'       => $clicks,
 				'duration'     => $duration,
 				'avg_reaction' => $avg_reaction,
 			)
@@ -126,6 +128,7 @@ class PHSG_Ajax {
 				'email'        => $email,
 				'consent'      => $consent,
 				'score'        => $score,
+				'clicks'       => $clicks,
 				'duration'     => round( $duration, 2 ),
 				'avg_reaction' => round( $avg_reaction, 2 ),
 				'utm_source'   => $utm_source,
@@ -143,17 +146,20 @@ class PHSG_Ajax {
 			wp_send_json_error( array( 'message' => __( 'שמירת התוצאה נכשלה. נסו שוב.', 'pizza-hut-slice-game' ) ), 500 );
 		}
 
-		$rank  = PHSG_DB::get_rank( $row_id );
-		$total = PHSG_DB::total_players();
+		$rank       = PHSG_DB::get_rank( $row_id );
+		$daily_rank = PHSG_DB::get_daily_rank( $row_id );
+		$total      = PHSG_DB::total_players();
 
 		wp_send_json_success(
 			array(
-				'rank'         => $rank,
-				'total'        => $total,
-				'display_name' => $display_name,
-				'score'        => $score,
-				'duration'     => round( $duration, 2 ),
-				'leaderboard'  => PHSG_Leaderboard::get_public( 10 ),
+				'rank'              => $rank,
+				'daily_rank'        => $daily_rank,
+				'total'             => $total,
+				'display_name'      => $display_name,
+				'score'             => $score,
+				'duration'          => round( $duration, 2 ),
+				'leaderboard'       => PHSG_Leaderboard::get_public( 10 ),
+				'daily_leaderboard' => PHSG_Leaderboard::get_public( 10, true ),
 			)
 		);
 	}

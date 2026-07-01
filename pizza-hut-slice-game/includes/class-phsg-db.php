@@ -45,6 +45,7 @@ class PHSG_DB {
 			email VARCHAR(190) NOT NULL DEFAULT '',
 			consent TINYINT(1) NOT NULL DEFAULT 0,
 			score INT(10) UNSIGNED NOT NULL DEFAULT 0,
+			clicks INT(10) UNSIGNED NOT NULL DEFAULT 0,
 			duration DECIMAL(6,2) NOT NULL DEFAULT 0,
 			avg_reaction DECIMAL(8,2) NOT NULL DEFAULT 0,
 			utm_source VARCHAR(120) NOT NULL DEFAULT '',
@@ -79,6 +80,7 @@ class PHSG_DB {
 			'email'        => '',
 			'consent'      => 0,
 			'score'        => 0,
+			'clicks'       => 0,
 			'duration'     => 0,
 			'avg_reaction' => 0,
 			'utm_source'   => '',
@@ -100,6 +102,7 @@ class PHSG_DB {
 			'%s', // email.
 			'%d', // consent.
 			'%d', // score.
+			'%d', // clicks.
 			'%f', // duration.
 			'%f', // avg_reaction.
 			'%s', // utm_source.
@@ -174,26 +177,89 @@ class PHSG_DB {
 	/**
 	 * שליפת טבלת המובילים (ללא חשיפת טלפון/אימייל).
 	 *
-	 * @param int $limit מספר השורות להחזרה.
+	 * @param int  $limit מספר השורות להחזרה.
+	 * @param bool $daily true = תוצאות מהיום בלבד (לפרס היומי).
 	 * @return array מערך אובייקטים: display_name, score, duration, avg_reaction.
 	 */
-	public static function get_leaderboard( $limit = 10 ) {
+	public static function get_leaderboard( $limit = 10, $daily = false ) {
 		global $wpdb;
 
 		$table = self::table_name();
 		$limit = max( 1, min( 100, (int) $limit ) );
 
-		$rows = $wpdb->get_results(
+		if ( $daily ) {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT display_name, score, duration, avg_reaction
+					 FROM {$table}
+					 WHERE DATE(created_at) = %s
+					 ORDER BY score DESC, avg_reaction ASC, created_at ASC, id ASC
+					 LIMIT %d", // phpcs:ignore WordPress.DB
+					current_time( 'Y-m-d' ),
+					$limit
+				)
+			);
+		} else {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT display_name, score, duration, avg_reaction
+					 FROM {$table}
+					 ORDER BY score DESC, avg_reaction ASC, created_at ASC, id ASC
+					 LIMIT %d", // phpcs:ignore WordPress.DB
+					$limit
+				)
+			);
+		}
+
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * דירוג רשומה בלוח היומי (תוצאות מאותו יום בלבד).
+	 *
+	 * @param int $row_id מזהה הרשומה.
+	 * @return int הדירוג היומי (1 = שיאן היום), 0 אם לא נמצא.
+	 */
+	public static function get_daily_rank( $row_id ) {
+		global $wpdb;
+
+		$table = self::table_name();
+
+		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT display_name, score, duration, avg_reaction
-				 FROM {$table}
-				 ORDER BY score DESC, avg_reaction ASC, created_at ASC, id ASC
-				 LIMIT %d", // phpcs:ignore WordPress.DB
-				$limit
+				"SELECT score, avg_reaction, created_at FROM {$table} WHERE id = %d", // phpcs:ignore WordPress.DB
+				$row_id
 			)
 		);
 
-		return is_array( $rows ) ? $rows : array();
+		if ( ! $row ) {
+			return 0;
+		}
+
+		$today  = current_time( 'Y-m-d' );
+		$better = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table} WHERE DATE(created_at) = %s AND (
+					score > %d
+					OR ( score = %d AND avg_reaction < %f )
+					OR ( score = %d AND avg_reaction = %f AND created_at < %s )
+					OR ( score = %d AND avg_reaction = %f AND created_at = %s AND id < %d )
+				)", // phpcs:ignore WordPress.DB
+				$today,
+				$row->score,
+				$row->score,
+				$row->avg_reaction,
+				$row->score,
+				$row->avg_reaction,
+				$row->created_at,
+				$row->score,
+				$row->avg_reaction,
+				$row->created_at,
+				$row_id
+			)
+		);
+
+		return (int) $better + 1;
 	}
 
 	/**

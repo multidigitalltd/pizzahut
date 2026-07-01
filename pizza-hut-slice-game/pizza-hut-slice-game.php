@@ -3,7 +3,7 @@
  * Plugin Name:       Pizza Hut Slice Game
  * Plugin URI:        https://multidigital.co.il/
  * Description:        משחק קמפיין ממותג של פיצה האט – "תפוס את המשולש". כולל מסך פתיחה, טופס משתתף, משחק, טבלת מובילים ואיסוף נתונים בטבלת DB ייעודית. שימוש: [pizza_hut_slice_game].
- * Version:           1.2.0
+ * Version:           2.0.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            Multi Digital
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * קבועי הפלאגין.
  */
-define( 'PHSG_VERSION', '1.2.0' );
+define( 'PHSG_VERSION', '2.0.0' );
 define( 'PHSG_PLUGIN_FILE', __FILE__ );
 define( 'PHSG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PHSG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

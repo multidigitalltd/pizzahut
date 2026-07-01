@@ -14,8 +14,25 @@
 
 	var CFG = window.PHSG_DATA;
 	var GAME_DURATION = parseInt(CFG.gameDuration, 10) || 60; // שניות.
-	var SLICE_TIMEOUT = parseInt(CFG.sliceTimeout, 10) || 10; // שניות.
+	var SLICE_TIMEOUT = parseInt(CFG.sliceTimeout, 10) || 10; // שניות – חסם עליון (אנטי-רמייה).
 	var COMBO_WINDOW = 1500; // מ"ש – פגיעה מהירה מזו ממשיכה קומבו.
+
+	// קושי מדורג: המשולש מתחיל "איטי וגדול" ונהיה מהיר וקטן עם הניקוד.
+	var BASE_TIMEOUT_S = Math.min(3, SLICE_TIMEOUT); // זמן שהות התחלתי.
+	var MIN_TIMEOUT_S = 1.1;                          // זמן שהות מינימלי.
+	var TIMEOUT_STEP_S = 0.08;                        // קיצור לכל נקודה.
+	var BASE_SIZE_PX = 74;                            // גודל התחלתי.
+	var MIN_SIZE_PX = 46;                             // גודל מינימלי.
+	var SIZE_STEP_PX = 1.2;                           // הקטנה לכל נקודה.
+
+	// משולשים מיוחדים.
+	var GOLD_CHANCE = 0.12;      // סיכוי למשולש זהב (אחרי 5 נקודות).
+	var GOLD_MIN_SCORE = 5;      // ניקוד מינימלי להופעת זהב.
+	var GOLD_POINTS = 3;         // שווי משולש זהב.
+	var GOLD_TIMEOUT_S = 2;      // זהב נעלם תוך 2 שניות – חייבים להיות זריזים.
+	var TRAP_CHANCE = 0.1;       // סיכוי למשולש מלכודת (אחרי 3 נקודות).
+	var TRAP_MIN_SCORE = 3;      // ניקוד מינימלי להופעת מלכודת.
+	var TRAP_POINTS = -1;        // מלכודת מורידה נקודה.
 
 	// כיבוד העדפת המשתמש לצמצום אנימציות.
 	var REDUCED_MOTION = false;
@@ -107,6 +124,12 @@
 					this.tone(880, 0.12, 'triangle', 0.1, 0.07);
 					this.tone(1174, 0.16, 'triangle', 0.09, 0.14);
 					break;
+				case 'gold':
+					// פנפרה קצרה למשולש הזהב.
+					this.tone(784, 0.09, 'square', 0.1);
+					this.tone(988, 0.09, 'square', 0.1, 0.08);
+					this.tone(1319, 0.2, 'triangle', 0.12, 0.16);
+					break;
 				case 'miss':
 					this.tone(150, 0.12, 'sawtooth', 0.05, 0, 90);
 					break;
@@ -126,6 +149,51 @@
 					this.tone(659, 0.15, 'triangle', 0.12, 0.15);
 					this.tone(523, 0.3, 'triangle', 0.12, 0.3);
 					break;
+			}
+		},
+
+		/* ===== מוזיקת רקע 8-ביט (לופ מסונתז) ===== */
+
+		musicTimer: null,
+		musicStep: 0,
+		musicFast: false,
+
+		// תבנית בס + מלודיה קלילה בסולם דו מז'ור (הרץ). 0 = שקט.
+		MUSIC_BASS: [131, 0, 131, 0, 165, 0, 165, 0, 147, 0, 147, 0, 196, 0, 165, 0],
+		MUSIC_LEAD: [523, 0, 659, 523, 0, 784, 0, 659, 587, 0, 698, 587, 0, 880, 784, 0],
+
+		startMusic: function () {
+			this.stopMusic();
+			this.musicStep = 0;
+			this.musicFast = false;
+			var self = this;
+			var schedule = function () {
+				if (!self.muted) {
+					var i = self.musicStep % self.MUSIC_BASS.length;
+					var bass = self.MUSIC_BASS[i];
+					var lead = self.MUSIC_LEAD[i];
+					if (bass) {
+						self.tone(bass, 0.1, 'triangle', 0.035);
+					}
+					if (lead) {
+						self.tone(lead, 0.07, 'square', 0.02);
+					}
+				}
+				self.musicStep++;
+				// טמפו רגיל 140ms לצעד; ב-10 שניות אחרונות – 100ms (מלחיץ).
+				self.musicTimer = window.setTimeout(schedule, self.musicFast ? 100 : 140);
+			};
+			schedule();
+		},
+
+		setMusicFast: function (fast) {
+			this.musicFast = !!fast;
+		},
+
+		stopMusic: function () {
+			if (this.musicTimer) {
+				window.clearTimeout(this.musicTimer);
+				this.musicTimer = null;
 			}
 		}
 	};
@@ -153,6 +221,13 @@
 		this.countdownEl = root.querySelector('[data-countdown]');
 		this.confettiEl = root.querySelector('[data-confetti]');
 		this.soundBtn = root.querySelector('[data-action="toggle-sound"]');
+		this.timebar = root.querySelector('[data-timebar]');
+		this.dailyChampEl = root.querySelector('[data-daily-champ]');
+		this.couponEl = root.querySelector('[data-coupon]');
+
+		// לוחות מובילים (יומי/כל הזמנים) לטאבים במסך הסיום.
+		this.boards = { daily: null, alltime: null };
+		this.activeBoard = 'daily';
 
 		this._syncSoundBtn();
 
@@ -178,7 +253,9 @@
 			timeLeft: GAME_DURATION,
 			combo: 0,           // רצף פגיעות מהירות (ויזואלי בלבד).
 			bestCombo: 0,
-			lastUrgentTick: -1  // השנייה האחרונה שבה הושמע טיק.
+			lastUrgentTick: -1, // השנייה האחרונה שבה הושמע טיק.
+			clicks: 0,          // סך לחיצות מוצלחות (לאנטי-רמייה בשרת).
+			sliceType: 'normal' // סוג המשולש הנוכחי: normal | gold | trap.
 		};
 	};
 
@@ -241,7 +318,80 @@
 					SoundKit.play('tick');
 				}
 				break;
+			case 'share-whatsapp':
+				this._shareWhatsApp();
+				break;
+			case 'copy-coupon':
+				this._copyCoupon();
+				break;
+			case 'board-daily':
+				this._switchBoard('daily');
+				break;
+			case 'board-alltime':
+				this._switchBoard('alltime');
+				break;
 		}
+	};
+
+	/**
+	 * שיתוף התוצאה בוואטסאפ (או Web Share API במובייל).
+	 */
+	PizzaHutGame.prototype._shareWhatsApp = function () {
+		var i18n = CFG.i18n || {};
+		var tmpl = i18n.shareText || 'תפסתי %s משולשי פיצה ב-60 שניות במשחק של פיצה האט! 🍕 נסו לעבור אותי:';
+		var text = tmpl.replace('%s', String(this.state.score));
+		// קישור נקי לעמוד (בלי פרמטרי UTM של המשתמש) + תיוג שיתוף.
+		var url = window.location.origin + window.location.pathname + '?utm_source=whatsapp&utm_medium=share&utm_campaign=slice_game';
+		var full = text + ' ' + url;
+
+		if (navigator.share) {
+			navigator.share({ text: text, url: url }).catch(function () { /* המשתמש ביטל */ });
+			return;
+		}
+		window.open('https://wa.me/?text=' + encodeURIComponent(full), '_blank', 'noopener');
+	};
+
+	/**
+	 * העתקת קוד הקופון ללוח.
+	 */
+	PizzaHutGame.prototype._copyCoupon = function () {
+		if (!this.couponEl) {
+			return;
+		}
+		var code = this.couponEl.getAttribute('data-coupon-code') || '';
+		var btn = this.couponEl.querySelector('[data-action="copy-coupon"]');
+		var copied = (CFG.i18n && CFG.i18n.copied) || 'הועתק!';
+
+		var mark = function () {
+			if (btn) {
+				var original = btn.textContent;
+				btn.textContent = copied + ' ✓';
+				window.setTimeout(function () { btn.textContent = original; }, 1600);
+			}
+		};
+
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(code).then(mark).catch(function () { /* מתעלמים */ });
+		}
+	};
+
+	/**
+	 * החלפת לוח מובילים (יומי/כל הזמנים).
+	 *
+	 * @param {string} which daily | alltime.
+	 */
+	PizzaHutGame.prototype._switchBoard = function (which) {
+		this.activeBoard = which;
+		var self = this;
+		this.root.querySelectorAll('.phsg-board-tab').forEach(function (tab) {
+			var active = tab.getAttribute('data-action') === 'board-' + which;
+			tab.classList.toggle('is-active', active);
+			tab.setAttribute('aria-selected', active ? 'true' : 'false');
+		});
+		if (this.boards[which]) {
+			this._renderLeaderboard(this.boards[which], this.lastDisplayName || '');
+		}
+		return self;
 	};
 
 	PizzaHutGame.prototype._syncSoundBtn = function () {
@@ -410,11 +560,12 @@
 			}
 		}, 200);
 
+		SoundKit.startMusic();
 		this._spawnSlice();
 	};
 
 	/**
-	 * מצב "לחוץ" ב-10 השניות האחרונות: הבהוב טיימר + טיק-טוק.
+	 * מצב "לחוץ" ב-10 השניות האחרונות: הבהוב טיימר + טיק-טוק + מוזיקה מהירה.
 	 */
 	PizzaHutGame.prototype._updateUrgency = function () {
 		var urgent = this.state.timeLeft <= 10 && this.state.timeLeft > 0;
@@ -423,6 +574,10 @@
 			timeItem.classList.toggle('is-urgent', urgent);
 		}
 		this.arena.classList.toggle('is-urgent', urgent);
+		if (this.timebar && this.timebar.parentNode) {
+			this.timebar.parentNode.classList.toggle('is-urgent', urgent);
+		}
+		SoundKit.setMusicFast(urgent);
 
 		if (urgent) {
 			var sec = Math.ceil(this.state.timeLeft);
@@ -431,6 +586,35 @@
 				SoundKit.play('urgent');
 			}
 		}
+	};
+
+	/**
+	 * קושי נוכחי לפי ניקוד – זמן שהות וגודל המשולש.
+	 *
+	 * @return {{timeoutMs: number, size: number}}
+	 */
+	PizzaHutGame.prototype._difficulty = function () {
+		var score = this.state.score;
+		var timeoutS = Math.max(MIN_TIMEOUT_S, BASE_TIMEOUT_S - score * TIMEOUT_STEP_S);
+		var size = Math.max(MIN_SIZE_PX, Math.round(BASE_SIZE_PX - score * SIZE_STEP_PX));
+		return { timeoutMs: timeoutS * 1000, size: size };
+	};
+
+	/**
+	 * הגרלת סוג המשולש הבא.
+	 *
+	 * @return {string} normal | gold | trap.
+	 */
+	PizzaHutGame.prototype._rollSliceType = function () {
+		var score = this.state.score;
+		var r = Math.random();
+		if (score >= GOLD_MIN_SCORE && r < GOLD_CHANCE) {
+			return 'gold';
+		}
+		if (score >= TRAP_MIN_SCORE && r >= GOLD_CHANCE && r < GOLD_CHANCE + TRAP_CHANCE) {
+			return 'trap';
+		}
+		return 'normal';
 	};
 
 	/**
@@ -443,9 +627,20 @@
 
 		clearTimeout(this.state.sliceTimeout);
 
+		var diff = this._difficulty();
+		var type = this._rollSliceType();
+		this.state.sliceType = type;
+		this.slice.setAttribute('data-type', type);
+		this.slice.style.width = diff.size + 'px';
+		this.slice.style.height = diff.size + 'px';
+
+		// זהב בורח מהר במיוחד.
+		if (type === 'gold') {
+			diff.timeoutMs = Math.min(diff.timeoutMs, GOLD_TIMEOUT_S * 1000);
+		}
+
 		var arenaRect = this.arena.getBoundingClientRect();
-		var sliceSize = this.slice.offsetWidth || 74;
-		var pad = sliceSize / 2 + 6;
+		var pad = diff.size / 2 + 6;
 
 		var maxX = Math.max(pad, arenaRect.width - pad);
 		var maxY = Math.max(pad, arenaRect.height - pad);
@@ -465,10 +660,13 @@
 		this.state.sliceShownAt = Date.now();
 
 		var self = this;
-		// אם לא נלחץ תוך SLICE_TIMEOUT שניות – מעבר למיקום חדש (החטאה).
+		// אם לא נלחץ בזמן – בריחה למיקום חדש. הזמן מתקצר ככל שהניקוד עולה.
 		this.state.sliceTimeout = setTimeout(function () {
+			// בריחה שוברת קומבו – לחץ אמיתי.
+			self.state.combo = 0;
+			self._hideCombo();
 			self._spawnSlice();
-		}, SLICE_TIMEOUT * 1000);
+		}, diff.timeoutMs);
 	};
 
 	/**
@@ -487,32 +685,61 @@
 			this.state.reactions.push(reaction);
 		}
 
-		this.state.score += 1;
+		this.state.clicks += 1;
 
-		// קומבו – ויזואלי בלבד, לא משנה ניקוד.
-		if (reaction <= COMBO_WINDOW) {
-			this.state.combo += 1;
+		var type = this.state.sliceType;
+		var points = type === 'gold' ? GOLD_POINTS : (type === 'trap' ? TRAP_POINTS : 1);
+		this.state.score = Math.max(0, this.state.score + points);
+
+		var pos = this._eventPos(e);
+
+		if (type === 'trap') {
+			// מלכודת: שוברת קומבו, בלי חלקיקים חגיגיים.
+			this.state.combo = 0;
+			this._hideCombo();
+			this._fxRing(pos.x, pos.y, true);
+			this._fxFloat(pos.x, pos.y, '-1', 'phsg-float--trap');
+			this._fxShake();
+			SoundKit.play('miss');
+			this._vibrate(60);
 		} else {
-			this.state.combo = 1;
+			// קומבו – ויזואלי בלבד, לא משנה ניקוד.
+			if (reaction <= COMBO_WINDOW) {
+				this.state.combo += 1;
+			} else {
+				this.state.combo = 1;
+			}
+			this.state.bestCombo = Math.max(this.state.bestCombo, this.state.combo);
+
+			this._fxBurst(pos.x, pos.y, type === 'gold');
+			this._fxRing(pos.x, pos.y);
+			this._fxFloat(pos.x, pos.y, '+' + points, type === 'gold' ? 'phsg-float--gold' : 'phsg-float--hit');
+			this._fxShake();
+			this._showCombo();
+			SoundKit.play(type === 'gold' ? 'gold' : 'hit', this.state.combo);
+			if (this.state.combo > 1 && this.state.combo % 5 === 0) {
+				SoundKit.play('combo');
+			}
+			this._vibrate(type === 'gold' ? 35 : 18);
 		}
-		this.state.bestCombo = Math.max(this.state.bestCombo, this.state.combo);
 
 		this._updateHud();
 
-		// אפקטים במיקום הלחיצה.
-		var pos = this._eventPos(e);
-		this._fxBurst(pos.x, pos.y);
-		this._fxRing(pos.x, pos.y);
-		this._fxFloat(pos.x, pos.y, '+1', 'phsg-float--hit');
-		this._fxShake();
-		this._showCombo();
-		SoundKit.play('hit', this.state.combo);
-		if (this.state.combo > 1 && this.state.combo % 5 === 0) {
-			SoundKit.play('combo');
-		}
-
 		// מעבר מיידי למיקום חדש.
 		this._spawnSlice();
+	};
+
+	/**
+	 * רטט קצר במובייל (אם נתמך).
+	 *
+	 * @param {number} ms משך הרטט במ"ש.
+	 */
+	PizzaHutGame.prototype._vibrate = function (ms) {
+		if (!REDUCED_MOTION && navigator.vibrate) {
+			try {
+				navigator.vibrate(ms);
+			} catch (err) { /* מתעלמים */ }
+		}
 	};
 
 	/**
@@ -559,6 +786,8 @@
 
 	// צבעי מותג לחלקיקים: אדום, שמנת, קראפט + "מוצרלה".
 	var FX_COLORS = ['#F32735', '#F0EFDD', '#B58967', '#FFDD87', '#FFFFFF'];
+	// חלקיקי זהב למשולש הזהב.
+	var FX_GOLD_COLORS = ['#F5B301', '#FFE9A8', '#FFDD87', '#FFFFFF'];
 
 	PizzaHutGame.prototype._clearFx = function () {
 		if (this.fxLayer) {
@@ -570,15 +799,19 @@
 	/**
 	 * פיצוץ חלקיקים במיקום הפגיעה.
 	 *
-	 * @param {number} x מיקום X בזירה.
-	 * @param {number} y מיקום Y בזירה.
+	 * @param {number}  x    מיקום X בזירה.
+	 * @param {number}  y    מיקום Y בזירה.
+	 * @param {boolean} gold חלקיקי זהב (משולש זהב).
 	 */
-	PizzaHutGame.prototype._fxBurst = function (x, y) {
+	PizzaHutGame.prototype._fxBurst = function (x, y, gold) {
 		if (!this.fxLayer || REDUCED_MOTION) {
 			return;
 		}
 
-		for (var i = 0; i < 10; i++) {
+		var colors = gold ? FX_GOLD_COLORS : FX_COLORS;
+		var count = gold ? 16 : 10;
+
+		for (var i = 0; i < count; i++) {
 			var p = document.createElement('span');
 			p.className = 'phsg-particle';
 			var size = 5 + Math.random() * 7;
@@ -586,7 +819,7 @@
 			p.style.height = size + 'px';
 			p.style.left = x + 'px';
 			p.style.top = y + 'px';
-			p.style.background = FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)];
+			p.style.background = colors[Math.floor(Math.random() * colors.length)];
 			if (Math.random() < 0.3) {
 				p.style.borderRadius = '2px'; // "פלפלוני" מרובע פה ושם.
 			}
@@ -752,6 +985,11 @@
 		if (timeEl) {
 			timeEl.textContent = Math.ceil(this.state.timeLeft);
 		}
+		// בר הזמן המתרוקן.
+		if (this.timebar) {
+			var pct = Math.max(0, Math.min(100, (this.state.timeLeft / GAME_DURATION) * 100));
+			this.timebar.style.width = pct + '%';
+		}
 	};
 
 	PizzaHutGame.prototype._endGame = function () {
@@ -767,6 +1005,7 @@
 		this._hideCombo();
 		this._clearFx();
 		this.arena.classList.remove('is-urgent');
+		SoundKit.stopMusic();
 		SoundKit.play('end');
 
 		var duration = (this.state.endTime - this.state.startTime) / 1000;
@@ -779,6 +1018,7 @@
 
 		this._submitScore({
 			score: this.state.score,
+			clicks: this.state.clicks,
 			duration: Math.round(duration * 100) / 100,
 			avg_reaction: Math.round(avgReaction * 100) / 100
 		});
@@ -800,6 +1040,7 @@
 		body.append('email', this.participant.email);
 		body.append('consent', this.participant.consent ? '1' : '0');
 		body.append('score', result.score);
+		body.append('clicks', result.clicks);
 		body.append('duration', result.duration);
 		body.append('avg_reaction', result.avg_reaction);
 		body.append('utm_source', this.utm.utm_source);
@@ -819,7 +1060,12 @@
 				self._toggleLoader(false);
 				if (json && json.success && json.data) {
 					self._fillResult(result, json.data);
-					self._renderLeaderboard(json.data.leaderboard, json.data.display_name);
+					// שמירת שני הלוחות והצגת הטאב הפעיל.
+					self.lastDisplayName = json.data.display_name || '';
+					self.boards.daily = json.data.daily_leaderboard || [];
+					self.boards.alltime = json.data.leaderboard || [];
+					self._switchBoard(self.activeBoard);
+					self._showDailyChamp(json.data);
 				} else {
 					var msg = (json && json.data && json.data.message) || (CFG.i18n && CFG.i18n.saveError);
 					self._showResultMessage(msg || 'שגיאה');
@@ -838,6 +1084,7 @@
 			// כניסה ראשונה למסך הסיום – חגיגה.
 			this._countUpScore(result.score);
 			this._fxConfetti();
+			this._maybeShowCoupon(result.score);
 		}
 		this._setText('[data-result="time"]', Math.round(result.duration));
 
@@ -853,6 +1100,40 @@
 
 	PizzaHutGame.prototype._showResultMessage = function (msg) {
 		this._setText('[data-result="msg"]', msg);
+	};
+
+	/**
+	 * חשיפת הקופון אם עברו את רף הניקוד (מוגדר בשורטקוד).
+	 *
+	 * @param {number} score הניקוד הסופי.
+	 */
+	PizzaHutGame.prototype._maybeShowCoupon = function (score) {
+		if (!this.couponEl) {
+			return;
+		}
+		var min = parseInt(this.couponEl.getAttribute('data-coupon-min'), 10) || 0;
+		this.couponEl.hidden = score < min;
+	};
+
+	/**
+	 * באנר "שיאן/ית היום" + דירוג יומי במסך הסיום.
+	 *
+	 * @param {Object} data תשובת השרת.
+	 */
+	PizzaHutGame.prototype._showDailyChamp = function (data) {
+		if (!this.dailyChampEl) {
+			return;
+		}
+		var i18n = CFG.i18n || {};
+		if (data.daily_rank === 1) {
+			this.dailyChampEl.textContent = i18n.dailyChamp || 'שיאן/ית היום! 🏆';
+			this.dailyChampEl.hidden = false;
+		} else if (data.daily_rank > 1) {
+			this.dailyChampEl.textContent = (i18n.dailyRank || 'דירוג יומי') + ': #' + data.daily_rank;
+			this.dailyChampEl.hidden = false;
+		} else {
+			this.dailyChampEl.hidden = true;
+		}
 	};
 
 	PizzaHutGame.prototype._renderLeaderboard = function (rows, youName) {

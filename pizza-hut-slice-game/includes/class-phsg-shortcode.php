@@ -91,6 +91,10 @@ class PHSG_Shortcode {
 					'go'            => __( 'GO!', 'pizza-hut-slice-game' ),
 					'combo'         => __( 'קומבו', 'pizza-hut-slice-game' ),
 					'comboBroken'   => __( 'הקומבו נשבר!', 'pizza-hut-slice-game' ),
+					'dailyChamp'    => __( 'שיאן/ית היום! 🏆', 'pizza-hut-slice-game' ),
+					'dailyRank'     => __( 'דירוג יומי', 'pizza-hut-slice-game' ),
+					'shareText'     => __( 'תפסתי %s משולשי פיצה ב-60 שניות במשחק של פיצה האט! 🍕 נסו לעבור אותי:', 'pizza-hut-slice-game' ),
+					'copied'        => __( 'הועתק!', 'pizza-hut-slice-game' ),
 				),
 			)
 		);
@@ -115,15 +119,20 @@ class PHSG_Shortcode {
 
 		$atts = shortcode_atts(
 			array(
-				'title'    => __( 'תפוס את המשולש', 'pizza-hut-slice-game' ),
-				'subtitle' => __( 'האט אנד יו נואו איט', 'pizza-hut-slice-game' ),
+				'title'       => __( 'תפוס את המשולש', 'pizza-hut-slice-game' ),
+				'subtitle'    => __( 'האט אנד יו נואו איט', 'pizza-hut-slice-game' ),
+				'logo'        => '', // URL ללוגו (מומלץ SVG/PNG שקוף). ריק = לוגו ברירת מחדל.
+				'coupon_code' => '', // קוד קופון למסך הסיום. ריק = ללא קופון.
+				'coupon_min'  => 15, // רף ניקוד מינימלי לקבלת הקופון.
+				'daily_prize' => __( 'שיאן/ית היום זוכה לפיצה משפחתית! 🍕', 'pizza-hut-slice-game' ), // ריק = הסתרת באנר הפרס.
 			),
 			$atts,
 			'pizza_hut_slice_game'
 		);
 
 		ob_start();
-		$leaderboard = PHSG_Leaderboard::get_public( 10 );
+		// רינדור ראשוני = הלוח היומי (הטאב הפעיל כברירת מחדל).
+		$leaderboard = PHSG_Leaderboard::get_public( 10, true );
 		include PHSG_PLUGIN_DIR . 'templates/game.php';
 		return ob_get_clean();
 	}

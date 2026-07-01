@@ -65,7 +65,7 @@ class PHSG_Admin {
 		$total = PHSG_DB::total_players();
 		$rows  = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id, full_name, phone, email, score, duration, avg_reaction,
+				"SELECT id, full_name, phone, email, score, clicks, duration, avg_reaction,
 						utm_source, utm_medium, utm_campaign, created_at
 				 FROM {$table}
 				 ORDER BY score DESC, avg_reaction ASC, created_at ASC
@@ -96,6 +96,7 @@ class PHSG_Admin {
 		echo '<th>' . esc_html__( 'טלפון', 'pizza-hut-slice-game' ) . '</th>';
 		echo '<th>' . esc_html__( 'אימייל', 'pizza-hut-slice-game' ) . '</th>';
 		echo '<th>' . esc_html__( 'ניקוד', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'לחיצות', 'pizza-hut-slice-game' ) . '</th>';
 		echo '<th>' . esc_html__( 'משך', 'pizza-hut-slice-game' ) . '</th>';
 		echo '<th>' . esc_html__( 'תגובה ממוצעת (מ"ש)', 'pizza-hut-slice-game' ) . '</th>';
 		echo '<th>UTM</th>';
@@ -103,7 +104,7 @@ class PHSG_Admin {
 		echo '</tr></thead><tbody>';
 
 		if ( empty( $rows ) ) {
-			echo '<tr><td colspan="9">' . esc_html__( 'אין עדיין תוצאות.', 'pizza-hut-slice-game' ) . '</td></tr>';
+			echo '<tr><td colspan="10">' . esc_html__( 'אין עדיין תוצאות.', 'pizza-hut-slice-game' ) . '</td></tr>';
 		} else {
 			foreach ( $rows as $r ) {
 				$utm = array_filter( array( $r->utm_source, $r->utm_medium, $r->utm_campaign ) );
@@ -113,6 +114,7 @@ class PHSG_Admin {
 				echo '<td>' . esc_html( $r->phone ) . '</td>';
 				echo '<td>' . esc_html( $r->email ) . '</td>';
 				echo '<td>' . esc_html( $r->score ) . '</td>';
+				echo '<td>' . esc_html( $r->clicks ) . '</td>';
 				echo '<td>' . esc_html( $r->duration ) . '</td>';
 				echo '<td>' . esc_html( $r->avg_reaction ) . '</td>';
 				echo '<td>' . esc_html( implode( ' / ', $utm ) ) . '</td>';
@@ -158,7 +160,7 @@ class PHSG_Admin {
 		$table = PHSG_DB::table_name();
 
 		$rows = $wpdb->get_results(
-			"SELECT id, full_name, phone, email, consent, score, duration, avg_reaction,
+			"SELECT id, full_name, phone, email, consent, score, clicks, duration, avg_reaction,
 					utm_source, utm_medium, utm_campaign, utm_term, utm_content, created_at
 			 FROM {$table}
 			 ORDER BY score DESC, avg_reaction ASC, created_at ASC", // phpcs:ignore WordPress.DB
@@ -176,7 +178,7 @@ class PHSG_Admin {
 		fputcsv(
 			$output,
 			array(
-				'ID', 'Full Name', 'Phone', 'Email', 'Consent', 'Score', 'Duration',
+				'ID', 'Full Name', 'Phone', 'Email', 'Consent', 'Score', 'Clicks', 'Duration',
 				'Avg Reaction (ms)', 'UTM Source', 'UTM Medium', 'UTM Campaign',
 				'UTM Term', 'UTM Content', 'Created At',
 			)

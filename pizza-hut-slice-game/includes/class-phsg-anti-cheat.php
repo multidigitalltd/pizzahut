@@ -16,23 +16,25 @@ class PHSG_Anti_Cheat {
 
 	// חוקי המשחק (חייבים להיות תואמים ל-JS).
 	const GAME_DURATION      = 60;   // משך המשחק בשניות.
-	const SLICE_TIMEOUT      = 10;   // זמן שהות מקסימלי של המשולש (שניות).
+	const SLICE_TIMEOUT      = 10;   // חסם עליון לזמן שהות המשולש (שניות).
 	const MIN_REACTION_MS    = 120;  // זמן תגובה אנושי מינימלי סביר (מ"ש).
 	const DURATION_TOLERANCE = 3;    // סטייה מותרת ממשך המשחק (שניות).
+	const GOLD_POINTS        = 3;    // ניקוד משולש זהב – מקסימום נקודות ללחיצה.
 
 	/**
 	 * בדיקת סבירות התוצאה.
 	 *
-	 * @param array $payload נתונים מסונָנים: score, duration, avg_reaction.
+	 * @param array $payload נתונים מסונָנים: score, clicks, duration, avg_reaction.
 	 * @return true|WP_Error true אם תקין, אחרת WP_Error עם הסבר.
 	 */
 	public static function validate( array $payload ) {
 		$score        = isset( $payload['score'] ) ? (int) $payload['score'] : 0;
+		$clicks       = isset( $payload['clicks'] ) ? (int) $payload['clicks'] : 0;
 		$duration     = isset( $payload['duration'] ) ? (float) $payload['duration'] : 0;
 		$avg_reaction = isset( $payload['avg_reaction'] ) ? (float) $payload['avg_reaction'] : 0;
 
-		// 1. ניקוד לא שלילי ובגבול הגיוני.
-		if ( $score < 0 ) {
+		// 1. ניקוד ולחיצות לא שליליים.
+		if ( $score < 0 || $clicks < 0 ) {
 			return new WP_Error( 'phsg_invalid_score', __( 'ניקוד לא תקין.', 'pizza-hut-slice-game' ) );
 		}
 
@@ -43,30 +45,35 @@ class PHSG_Anti_Cheat {
 			return new WP_Error( 'phsg_invalid_duration', __( 'משך משחק לא תקין.', 'pizza-hut-slice-game' ) );
 		}
 
-		// 3. חסם עליון תיאורטי על הניקוד:
-		//    כל לחיצה דורשת לפחות MIN_REACTION_MS. מספר הלחיצות המרבי במשך המשחק
-		//    לא יכול לעבור duration / MIN_REACTION_MS. מוסיפים באפר קטן להשהיית רינדור.
-		$max_possible = (int) floor( ( self::GAME_DURATION * 1000 ) / self::MIN_REACTION_MS ) + 5;
-		if ( $score > $max_possible ) {
+		// 3. חסם עליון תיאורטי על מספר הלחיצות:
+		//    כל לחיצה דורשת לפחות MIN_REACTION_MS. מוסיפים באפר קטן להשהיית רינדור.
+		$max_clicks = (int) floor( ( self::GAME_DURATION * 1000 ) / self::MIN_REACTION_MS ) + 5;
+		if ( $clicks > $max_clicks ) {
 			return new WP_Error( 'phsg_score_too_high', __( 'הניקוד גבוה מהאפשרי במשחק.', 'pizza-hut-slice-game' ) );
 		}
 
-		// 4. אם יש ניקוד – זמן התגובה הממוצע חייב להיות אנושי (לא 0 ולא מהיר מדי).
-		if ( $score > 0 ) {
+		// 4. הניקוד חסום על ידי הלחיצות: כל לחיצה שווה לכל היותר GOLD_POINTS
+		//    (משולש זהב), ומשולש מלכודת עשוי להוריד – לכן אין חסם תחתון מעבר ל-0.
+		if ( $score > $clicks * self::GOLD_POINTS ) {
+			return new WP_Error( 'phsg_score_too_high', __( 'הניקוד גבוה מהאפשרי במשחק.', 'pizza-hut-slice-game' ) );
+		}
+
+		// 5. אם היו לחיצות – זמן התגובה הממוצע חייב להיות אנושי (לא 0 ולא מהיר מדי).
+		if ( $clicks > 0 ) {
 			if ( $avg_reaction < self::MIN_REACTION_MS ) {
 				return new WP_Error( 'phsg_reaction_too_fast', __( 'זמן תגובה מהיר מהאפשרי.', 'pizza-hut-slice-game' ) );
 			}
-			// זמן תגובה לא יכול לעבור את חלון הזמן של המשולש.
+			// זמן תגובה לא יכול לעבור את חלון הזמן המקסימלי של המשולש.
 			if ( $avg_reaction > ( self::SLICE_TIMEOUT * 1000 ) ) {
 				return new WP_Error( 'phsg_reaction_too_slow', __( 'זמן תגובה לא תקין.', 'pizza-hut-slice-game' ) );
 			}
-			// בדיקת עקביות: score * avg_reaction לא יכול לעבור את משך המשחק בפועל.
-			$spent_ms = $score * $avg_reaction;
+			// בדיקת עקביות: clicks * avg_reaction לא יכול לעבור את משך המשחק בפועל.
+			$spent_ms = $clicks * $avg_reaction;
 			if ( $spent_ms > ( $duration * 1000 ) + 500 ) {
 				return new WP_Error( 'phsg_inconsistent', __( 'הנתונים אינם עקביים.', 'pizza-hut-slice-game' ) );
 			}
-		} elseif ( $avg_reaction > 0 ) {
-			// אין ניקוד אבל יש זמן תגובה – לא עקבי.
+		} elseif ( $score > 0 || $avg_reaction > 0 ) {
+			// אין לחיצות אבל יש ניקוד/זמן תגובה – לא עקבי.
 			return new WP_Error( 'phsg_inconsistent', __( 'הנתונים אינם עקביים.', 'pizza-hut-slice-game' ) );
 		}
 
