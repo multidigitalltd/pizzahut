@@ -1,0 +1,501 @@
+/**
+ * Pizza Hut Slice Game – עיצוב ומיתוג.
+ *
+ * צבעי מותג:
+ *   #F32735 אדום | #2D2A26 שחור | #F0EFDD קרם | #B58967 קראפט
+ *   נמנעים מ-#6BA43A (ירוק) אלא אם הקמפיין נטול גלוטן.
+ */
+
+.phsg-app {
+	--phsg-red: #F32735;
+	--phsg-black: #2D2A26;
+	--phsg-cream: #F0EFDD;
+	--phsg-kraft: #B58967;
+	--phsg-kraft-dark: #9a6f4f;
+
+	position: relative;
+	box-sizing: border-box;
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 20px;
+	min-height: 560px;
+	/* רקע קופסת פיצה בגוון קראפט */
+	background-color: var(--phsg-kraft);
+	background-image:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.06) 25%, transparent 25%),
+		linear-gradient(225deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%);
+	background-size: 22px 22px;
+	border: 6px solid var(--phsg-black);
+	border-radius: 18px;
+	box-shadow: 0 18px 40px rgba(45, 42, 38, 0.35);
+	overflow: hidden;
+	font-family: "Machmorat Rounded", "Rubik", "Assistant", -apple-system, "Segoe UI", sans-serif;
+	color: var(--phsg-black);
+	text-align: center;
+}
+
+.phsg-app *,
+.phsg-app *::before,
+.phsg-app *::after {
+	box-sizing: border-box;
+}
+
+/* ===== רקע תבנית טיפוגרפיה ===== */
+.phsg-pattern {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	opacity: 0.10;
+	pointer-events: none;
+	overflow: hidden;
+	transform: rotate(-8deg) scale(1.4);
+	transform-origin: center;
+}
+
+.phsg-pattern__row {
+	display: block;
+	white-space: nowrap;
+	font-family: "HWT Artz", "Rubik", sans-serif;
+	font-weight: 800;
+	font-size: 26px;
+	line-height: 1.7;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: var(--phsg-black);
+}
+
+/* ===== במה ומסכים ===== */
+.phsg-stage {
+	position: relative;
+	z-index: 1;
+}
+
+.phsg-screen {
+	display: none;
+	animation: phsg-fade 0.35s ease;
+}
+
+.phsg-screen.is-active {
+	display: block;
+}
+
+@keyframes phsg-fade {
+	from { opacity: 0; transform: translateY(10px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== כרטיס ===== */
+.phsg-card {
+	background: var(--phsg-cream);
+	border: 4px solid var(--phsg-black);
+	border-radius: 16px;
+	padding: 28px 22px;
+	margin: 0 auto 16px;
+	box-shadow: 0 8px 0 var(--phsg-black);
+}
+
+.phsg-card--board {
+	padding: 18px;
+}
+
+/* ===== לוגו/משולש ===== */
+.phsg-logo {
+	width: 96px;
+	margin: 0 auto 12px;
+}
+
+.phsg-logo--sm {
+	width: 64px;
+}
+
+.phsg-slice-svg {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* ===== טיפוגרפיה ===== */
+.phsg-title {
+	font-family: "HWT Artz", "Rubik", "Assistant", sans-serif;
+	font-weight: 800;
+	font-size: clamp(30px, 7vw, 48px);
+	line-height: 1.05;
+	margin: 0 0 6px;
+	color: var(--phsg-red);
+	text-transform: uppercase;
+	-webkit-text-stroke: 1.5px var(--phsg-black);
+	text-shadow: 3px 3px 0 var(--phsg-black);
+}
+
+.phsg-title--sm {
+	font-size: clamp(24px, 5vw, 34px);
+}
+
+.phsg-subtitle {
+	font-weight: 700;
+	font-size: 18px;
+	margin: 0 0 14px;
+	color: var(--phsg-black);
+}
+
+.phsg-lead {
+	font-size: 16px;
+	line-height: 1.5;
+	margin: 0 0 20px;
+	color: var(--phsg-black);
+}
+
+/* ===== כפתורים ===== */
+.phsg-btn {
+	display: inline-block;
+	font-family: inherit;
+	font-weight: 800;
+	font-size: 18px;
+	padding: 14px 34px;
+	border: 3px solid var(--phsg-black);
+	border-radius: 40px;
+	cursor: pointer;
+	transition: transform 0.12s ease, box-shadow 0.12s ease;
+	text-decoration: none;
+}
+
+.phsg-btn--primary {
+	background: var(--phsg-red);
+	color: #fff;
+	box-shadow: 0 5px 0 var(--phsg-black);
+}
+
+.phsg-btn--primary:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 7px 0 var(--phsg-black);
+}
+
+.phsg-btn--primary:active {
+	transform: translateY(3px);
+	box-shadow: 0 2px 0 var(--phsg-black);
+}
+
+.phsg-btn:focus-visible {
+	outline: 3px dashed var(--phsg-black);
+	outline-offset: 3px;
+}
+
+/* ===== טופס ===== */
+.phsg-form {
+	text-align: right;
+	max-width: 380px;
+	margin: 0 auto;
+}
+
+.phsg-field {
+	margin-bottom: 16px;
+}
+
+.phsg-field label {
+	display: block;
+	font-weight: 700;
+	margin-bottom: 6px;
+}
+
+.phsg-field input[type="text"],
+.phsg-field input[type="tel"],
+.phsg-field input[type="email"] {
+	width: 100%;
+	font-family: inherit;
+	font-size: 16px;
+	padding: 12px 14px;
+	border: 3px solid var(--phsg-black);
+	border-radius: 10px;
+	background: #fff;
+	color: var(--phsg-black);
+}
+
+.phsg-field input:focus {
+	outline: none;
+	border-color: var(--phsg-red);
+	box-shadow: 0 0 0 3px rgba(243, 39, 53, 0.25);
+}
+
+.phsg-field--check label {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	font-weight: 500;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.phsg-field--check input {
+	margin-top: 3px;
+	width: 20px;
+	height: 20px;
+	accent-color: var(--phsg-red);
+	flex: 0 0 auto;
+}
+
+.phsg-field__error {
+	display: block;
+	color: var(--phsg-red);
+	font-size: 13px;
+	font-weight: 700;
+	margin-top: 5px;
+	min-height: 16px;
+}
+
+.phsg-field.has-error input {
+	border-color: var(--phsg-red);
+	background: #fff4f5;
+}
+
+/* ===== HUD ===== */
+.phsg-hud {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.phsg-hud__item {
+	flex: 1;
+	background: var(--phsg-cream);
+	border: 3px solid var(--phsg-black);
+	border-radius: 12px;
+	padding: 8px 10px;
+	box-shadow: 0 4px 0 var(--phsg-black);
+}
+
+.phsg-hud__label {
+	display: block;
+	font-size: 13px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.phsg-hud__value {
+	display: block;
+	font-family: "HWT Artz", "Rubik", sans-serif;
+	font-weight: 800;
+	font-size: 30px;
+	color: var(--phsg-red);
+	line-height: 1;
+}
+
+/* ===== זירת משחק ===== */
+.phsg-arena {
+	position: relative;
+	width: 100%;
+	height: 420px;
+	background: var(--phsg-cream);
+	border: 4px solid var(--phsg-black);
+	border-radius: 16px;
+	box-shadow: inset 0 0 0 4px rgba(181, 137, 103, 0.35);
+	overflow: hidden;
+	cursor: crosshair;
+	touch-action: manipulation;
+}
+
+.phsg-arena:focus-visible {
+	outline: 3px dashed var(--phsg-red);
+	outline-offset: 3px;
+}
+
+/* ===== משולש הפיצה (מטרה) ===== */
+.phsg-slice {
+	position: absolute;
+	width: 74px;
+	height: 74px;
+	padding: 0;
+	margin: 0;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	transform: translate(-50%, -50%) scale(1);
+	transition: transform 0.08s ease;
+	animation: phsg-pop 0.18s ease;
+	filter: drop-shadow(2px 4px 3px rgba(45, 42, 38, 0.4));
+}
+
+.phsg-slice:active {
+	transform: translate(-50%, -50%) scale(0.86);
+}
+
+@keyframes phsg-pop {
+	from { transform: translate(-50%, -50%) scale(0.2); }
+	to   { transform: translate(-50%, -50%) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.phsg-slice,
+	.phsg-screen {
+		animation: none;
+	}
+}
+
+/* ===== מסך סיום – תוצאה ===== */
+.phsg-result {
+	display: flex;
+	justify-content: center;
+	gap: 14px;
+	margin: 18px 0;
+}
+
+.phsg-result__item {
+	flex: 1;
+	max-width: 130px;
+	background: #fff;
+	border: 3px solid var(--phsg-black);
+	border-radius: 12px;
+	padding: 12px 6px;
+}
+
+.phsg-result__value {
+	display: block;
+	font-family: "HWT Artz", "Rubik", sans-serif;
+	font-weight: 800;
+	font-size: 34px;
+	color: var(--phsg-red);
+	line-height: 1;
+}
+
+.phsg-result__label {
+	display: block;
+	font-size: 13px;
+	font-weight: 700;
+	margin-top: 4px;
+}
+
+.phsg-result__msg {
+	font-size: 16px;
+	font-weight: 700;
+	margin: 6px 0 18px;
+	min-height: 22px;
+}
+
+/* ===== טבלת מובילים ===== */
+.phsg-board__title {
+	font-family: "HWT Artz", "Rubik", sans-serif;
+	font-weight: 800;
+	font-size: 22px;
+	color: var(--phsg-red);
+	margin: 0 0 12px;
+	text-transform: uppercase;
+}
+
+.phsg-board__head,
+.phsg-board__row {
+	display: grid;
+	grid-template-columns: 60px 1fr 70px 60px;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 10px;
+	text-align: center;
+}
+
+.phsg-board__head {
+	font-size: 12px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	border-bottom: 3px solid var(--phsg-black);
+	color: var(--phsg-black);
+}
+
+.phsg-board__row {
+	background: #fff;
+	border: 2px solid var(--phsg-black);
+	border-radius: 10px;
+	margin-top: 6px;
+	font-weight: 600;
+}
+
+.phsg-board__row .phsg-board__name {
+	text-align: right;
+}
+
+.phsg-board__rank {
+	font-family: "HWT Artz", "Rubik", sans-serif;
+	font-weight: 800;
+	color: var(--phsg-red);
+}
+
+.phsg-board__row--gold   { background: #fff7d6; border-color: #d9a300; }
+.phsg-board__row--silver { background: #f2f2f2; border-color: #9a9a9a; }
+.phsg-board__row--bronze { background: #f7e6d4; border-color: var(--phsg-kraft-dark); }
+
+.phsg-board__empty {
+	padding: 16px;
+	font-weight: 700;
+}
+
+.phsg-board__row.is-you {
+	outline: 3px solid var(--phsg-red);
+	outline-offset: 1px;
+}
+
+/* ===== לואודר ===== */
+.phsg-loader {
+	position: absolute;
+	inset: 0;
+	z-index: 5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(240, 239, 221, 0.7);
+}
+
+.phsg-loader__spinner {
+	width: 46px;
+	height: 46px;
+	border: 5px solid var(--phsg-kraft);
+	border-top-color: var(--phsg-red);
+	border-radius: 50%;
+	animation: phsg-spin 0.8s linear infinite;
+}
+
+@keyframes phsg-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* ===== רספונסיביות ===== */
+@media (max-width: 600px) {
+	.phsg-app {
+		padding: 14px;
+		border-width: 4px;
+		min-height: 500px;
+	}
+
+	.phsg-card {
+		padding: 20px 16px;
+	}
+
+	.phsg-arena {
+		height: 340px;
+	}
+
+	.phsg-slice {
+		width: 64px;
+		height: 64px;
+	}
+
+	.phsg-result__value {
+		font-size: 28px;
+	}
+
+	.phsg-board__head,
+	.phsg-board__row {
+		grid-template-columns: 44px 1fr 56px 50px;
+		font-size: 14px;
+		padding: 7px 6px;
+	}
+}
+
+@media (max-width: 360px) {
+	.phsg-arena {
+		height: 300px;
+	}
+	.phsg-slice {
+		width: 56px;
+		height: 56px;
+	}
+}
