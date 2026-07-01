@@ -88,6 +88,9 @@ class PHSG_Shortcode {
 					'consentNeeded' => __( 'יש לאשר את תנאי ההשתתפות', 'pizza-hut-slice-game' ),
 					'saveError'     => __( 'אירעה שגיאה בשמירה. נסו שוב.', 'pizza-hut-slice-game' ),
 					'rankOf'        => __( 'מתוך', 'pizza-hut-slice-game' ),
+					'go'            => __( 'GO!', 'pizza-hut-slice-game' ),
+					'combo'         => __( 'קומבו', 'pizza-hut-slice-game' ),
+					'comboBroken'   => __( 'הקומבו נשבר!', 'pizza-hut-slice-game' ),
 				),
 			)
 		);

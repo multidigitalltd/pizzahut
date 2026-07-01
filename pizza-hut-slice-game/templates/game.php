@@ -96,20 +96,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span class="phsg-hud__label"><?php esc_html_e( 'ניקוד', 'pizza-hut-slice-game' ); ?></span>
 					<span class="phsg-hud__value" data-hud="score">0</span>
 				</div>
-				<div class="phsg-hud__item">
+				<div class="phsg-hud__item phsg-hud__item--time">
 					<span class="phsg-hud__label"><?php esc_html_e( 'זמן', 'pizza-hut-slice-game' ); ?></span>
 					<span class="phsg-hud__value" data-hud="time">60</span>
 				</div>
+				<button type="button" class="phsg-sound" data-action="toggle-sound" aria-pressed="false" aria-label="<?php echo esc_attr__( 'הפעלה/השתקה של צלילים', 'pizza-hut-slice-game' ); ?>">🔊</button>
 			</div>
 			<div class="phsg-arena" data-arena tabindex="0" aria-label="<?php echo esc_attr__( 'אזור משחק – לחצו על משולש הפיצה', 'pizza-hut-slice-game' ); ?>">
 				<button type="button" class="phsg-slice" data-slice hidden aria-label="<?php echo esc_attr__( 'משולש פיצה – לחצו!', 'pizza-hut-slice-game' ); ?>">
 					<?php echo phsg_slice_svg(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</button>
+				<?php // שכבת אפקטים (חלקיקים, גלי הדף, טקסט מרחף) – ללא אינטראקציה. ?>
+				<div class="phsg-fx" data-fx aria-hidden="true"></div>
+				<?php // תג קומבו ?>
+				<div class="phsg-combo" data-combo hidden aria-hidden="true"></div>
+				<?php // ספירה לאחור לפני תחילת סיבוב ?>
+				<div class="phsg-countdown" data-countdown hidden aria-hidden="true">
+					<span class="phsg-countdown__num" data-countdown-num>3</span>
+				</div>
 			</div>
 		</section>
 
 		<?php // ===== מסך סיום ===== ?>
 		<section class="phsg-screen phsg-screen--end" data-screen="end" hidden>
+			<?php // קונפטי חגיגי – מתמלא ב-JS. ?>
+			<div class="phsg-confetti" data-confetti aria-hidden="true"></div>
 			<div class="phsg-card">
 				<div class="phsg-logo phsg-logo--sm" aria-hidden="true">
 					<?php echo phsg_slice_svg(); // phpcs:ignore WordPress.Security.EscapeOutput ?>

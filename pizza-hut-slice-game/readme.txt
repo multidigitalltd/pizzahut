@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,14 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 1.2.0 =
+* חוויית משחק משודרגת: סמן-מטרה מעוצב, ספירה לאחור 3-2-1-GO, פיצוץ חלקיקים + "+1" מרחף + גל הדף בכל פגיעה, רעידת מסך עדינה.
+* מערכת קומבו ויזואלית (לא משנה ניקוד) עם תג מונפש.
+* אפקטים קוליים מסונתזים (WebAudio, ללא קבצים) + כפתור השתקה עם שמירת העדפה.
+* מצב "לחוץ" ב-10 השניות האחרונות: טיימר מהבהב + טיק-טוק.
+* מסך סיום חגיגי: קונפטי וספירת ניקוד עולה.
+* כיבוד prefers-reduced-motion.
 
 = 1.1.1 =
 * תיקון: אינדיקטור טעינה שנשאר מוצג כל הזמן (display:flex דרס את hidden).
