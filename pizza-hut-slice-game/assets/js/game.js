@@ -1,9 +1,10 @@
 /**
  * Pizza Hut Slice Game – מנוע המשחק (Vanilla JS).
  *
- * זרימה: פתיחה ← טופס ← משחק ← סיום.
- * המשולש מופיע במיקום אקראי, נשאר עד 10 שניות או עד לחיצה,
- * כל לחיצה = נקודה + מעבר מיידי למיקום חדש. משך המשחק 60 שניות.
+ * פורט נאמן של לוגיקת אב-הטיפוס המאושר (design handoff v2):
+ * מסכים: intro → form → countdown → game → end.
+ * חוקים: משולש +1 · זהב +3 (10%) · פרנזי ×2 · רצף 5 = +2 בונוס ·
+ * מכשול −1 · שרוף −2 · שעון +5 שנ' · לולאת משחק כל 100ms · שלבים 1–5.
  */
 (function () {
 	'use strict';
@@ -13,1028 +14,754 @@
 	}
 
 	var CFG = window.PHSG_DATA;
-	var GAME_DURATION = parseInt(CFG.gameDuration, 10) || 60; // שניות.
-	var SLICE_TIMEOUT = parseInt(CFG.sliceTimeout, 10) || 10; // שניות – חסם עליון (אנטי-רמייה).
-	var COMBO_WINDOW = 1500; // מ"ש – פגיעה מהירה מזו ממשיכה קומבו.
+	var I18N = CFG.i18n || {};
 
-	// קושי מדורג: המשולש מתחיל "איטי וגדול" ונהיה מהיר וקטן עם הניקוד.
-	var BASE_TIMEOUT_S = Math.min(3, SLICE_TIMEOUT); // זמן שהות התחלתי.
-	var MIN_TIMEOUT_S = 1.1;                          // זמן שהות מינימלי.
-	var TIMEOUT_STEP_S = 0.08;                        // קיצור לכל נקודה.
-	var BASE_SIZE_PX = 74;                            // גודל התחלתי.
-	var MIN_SIZE_PX = 46;                             // גודל מינימלי.
-	var SIZE_STEP_PX = 1.2;                           // הקטנה לכל נקודה.
-
-	// משולשים מיוחדים.
-	var GOLD_CHANCE = 0.12;      // סיכוי למשולש זהב (אחרי 5 נקודות).
-	var GOLD_MIN_SCORE = 5;      // ניקוד מינימלי להופעת זהב.
-	var GOLD_POINTS = 3;         // שווי משולש זהב.
-	var GOLD_TIMEOUT_S = 2;      // זהב נעלם תוך 2 שניות – חייבים להיות זריזים.
-	var TRAP_CHANCE = 0.1;       // סיכוי למשולש מלכודת (אחרי 3 נקודות).
-	var TRAP_MIN_SCORE = 3;      // ניקוד מינימלי להופעת מלכודת.
-	var TRAP_POINTS = -1;        // מלכודת מורידה נקודה.
-
-	// כיבוד העדפת המשתמש לצמצום אנימציות.
-	var REDUCED_MOTION = false;
-	try {
-		REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-	} catch (e) { /* מתעלמים */ }
-
-	/* ==================== צלילים (WebAudio, ללא קבצים) ==================== */
-
-	var SoundKit = {
-		ctx: null,
-		muted: false,
-
-		init: function () {
-			try {
-				this.muted = window.localStorage.getItem('phsg_muted') === '1';
-			} catch (e) { /* מתעלמים */ }
-		},
-
-		// יצירת ה-context רק אחרי מחוות משתמש (מדיניות autoplay).
-		ensure: function () {
-			if (!this.ctx) {
-				var AC = window.AudioContext || window.webkitAudioContext;
-				if (!AC) {
-					return;
-				}
-				try {
-					this.ctx = new AC();
-				} catch (e) {
-					this.ctx = null;
-				}
-			}
-			if (this.ctx && this.ctx.state === 'suspended') {
-				this.ctx.resume();
-			}
-		},
-
-		setMuted: function (muted) {
-			this.muted = muted;
-			try {
-				window.localStorage.setItem('phsg_muted', muted ? '1' : '0');
-			} catch (e) { /* מתעלמים */ }
-		},
-
-		/**
-		 * השמעת צליל קצר.
-		 *
-		 * @param {number} freq   תדר בהרץ.
-		 * @param {number} dur    משך בשניות.
-		 * @param {string} type   צורת גל.
-		 * @param {number} vol    עוצמה (0-1).
-		 * @param {number} delay  השהיה בשניות.
-		 * @param {number} glide  תדר יעד (סליידר) – אופציונלי.
-		 */
-		tone: function (freq, dur, type, vol, delay, glide) {
-			if (this.muted) {
-				return;
-			}
-			this.ensure();
-			if (!this.ctx) {
-				return;
-			}
-			var t = this.ctx.currentTime + (delay || 0);
-			var osc = this.ctx.createOscillator();
-			var gain = this.ctx.createGain();
-			osc.type = type || 'sine';
-			osc.frequency.setValueAtTime(freq, t);
-			if (glide) {
-				osc.frequency.exponentialRampToValueAtTime(glide, t + dur);
-			}
-			gain.gain.setValueAtTime(0.0001, t);
-			gain.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.01);
-			gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-			osc.connect(gain).connect(this.ctx.destination);
-			osc.start(t);
-			osc.stop(t + dur + 0.05);
-		},
-
-		play: function (name, combo) {
-			switch (name) {
-				case 'hit':
-					// גובה עולה עם הקומבו – פידבק מתגמל.
-					var base = 430 + Math.min(combo || 0, 12) * 45;
-					this.tone(base, 0.09, 'square', 0.08);
-					this.tone(base * 1.5, 0.14, 'sine', 0.1, 0.04);
-					break;
-				case 'combo':
-					this.tone(660, 0.08, 'triangle', 0.1);
-					this.tone(880, 0.12, 'triangle', 0.1, 0.07);
-					this.tone(1174, 0.16, 'triangle', 0.09, 0.14);
-					break;
-				case 'gold':
-					// פנפרה קצרה למשולש הזהב.
-					this.tone(784, 0.09, 'square', 0.1);
-					this.tone(988, 0.09, 'square', 0.1, 0.08);
-					this.tone(1319, 0.2, 'triangle', 0.12, 0.16);
-					break;
-				case 'miss':
-					this.tone(150, 0.12, 'sawtooth', 0.05, 0, 90);
-					break;
-				case 'tick':
-					this.tone(520, 0.05, 'square', 0.05);
-					break;
-				case 'urgent':
-					this.tone(700, 0.06, 'square', 0.06);
-					break;
-				case 'go':
-					this.tone(523, 0.12, 'triangle', 0.12);
-					this.tone(659, 0.12, 'triangle', 0.12, 0.12);
-					this.tone(784, 0.25, 'triangle', 0.14, 0.24);
-					break;
-				case 'end':
-					this.tone(784, 0.15, 'triangle', 0.12);
-					this.tone(659, 0.15, 'triangle', 0.12, 0.15);
-					this.tone(523, 0.3, 'triangle', 0.12, 0.3);
-					break;
-			}
-		},
-
-		/* ===== מוזיקת רקע 8-ביט (לופ מסונתז) ===== */
-
-		musicTimer: null,
-		musicStep: 0,
-		musicFast: false,
-
-		// תבנית בס + מלודיה קלילה בסולם דו מז'ור (הרץ). 0 = שקט.
-		MUSIC_BASS: [131, 0, 131, 0, 165, 0, 165, 0, 147, 0, 147, 0, 196, 0, 165, 0],
-		MUSIC_LEAD: [523, 0, 659, 523, 0, 784, 0, 659, 587, 0, 698, 587, 0, 880, 784, 0],
-
-		startMusic: function () {
-			this.stopMusic();
-			this.musicStep = 0;
-			this.musicFast = false;
-			var self = this;
-			var schedule = function () {
-				if (!self.muted) {
-					var i = self.musicStep % self.MUSIC_BASS.length;
-					var bass = self.MUSIC_BASS[i];
-					var lead = self.MUSIC_LEAD[i];
-					if (bass) {
-						self.tone(bass, 0.1, 'triangle', 0.035);
-					}
-					if (lead) {
-						self.tone(lead, 0.07, 'square', 0.02);
-					}
-				}
-				self.musicStep++;
-				// טמפו רגיל 140ms לצעד; ב-10 שניות אחרונות – 100ms (מלחיץ).
-				self.musicTimer = window.setTimeout(schedule, self.musicFast ? 100 : 140);
-			};
-			schedule();
-		},
-
-		setMusicFast: function (fast) {
-			this.musicFast = !!fast;
-		},
-
-		stopMusic: function () {
-			if (this.musicTimer) {
-				window.clearTimeout(this.musicTimer);
-				this.musicTimer = null;
-			}
-		}
-	};
-
-	SoundKit.init();
+	function t(key, fallback) {
+		return I18N[key] || fallback;
+	}
 
 	/**
-	 * מופע משחק בודד (תומך במספר שורטקודים בעמוד).
+	 * מופע משחק בודד.
 	 *
 	 * @param {HTMLElement} root שורש האפליקציה.
 	 */
-	function PizzaHutGame(root) {
+	function Game(root) {
 		this.root = root;
+		this.dur = parseInt(CFG.gameDuration, 10) || 60;
+
 		this.screens = {};
 		root.querySelectorAll('[data-screen]').forEach(function (el) {
 			this.screens[el.getAttribute('data-screen')] = el;
 		}, this);
 
-		this.arena = root.querySelector('[data-arena]');
+		this.stage = root.querySelector('[data-stage]');
 		this.slice = root.querySelector('[data-slice]');
-		this.loader = root.querySelector('[data-loader]');
-		this.form = root.querySelector('.phsg-form');
-		this.fxLayer = root.querySelector('[data-fx]');
+		this.obstaclesEl = root.querySelector('[data-obstacles]');
+		this.bonusEl = root.querySelector('[data-bonus]');
+		this.popupsEl = root.querySelector('[data-popups]');
 		this.comboEl = root.querySelector('[data-combo]');
+		this.frenzyEl = root.querySelector('[data-frenzy]');
 		this.countdownEl = root.querySelector('[data-countdown]');
+		this.countdownNum = root.querySelector('[data-countdown-num]');
+		this.timerCard = root.querySelector('[data-timer-card]');
+		this.progressEl = root.querySelector('[data-progress]');
 		this.confettiEl = root.querySelector('[data-confetti]');
+		this.medalEl = root.querySelector('[data-medal]');
+		this.boardEl = root.querySelector('[data-leaderboard]');
+		this.loaderEl = root.querySelector('[data-loader]');
+		this.form = root.querySelector('.phsg-form');
+		this.formErrorEl = root.querySelector('[data-form-error]');
 		this.soundBtn = root.querySelector('[data-action="toggle-sound"]');
-		this.timebar = root.querySelector('[data-timebar]');
-		this.dailyChampEl = root.querySelector('[data-daily-champ]');
-		this.couponEl = root.querySelector('[data-coupon]');
+		this.soundLabel = root.querySelector('[data-sound-label]');
 
-		// לוחות מובילים (יומי/כל הזמנים) לטאבים במסך הסיום.
-		this.boards = { daily: null, alltime: null };
-		this.activeBoard = 'daily';
+		// אבות-טיפוס של SVG למכשולים/בונוסים.
+		this.protos = {};
+		root.querySelectorAll('[data-proto]').forEach(function (el) {
+			this.protos[el.getAttribute('data-proto')] = el.innerHTML;
+		}, this);
 
-		this._syncSoundBtn();
+		// מצב.
+		this.muted = false;
+		try {
+			this.muted = window.localStorage.getItem('phsg_muted') === '1';
+		} catch (e) { /* מתעלמים */ }
 
-		// מצב משחק.
-		this.state = this._freshState();
-		this.utm = this._captureUtm();
 		this.participant = null;
-
+		this.utm = this._captureUtm();
+		this.token = '';
+		this._resetGameState();
+		this._syncSound();
 		this._bind();
 	}
 
-	PizzaHutGame.prototype._freshState = function () {
-		return {
-			running: false,
-			score: 0,
-			reactions: [],      // זמני תגובה במ"ש.
-			startTime: 0,
-			endTime: 0,
-			sliceShownAt: 0,
-			timerInterval: null,
-			sliceTimeout: null,
-			rafId: null,
-			timeLeft: GAME_DURATION,
-			combo: 0,           // רצף פגיעות מהירות (ויזואלי בלבד).
-			bestCombo: 0,
-			lastUrgentTick: -1, // השנייה האחרונה שבה הושמע טיק.
-			clicks: 0,          // סך לחיצות מוצלחות (לאנטי-רמייה בשרת).
-			sliceType: 'normal' // סוג המשולש הנוכחי: normal | gold | trap.
-		};
+	Game.prototype._resetGameState = function () {
+		this.score = 0;
+		this.timeLeft = this.dur;
+		this.streak = 0;
+		this.bestStreak = 0;
+		this.reactions = [];
+		this.clicks = 0;
+		this.frenzyUntil = 0;
+		this.sliceGold = false;
+		this.sliceSpawn = 0;
+		this.sliceDeadline = 0;
+		this.startedAt = 0;
+		this.realStart = 0;
+		clearInterval(this.loop);
+		clearInterval(this.cd);
+		clearInterval(this.countUpTimer);
 	};
 
-	/**
-	 * חיווט אירועים.
-	 */
-	PizzaHutGame.prototype._bind = function () {
+	/* ==================== צלילים (WebAudio – מהאב-טיפוס) ==================== */
+
+	Game.prototype._ac = function () {
+		if (!this.audio) {
+			var AC = window.AudioContext || window.webkitAudioContext;
+			if (!AC) {
+				return null;
+			}
+			try {
+				this.audio = new AC();
+			} catch (e) {
+				return null;
+			}
+		}
+		if (this.audio.state === 'suspended') {
+			this.audio.resume();
+		}
+		return this.audio;
+	};
+
+	Game.prototype._tone = function (freq, dur, type, vol, slide) {
+		if (this.muted) {
+			return;
+		}
+		try {
+			var ac = this._ac();
+			if (!ac) {
+				return;
+			}
+			var o = ac.createOscillator();
+			var g = ac.createGain();
+			o.type = type || 'sine';
+			o.frequency.value = freq;
+			if (slide) {
+				o.frequency.exponentialRampToValueAtTime(slide, ac.currentTime + dur);
+			}
+			g.gain.setValueAtTime(vol || 0.15, ac.currentTime);
+			g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + dur);
+			o.connect(g);
+			g.connect(ac.destination);
+			o.start();
+			o.stop(ac.currentTime + dur);
+		} catch (e) { /* מתעלמים */ }
+	};
+
+	Game.prototype.playPop = function (streak) {
+		var base = 420 + Math.min(8, streak || 0) * 40;
+		this._tone(base, 0.12, 'triangle', 0.22, base * 2.2);
+		this._tone(base * 1.5, 0.08, 'sine', 0.1, base * 2.8);
+	};
+	Game.prototype.playGold = function () {
+		var self = this;
+		[660, 880, 1180].forEach(function (f, i) {
+			window.setTimeout(function () { self._tone(f, 0.14, 'triangle', 0.2); }, i * 70);
+		});
+	};
+	Game.prototype.playBad = function () { this._tone(190, 0.28, 'sawtooth', 0.14, 70); };
+	Game.prototype.playTick = function () { this._tone(950, 0.05, 'square', 0.06); };
+	Game.prototype.playGo = function () { this._tone(520, 0.2, 'triangle', 0.2, 1040); };
+	Game.prototype.playBonus = function () {
+		var self = this;
+		[880, 1175, 1568].forEach(function (f, i) {
+			window.setTimeout(function () { self._tone(f, 0.1, 'sine', 0.18); }, i * 55);
+		});
+	};
+	Game.prototype.playFrenzy = function () {
+		var self = this;
+		[440, 554, 659, 880].forEach(function (f, i) {
+			window.setTimeout(function () { self._tone(f, 0.12, 'square', 0.09); }, i * 60);
+		});
+	};
+	Game.prototype.playFanfare = function () {
+		var self = this;
+		[523, 659, 784, 1046, 1318].forEach(function (f, i) {
+			window.setTimeout(function () { self._tone(f, 0.22, 'triangle', 0.18); }, i * 120);
+		});
+	};
+
+	/* ==================== חיווט ==================== */
+
+	Game.prototype._bind = function () {
 		var self = this;
 
 		this.root.querySelectorAll('[data-action]').forEach(function (btn) {
 			btn.addEventListener('click', function (e) {
-				var action = btn.getAttribute('data-action');
-				if (action === 'start-game') {
-					return; // מטופל ב-submit של הטופס.
-				}
 				e.preventDefault();
-				self._onAction(action);
+				self._onAction(btn.getAttribute('data-action'));
 			});
 		});
 
 		if (this.form) {
 			this.form.addEventListener('submit', function (e) {
 				e.preventDefault();
-				self._onFormSubmit();
+				self._submitForm();
+			});
+			this.form.querySelectorAll('input').forEach(function (inp) {
+				inp.addEventListener('input', function () { self._hideFormError(); });
 			});
 		}
 
 		if (this.slice) {
-			// pointerdown לתגובה מהירה יותר ממ-click.
 			this.slice.addEventListener('pointerdown', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				self._onSliceHit(e);
+				self._hitSlice(e);
 			});
 		}
 
-		if (this.arena) {
-			// לחיצה בזירה שלא על המשולש = החטאה (אפקט + צליל בלבד).
-			this.arena.addEventListener('pointerdown', function (e) {
-				if (!self.state.running) {
-					return;
-				}
-				self._onMiss(e);
+		if (this.bonusEl) {
+			this.bonusEl.addEventListener('pointerdown', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				self._hitBonus(e);
 			});
 		}
 	};
 
-	PizzaHutGame.prototype._onAction = function (action) {
+	Game.prototype._onAction = function (action) {
 		switch (action) {
 			case 'go-form':
+				this._ac();
+				this.playTick();
 				this._show('form');
 				break;
 			case 'play-again':
-				this._resetToForm();
+				this._startCountdown();
+				break;
+			case 'go-home':
+				this._clearConfetti();
+				this._show('intro');
 				break;
 			case 'toggle-sound':
-				SoundKit.setMuted(!SoundKit.muted);
-				this._syncSoundBtn();
-				if (!SoundKit.muted) {
-					SoundKit.play('tick');
+				this.muted = !this.muted;
+				try {
+					window.localStorage.setItem('phsg_muted', this.muted ? '1' : '0');
+				} catch (e) { /* מתעלמים */ }
+				this._syncSound();
+				if (!this.muted) {
+					this.playTick();
 				}
 				break;
-			case 'share-whatsapp':
-				this._shareWhatsApp();
-				break;
-			case 'copy-coupon':
-				this._copyCoupon();
-				break;
-			case 'board-daily':
-				this._switchBoard('daily');
-				break;
-			case 'board-alltime':
-				this._switchBoard('alltime');
-				break;
 		}
 	};
 
-	/**
-	 * שיתוף התוצאה בוואטסאפ (או Web Share API במובייל).
-	 */
-	PizzaHutGame.prototype._shareWhatsApp = function () {
-		var i18n = CFG.i18n || {};
-		var tmpl = i18n.shareText || 'תפסתי %s משולשי פיצה ב-60 שניות במשחק של פיצה האט! 🍕 נסו לעבור אותי:';
-		var text = tmpl.replace('%s', String(this.state.score));
-		// קישור נקי לעמוד (בלי פרמטרי UTM של המשתמש) + תיוג שיתוף.
-		var url = window.location.origin + window.location.pathname + '?utm_source=whatsapp&utm_medium=share&utm_campaign=slice_game';
-		var full = text + ' ' + url;
-
-		if (navigator.share) {
-			navigator.share({ text: text, url: url }).catch(function () { /* המשתמש ביטל */ });
-			return;
-		}
-		window.open('https://wa.me/?text=' + encodeURIComponent(full), '_blank', 'noopener');
-	};
-
-	/**
-	 * העתקת קוד הקופון ללוח.
-	 */
-	PizzaHutGame.prototype._copyCoupon = function () {
-		if (!this.couponEl) {
-			return;
-		}
-		var code = this.couponEl.getAttribute('data-coupon-code') || '';
-		var btn = this.couponEl.querySelector('[data-action="copy-coupon"]');
-		var copied = (CFG.i18n && CFG.i18n.copied) || 'הועתק!';
-
-		var mark = function () {
-			if (btn) {
-				var original = btn.textContent;
-				btn.textContent = copied + ' ✓';
-				window.setTimeout(function () { btn.textContent = original; }, 1600);
-			}
-		};
-
-		if (navigator.clipboard && navigator.clipboard.writeText) {
-			navigator.clipboard.writeText(code).then(mark).catch(function () { /* מתעלמים */ });
-		}
-	};
-
-	/**
-	 * החלפת לוח מובילים (יומי/כל הזמנים).
-	 *
-	 * @param {string} which daily | alltime.
-	 */
-	PizzaHutGame.prototype._switchBoard = function (which) {
-		this.activeBoard = which;
-		var self = this;
-		this.root.querySelectorAll('.phsg-board-tab').forEach(function (tab) {
-			var active = tab.getAttribute('data-action') === 'board-' + which;
-			tab.classList.toggle('is-active', active);
-			tab.setAttribute('aria-selected', active ? 'true' : 'false');
-		});
-		if (this.boards[which]) {
-			this._renderLeaderboard(this.boards[which], this.lastDisplayName || '');
-		}
-		return self;
-	};
-
-	PizzaHutGame.prototype._syncSoundBtn = function () {
+	Game.prototype._syncSound = function () {
 		if (this.soundBtn) {
-			this.soundBtn.textContent = SoundKit.muted ? '🔇' : '🔊';
-			this.soundBtn.setAttribute('aria-pressed', SoundKit.muted ? 'true' : 'false');
+			this.soundBtn.setAttribute('aria-pressed', this.muted ? 'true' : 'false');
+		}
+		if (this.soundLabel) {
+			this.soundLabel.textContent = this.muted ? t('soundOff', 'צליל: כבוי') : t('soundOn', 'צליל: פועל');
 		}
 	};
 
-	/**
-	 * הצגת מסך בודד.
-	 *
-	 * @param {string} name שם המסך.
-	 */
-	PizzaHutGame.prototype._show = function (name) {
+	Game.prototype._show = function (name) {
 		Object.keys(this.screens).forEach(function (key) {
-			var el = this.screens[key];
 			var active = key === name;
-			el.hidden = !active;
-			el.classList.toggle('is-active', active);
+			this.screens[key].hidden = !active;
+			this.screens[key].classList.toggle('is-active', active);
 		}, this);
 	};
 
 	/* ==================== טופס ==================== */
 
-	PizzaHutGame.prototype._onFormSubmit = function () {
-		var data = this._readForm();
-		var errors = this._validateForm(data);
-
-		this._clearErrors();
-		if (Object.keys(errors).length > 0) {
-			this._showErrors(errors);
-			return;
-		}
-
-		this.participant = data;
-		this._startGame();
-	};
-
-	PizzaHutGame.prototype._readForm = function () {
+	Game.prototype._submitForm = function () {
 		var f = this.form;
-		return {
-			full_name: (f.querySelector('[name="full_name"]').value || '').trim(),
-			phone: (f.querySelector('[name="phone"]').value || '').replace(/[^0-9]/g, ''),
-			email: (f.querySelector('[name="email"]').value || '').trim(),
-			consent: f.querySelector('[name="consent"]').checked
-		};
+		var name = (f.querySelector('[name="full_name"]').value || '').trim();
+		var phone = (f.querySelector('[name="phone"]').value || '').replace(/[-\s]/g, '');
+		var email = (f.querySelector('[name="email"]').value || '').trim();
+		var consent = f.querySelector('[name="consent"]').checked;
+
+		if (name.length < 2) {
+			return this._showFormError(t('errName', 'נא להזין שם מלא'));
+		}
+		if (!/^0\d{8,9}$/.test(phone)) {
+			return this._showFormError(t('errPhone', 'מספר טלפון לא תקין'));
+		}
+		if (!/^\S+@\S+\.\S+$/.test(email)) {
+			return this._showFormError(t('errEmail', 'כתובת אימייל לא תקינה'));
+		}
+		if (!consent) {
+			return this._showFormError(t('errConsent', 'יש לאשר את התקנון כדי להשתתף'));
+		}
+
+		this._hideFormError();
+		this.participant = { full_name: name, phone: phone, email: email, consent: consent };
+		this._startCountdown();
 	};
 
-	PizzaHutGame.prototype._validateForm = function (d) {
-		var errors = {};
-		var i18n = CFG.i18n || {};
-
-		if (!d.full_name || d.full_name.length < 2) {
-			errors.full_name = i18n.required || 'שדה חובה';
+	Game.prototype._showFormError = function (msg) {
+		if (this.formErrorEl) {
+			this.formErrorEl.textContent = msg;
+			this.formErrorEl.hidden = false;
+			// ריסטרט אנימציית הרעד.
+			this.formErrorEl.style.animation = 'none';
+			void this.formErrorEl.offsetHeight;
+			this.formErrorEl.style.animation = '';
 		}
-		if (!d.phone || !/^[0-9]{9,15}$/.test(d.phone)) {
-			errors.phone = i18n.invalidPhone || 'טלפון לא תקין';
-		}
-		if (!d.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) {
-			errors.email = i18n.invalidEmail || 'אימייל לא תקין';
-		}
-		if (!d.consent) {
-			errors.consent = i18n.consentNeeded || 'יש לאשר את תנאי ההשתתפות';
-		}
-		return errors;
 	};
 
-	PizzaHutGame.prototype._clearErrors = function () {
-		this.form.querySelectorAll('.phsg-field').forEach(function (field) {
-			field.classList.remove('has-error');
-		});
-		this.form.querySelectorAll('[data-error-for]').forEach(function (span) {
-			span.textContent = '';
-		});
+	Game.prototype._hideFormError = function () {
+		if (this.formErrorEl) {
+			this.formErrorEl.hidden = true;
+		}
 	};
 
-	PizzaHutGame.prototype._showErrors = function (errors) {
+	/* ==================== זרימת משחק ==================== */
+
+	Game.prototype.level = function () {
+		var elapsed = this.dur - this.timeLeft;
+		return Math.min(4, Math.floor(elapsed / (this.dur / 5)));
+	};
+
+	Game.prototype._startCountdown = function () {
 		var self = this;
-		Object.keys(errors).forEach(function (name) {
-			var span = self.form.querySelector('[data-error-for="' + name + '"]');
-			if (span) {
-				span.textContent = errors[name];
-				var field = span.closest('.phsg-field');
-				if (field) {
-					field.classList.add('has-error');
-				}
-			}
-		});
-	};
-
-	/* ==================== משחק ==================== */
-
-	PizzaHutGame.prototype._startGame = function () {
-		this.state = this._freshState();
-		this._updateHud();
-		this._clearFx();
+		this._clearConfetti();
+		this._resetGameState();
+		this._requestToken();
 		this._show('game');
+		this._renderHud();
+		this.slice.hidden = true;
+		this.obstaclesEl.innerHTML = '';
+		this.bonusEl.hidden = true;
+		this.popupsEl.innerHTML = '';
+		this.comboEl.hidden = true;
+		this.frenzyEl.hidden = true;
+		this.stage.classList.remove('is-frenzy');
 
-		var self = this;
-		// ספירה לאחור 3-2-1-GO ורק אז מתחילים למדוד זמן.
-		this._runCountdown(function () {
-			self._beginRound();
-		});
+		var count = 3;
+		this.countdownEl.hidden = false;
+		this._setCountdownNum(count);
+		this.playTick();
+
+		clearInterval(this.cd);
+		this.cd = setInterval(function () {
+			if (count <= 1) {
+				clearInterval(self.cd);
+				self.countdownEl.hidden = true;
+				self._begin();
+			} else {
+				count--;
+				self.playTick();
+				self._setCountdownNum(count);
+			}
+		}, 850);
 	};
 
-	/**
-	 * ספירה לאחור מונפשת לפני תחילת הסיבוב.
-	 *
-	 * @param {Function} done קריאה בסיום.
-	 */
-	PizzaHutGame.prototype._runCountdown = function (done) {
-		var el = this.countdownEl;
-		if (!el) {
-			done();
-			return;
-		}
+	Game.prototype._setCountdownNum = function (n) {
+		this.countdownNum.textContent = n;
+		this.countdownNum.style.animation = 'none';
+		void this.countdownNum.offsetHeight;
+		this.countdownNum.style.animation = '';
+	};
 
-		var numEl = el.querySelector('[data-countdown-num]');
-		var steps = ['3', '2', '1', (CFG.i18n && CFG.i18n.go) || 'GO!'];
-		var i = 0;
-		el.hidden = false;
+	Game.prototype._begin = function () {
+		var self = this;
+		this.playGo();
+		this.startedAt = Date.now();
+		this.realStart = Date.now();
+		this.score = 0;
+		this.streak = 0;
+		this.bestStreak = 0;
+		this.reactions = [];
+		this.clicks = 0;
+		this.timeLeft = this.dur;
+		this._spawnSlice();
+		this._renderHud();
 
-		var tick = function () {
-			if (i >= steps.length) {
-				el.hidden = true;
-				done();
+		clearInterval(this.loop);
+		this.loop = setInterval(function () {
+			var tLeft = Math.max(0, self.dur - (Date.now() - self.startedAt) / 1000);
+			// טיק בשניות האחרונות.
+			if (Math.ceil(tLeft) !== Math.ceil(self.timeLeft) && tLeft <= 5 && tLeft > 0) {
+				self.playTick();
+			}
+			self.timeLeft = tLeft;
+			if (tLeft <= 0) {
+				self._endGame();
 				return;
 			}
-			numEl.textContent = steps[i];
-			numEl.classList.toggle('is-go', i === steps.length - 1);
-			// ריסטרט אנימציית ה-pop.
-			numEl.style.animation = 'none';
-			void numEl.offsetHeight;
-			numEl.style.animation = '';
-			SoundKit.play(i === steps.length - 1 ? 'go' : 'tick');
-			i++;
-			window.setTimeout(tick, i === steps.length ? 550 : 700);
-		};
-		tick();
-	};
-
-	/**
-	 * תחילת סיבוב בפועל – אחרי הספירה לאחור.
-	 */
-	PizzaHutGame.prototype._beginRound = function () {
-		this.state.running = true;
-		this.state.startTime = Date.now();
-		this.state.timeLeft = GAME_DURATION;
-
-		this._updateHud();
-		if (this.arena && this.arena.focus) {
-			this.arena.focus({ preventScroll: true });
-		}
-
-		var self = this;
-
-		// טיימר ספירה לאחור (עדכון תצוגה כל 200ms, דיוק לפי startTime).
-		this.state.timerInterval = setInterval(function () {
-			var elapsed = (Date.now() - self.state.startTime) / 1000;
-			self.state.timeLeft = Math.max(0, GAME_DURATION - elapsed);
-			self._updateHud();
-			self._updateUrgency();
-			if (self.state.timeLeft <= 0) {
-				self._endGame();
+			// בריחת המשולש אם לא נתפס בזמן.
+			if (Date.now() > self.sliceDeadline) {
+				self.streak = 0;
+				self._spawnSlice();
 			}
-		}, 200);
-
-		SoundKit.startMusic();
-		this._spawnSlice();
+			self._renderHud();
+			self._renderFrenzy();
+		}, 100);
 	};
 
 	/**
-	 * מצב "לחוץ" ב-10 השניות האחרונות: הבהוב טיימר + טיק-טוק + מוזיקה מהירה.
+	 * מיקום משולש חדש + מכשולים + בונוס (אלגוריתם האב-טיפוס).
 	 */
-	PizzaHutGame.prototype._updateUrgency = function () {
-		var urgent = this.state.timeLeft <= 10 && this.state.timeLeft > 0;
-		var timeItem = this.root.querySelector('.phsg-hud__item--time');
-		if (timeItem) {
-			timeItem.classList.toggle('is-urgent', urgent);
-		}
-		this.arena.classList.toggle('is-urgent', urgent);
-		if (this.timebar && this.timebar.parentNode) {
-			this.timebar.parentNode.classList.toggle('is-urgent', urgent);
-		}
-		SoundKit.setMusicFast(urgent);
+	Game.prototype._spawnSlice = function () {
+		var lv = this.level();
+		var x = 5 + Math.random() * 70;
+		var y = 8 + Math.random() * 60;
+		var gold = Math.random() < 0.1;
 
-		if (urgent) {
-			var sec = Math.ceil(this.state.timeLeft);
-			if (sec !== this.state.lastUrgentTick) {
-				this.state.lastUrgentTick = sec;
-				SoundKit.play('urgent');
-			}
+		// מכשולים: 2 + שלב (עד 7).
+		var count = Math.min(7, 2 + lv);
+		var types = ['mush', 'olive', 'onion', 'tomato'];
+		var obstacles = [];
+		var i;
+		for (i = 0; i < count; i++) {
+			var ox;
+			var oy;
+			var tries = 0;
+			do {
+				ox = 4 + Math.random() * 80;
+				oy = 6 + Math.random() * 70;
+				tries++;
+			} while (tries < 25 && (Math.hypot(ox - x, oy - y) < 22 || obstacles.some(function (o) { return Math.hypot(ox - o.x, oy - o.y) < 13; })));
+			var burnt = lv >= 1 && i === 0 && Math.random() < 0.45;
+			var type = burnt ? 'burnt' : types[Math.floor(Math.random() * types.length)];
+			obstacles.push({
+				x: ox,
+				y: oy,
+				rot: Math.round(Math.random() * 44 - 22),
+				s: burnt ? 78 + Math.round(Math.random() * 10) : 50 + Math.round(Math.random() * 14),
+				pen: burnt ? 2 : 1,
+				type: type
+			});
 		}
+
+		// בונוס (18%): שעון או פלפל.
+		var bonus = null;
+		if (Math.random() < 0.18) {
+			var bx;
+			var by;
+			var btries = 0;
+			do {
+				bx = 6 + Math.random() * 80;
+				by = 8 + Math.random() * 68;
+				btries++;
+			} while (btries < 25 && (Math.hypot(bx - x, by - y) < 20 || obstacles.some(function (o) { return Math.hypot(bx - o.x, by - o.y) < 13; })));
+			bonus = { x: bx, y: by, type: Math.random() < 0.5 ? 'clock' : 'chili' };
+		}
+
+		this.sliceSpawn = Date.now();
+		this.sliceDeadline = Date.now() + Math.max(1100, 4800 - lv * 900);
+		this.sliceGold = gold;
+
+		this._renderSlice(x, y, gold, lv);
+		this._renderObstacles(obstacles);
+		this._renderBonus(bonus);
 	};
 
-	/**
-	 * קושי נוכחי לפי ניקוד – זמן שהות וגודל המשולש.
-	 *
-	 * @return {{timeoutMs: number, size: number}}
-	 */
-	PizzaHutGame.prototype._difficulty = function () {
-		var score = this.state.score;
-		var timeoutS = Math.max(MIN_TIMEOUT_S, BASE_TIMEOUT_S - score * TIMEOUT_STEP_S);
-		var size = Math.max(MIN_SIZE_PX, Math.round(BASE_SIZE_PX - score * SIZE_STEP_PX));
-		return { timeoutMs: timeoutS * 1000, size: size };
-	};
+	/* ==================== רינדור ==================== */
 
-	/**
-	 * הגרלת סוג המשולש הבא.
-	 *
-	 * @return {string} normal | gold | trap.
-	 */
-	PizzaHutGame.prototype._rollSliceType = function () {
-		var score = this.state.score;
-		var r = Math.random();
-		if (score >= GOLD_MIN_SCORE && r < GOLD_CHANCE) {
-			return 'gold';
-		}
-		if (score >= TRAP_MIN_SCORE && r >= GOLD_CHANCE && r < GOLD_CHANCE + TRAP_CHANCE) {
-			return 'trap';
-		}
-		return 'normal';
-	};
-
-	/**
-	 * מיקום המשולש במקום אקראי בתוך הזירה.
-	 */
-	PizzaHutGame.prototype._spawnSlice = function () {
-		if (!this.state.running) {
-			return;
-		}
-
-		clearTimeout(this.state.sliceTimeout);
-
-		var diff = this._difficulty();
-		var type = this._rollSliceType();
-		this.state.sliceType = type;
-		this.slice.setAttribute('data-type', type);
-		this.slice.style.width = diff.size + 'px';
-		this.slice.style.height = diff.size + 'px';
-
-		// זהב בורח מהר במיוחד.
-		if (type === 'gold') {
-			diff.timeoutMs = Math.min(diff.timeoutMs, GOLD_TIMEOUT_S * 1000);
-		}
-
-		var arenaRect = this.arena.getBoundingClientRect();
-		var pad = diff.size / 2 + 6;
-
-		var maxX = Math.max(pad, arenaRect.width - pad);
-		var maxY = Math.max(pad, arenaRect.height - pad);
-		var x = pad + Math.random() * (maxX - pad);
-		var y = pad + Math.random() * (maxY - pad);
-
-		this.slice.style.left = x + 'px';
-		this.slice.style.top = y + 'px';
-		this.slice.hidden = false;
-		// אתחול אנימציית pop.
-		this.slice.style.animation = 'none';
-		/* eslint-disable no-unused-expressions */
-		this.slice.offsetHeight;
-		/* eslint-enable no-unused-expressions */
-		this.slice.style.animation = '';
-
-		this.state.sliceShownAt = Date.now();
-
-		var self = this;
-		// אם לא נלחץ בזמן – בריחה למיקום חדש. הזמן מתקצר ככל שהניקוד עולה.
-		this.state.sliceTimeout = setTimeout(function () {
-			// בריחה שוברת קומבו – לחץ אמיתי.
-			self.state.combo = 0;
-			self._hideCombo();
-			self._spawnSlice();
-		}, diff.timeoutMs);
-	};
-
-	/**
-	 * טיפול בפגיעה במשולש.
-	 *
-	 * @param {PointerEvent} e אירוע הלחיצה (למיקום האפקטים).
-	 */
-	PizzaHutGame.prototype._onSliceHit = function (e) {
-		if (!this.state.running || this.slice.hidden) {
-			return;
-		}
-
-		var reaction = Date.now() - this.state.sliceShownAt;
-		// שמירת זמן תגובה סביר בלבד (הגנה מפני ערכים חריגים).
-		if (reaction >= 0 && reaction <= SLICE_TIMEOUT * 1000) {
-			this.state.reactions.push(reaction);
-		}
-
-		this.state.clicks += 1;
-
-		var type = this.state.sliceType;
-		var points = type === 'gold' ? GOLD_POINTS : (type === 'trap' ? TRAP_POINTS : 1);
-		this.state.score = Math.max(0, this.state.score + points);
-
-		var pos = this._eventPos(e);
-
-		if (type === 'trap') {
-			// מלכודת: שוברת קומבו, בלי חלקיקים חגיגיים.
-			this.state.combo = 0;
-			this._hideCombo();
-			this._fxRing(pos.x, pos.y, true);
-			this._fxFloat(pos.x, pos.y, '-1', 'phsg-float--trap');
-			this._fxShake();
-			SoundKit.play('miss');
-			this._vibrate(60);
+	Game.prototype._renderSlice = function (x, y, gold, lv) {
+		var base = 116 - lv * 10;
+		this.slice.style.left = x + '%';
+		this.slice.style.top = y + '%';
+		this.slice.style.width = base + 'px';
+		this.slice.style.height = Math.round(base * 1.1) + 'px';
+		this.slice.setAttribute('data-type', gold ? 'gold' : 'normal');
+		this.slice.classList.toggle('is-gold', gold);
+		this.slice.querySelectorAll('[data-gold-only]').forEach(function (el) {
+			el.hidden = !gold;
+		});
+		// תנועת ריחוף משלב 3.
+		if (lv >= 2) {
+			this.slice.classList.add('is-drifting');
+			this.slice.style.animationDuration = (3.4 - lv * 0.45).toFixed(2) + 's';
 		} else {
-			// קומבו – ויזואלי בלבד, לא משנה ניקוד.
-			if (reaction <= COMBO_WINDOW) {
-				this.state.combo += 1;
-			} else {
-				this.state.combo = 1;
-			}
-			this.state.bestCombo = Math.max(this.state.bestCombo, this.state.combo);
-
-			this._fxBurst(pos.x, pos.y, type === 'gold');
-			this._fxRing(pos.x, pos.y);
-			this._fxFloat(pos.x, pos.y, '+' + points, type === 'gold' ? 'phsg-float--gold' : 'phsg-float--hit');
-			this._fxShake();
-			this._showCombo();
-			SoundKit.play(type === 'gold' ? 'gold' : 'hit', this.state.combo);
-			if (this.state.combo > 1 && this.state.combo % 5 === 0) {
-				SoundKit.play('combo');
-			}
-			this._vibrate(type === 'gold' ? 35 : 18);
+			this.slice.classList.remove('is-drifting');
+			this.slice.style.animationDuration = '';
 		}
+		this.slice.hidden = false;
+	};
 
-		this._updateHud();
+	Game.prototype._renderObstacles = function (list) {
+		var self = this;
+		this.obstaclesEl.innerHTML = '';
+		list.forEach(function (ob) {
+			var el = document.createElement('div');
+			el.className = 'phsg-obstacle';
+			el.style.left = ob.x + '%';
+			el.style.top = ob.y + '%';
+			el.style.width = ob.s + 'px';
+			el.style.height = ob.s + 'px';
+			el.style.transform = 'rotate(' + ob.rot + 'deg)';
+			el.setAttribute('data-pen', ob.pen);
+			el.innerHTML = self.protos[ob.type] || '';
+			el.addEventListener('pointerdown', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				self._hitObstacle(e, ob.pen);
+			});
+			self.obstaclesEl.appendChild(el);
+		});
+	};
 
-		// מעבר מיידי למיקום חדש.
+	Game.prototype._renderBonus = function (bonus) {
+		this.bonus = bonus;
+		if (!bonus) {
+			this.bonusEl.hidden = true;
+			return;
+		}
+		this.bonusEl.style.left = bonus.x + '%';
+		this.bonusEl.style.top = bonus.y + '%';
+		this.bonusEl.innerHTML = this.protos[bonus.type] || '';
+		this.bonusEl.hidden = false;
+	};
+
+	Game.prototype._renderHud = function () {
+		var secs = Math.ceil(this.timeLeft);
+		var timeText = Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
+		this._setText('[data-hud="score"]', this.score);
+		this._setText('[data-hud="time"]', timeText);
+		this._setText('[data-hud="level"]', this.level() + 1);
+
+		if (this.timerCard) {
+			this.timerCard.classList.toggle('is-danger', this.timeLeft <= 10 && this.timeLeft > 0);
+		}
+		if (this.progressEl) {
+			this.progressEl.style.width = ((this.timeLeft / this.dur) * 100) + '%';
+		}
+		// תג רצף מ-3 ומעלה.
+		if (this.comboEl) {
+			if (this.streak >= 3) {
+				this.comboEl.textContent = t('streak', 'רצף') + ' ×' + this.streak;
+				this.comboEl.hidden = false;
+			} else {
+				this.comboEl.hidden = true;
+			}
+		}
+	};
+
+	Game.prototype._renderFrenzy = function () {
+		var active = Date.now() < this.frenzyUntil;
+		this.frenzyEl.hidden = !active;
+		this.stage.classList.toggle('is-frenzy', active);
+	};
+
+	/* ==================== אירועי משחק ==================== */
+
+	Game.prototype._popup = function (e, text, color) {
+		var rect = this.stage.getBoundingClientRect();
+		var x = ((e.clientX - rect.left) / rect.width) * 100;
+		var y = ((e.clientY - rect.top) / rect.height) * 100;
+
+		var txt = document.createElement('div');
+		txt.className = 'phsg-popup';
+		txt.style.left = x + '%';
+		txt.style.top = y + '%';
+		txt.style.color = color;
+		txt.textContent = text;
+
+		var ring = document.createElement('div');
+		ring.className = 'phsg-popup-ring';
+		ring.style.left = x + '%';
+		ring.style.top = y + '%';
+		ring.style.borderColor = color;
+
+		this.popupsEl.appendChild(txt);
+		this.popupsEl.appendChild(ring);
+		window.setTimeout(function () {
+			txt.remove();
+			ring.remove();
+		}, 820);
+	};
+
+	Game.prototype._hitSlice = function (e) {
+		if (this.timeLeft <= 0 || this.slice.hidden) {
+			return;
+		}
+		var wasGold = this.sliceGold;
+		var frenzy = Date.now() < this.frenzyUntil;
+		var mult = frenzy ? 2 : 1;
+		var newStreak = this.streak + 1;
+		var bonusPts = (newStreak > 0 && newStreak % 5 === 0) ? 2 : 0;
+		var pts = (wasGold ? 3 : 1) * mult + bonusPts;
+
+		if (wasGold) {
+			this.playGold();
+		} else {
+			this.playPop(newStreak);
+		}
+		this._popup(e, '+' + pts, wasGold ? '#D19A2B' : (frenzy ? '#D01423' : '#F32735'));
+		this._vibrate(wasGold ? 35 : 18);
+
+		this.score += pts;
+		this.streak = newStreak;
+		this.bestStreak = Math.max(this.bestStreak, newStreak);
+		this.reactions.push(Date.now() - this.sliceSpawn);
+		this.clicks += 1;
+
+		this._renderHud();
 		this._spawnSlice();
 	};
 
-	/**
-	 * רטט קצר במובייל (אם נתמך).
-	 *
-	 * @param {number} ms משך הרטט במ"ש.
-	 */
-	PizzaHutGame.prototype._vibrate = function (ms) {
-		if (!REDUCED_MOTION && navigator.vibrate) {
+	Game.prototype._hitObstacle = function (e, pen) {
+		if (this.timeLeft <= 0) {
+			return;
+		}
+		var self = this;
+		this.playBad();
+		this._popup(e, '−' + pen, '#2D2A26');
+		this._vibrate(60);
+		this.score = Math.max(0, this.score - pen);
+		this.streak = 0;
+		this.stage.classList.remove('is-shaking');
+		void this.stage.offsetHeight;
+		this.stage.classList.add('is-shaking');
+		window.setTimeout(function () {
+			self.stage.classList.remove('is-shaking');
+		}, 380);
+		this._renderHud();
+	};
+
+	Game.prototype._hitBonus = function (e) {
+		if (!this.bonus || this.timeLeft <= 0) {
+			return;
+		}
+		var b = this.bonus;
+		if (b.type === 'clock') {
+			this.playBonus();
+			this._popup(e, '+5 ' + t('sec', "שנ'"), '#D19A2B');
+			// הזמן נגזר מ-startedAt – הזזה קדימה מוסיפה 5 שנ', עם תקרה במשך המלא.
+			this.startedAt = Math.min(Date.now(), this.startedAt + 5000);
+		} else {
+			this.playFrenzy();
+			this._popup(e, '×2!', '#D01423');
+			this.frenzyUntil = Date.now() + 6000;
+		}
+		this._renderBonus(null);
+		this._renderHud();
+		this._renderFrenzy();
+	};
+
+	Game.prototype._vibrate = function (ms) {
+		if (navigator.vibrate) {
 			try {
 				navigator.vibrate(ms);
-			} catch (err) { /* מתעלמים */ }
+			} catch (e) { /* מתעלמים */ }
 		}
 	};
 
-	/**
-	 * החטאה – לחיצה בזירה שלא על המשולש.
-	 *
-	 * @param {PointerEvent} e אירוע הלחיצה.
-	 */
-	PizzaHutGame.prototype._onMiss = function (e) {
-		if (e.target && e.target.closest('[data-slice]')) {
-			return; // פגיעה – מטופלת בנפרד.
-		}
+	/* ==================== סיום ==================== */
 
-		// שבירת קומבו.
-		if (this.state.combo > 1) {
-			this._fxFloat(this._eventPos(e).x, this._eventPos(e).y, ((CFG.i18n && CFG.i18n.comboBroken) || 'הקומבו נשבר!'), 'phsg-float--miss');
-		}
-		this.state.combo = 0;
-		this._hideCombo();
+	Game.prototype._endGame = function () {
+		clearInterval(this.loop);
+		this.playFanfare();
 
-		var pos = this._eventPos(e);
-		this._fxRing(pos.x, pos.y, true);
-		SoundKit.play('miss');
+		var durationSec = (Date.now() - this.realStart) / 1000;
+		var avgMs = this.reactions.length
+			? this.reactions.reduce(function (a, b) { return a + b; }, 0) / this.reactions.length
+			: 0;
+
+		this.slice.hidden = true;
+		this.bonusEl.hidden = true;
+		this.frenzyEl.hidden = true;
+		this.stage.classList.remove('is-frenzy');
+		this._show('end');
+
+		// כותרת לפי ניקוד.
+		var title = this.score >= 25
+			? t('titleChamp', 'אלוף/ת הפיצה!')
+			: (this.score >= 12 ? t('titleGood', 'כל הכבוד!') : t('titleMeh', 'לא רע… עוד סיבוב?'));
+		this._setText('[data-end-title]', title);
+
+		// סטטיסטיקות.
+		this._setText('[data-result="avg"]', (avgMs / 1000).toFixed(1) + ' ' + t('sec', "שנ'"));
+		this._setText('[data-result="streak"]', this.bestStreak);
+		this._setText('[data-result="rank"]', '—');
+		this._setMedal(0);
+		this._countUpScore(this.score);
+		this._confetti();
+
+		this._submitScore({
+			score: this.score,
+			clicks: this.clicks,
+			duration: Math.round(durationSec * 100) / 100,
+			avg_reaction: Math.round(avgMs * 100) / 100
+		});
 	};
 
-	/**
-	 * מיקום אירוע ביחס לזירה.
-	 *
-	 * @param {PointerEvent} e אירוע.
-	 * @return {{x: number, y: number}}
-	 */
-	PizzaHutGame.prototype._eventPos = function (e) {
-		var rect = this.arena.getBoundingClientRect();
-		if (e && typeof e.clientX === 'number' && (e.clientX || e.clientY)) {
-			return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-		}
-		// גיבוי: מרכז המשולש.
-		return {
-			x: parseFloat(this.slice.style.left) || rect.width / 2,
-			y: parseFloat(this.slice.style.top) || rect.height / 2
-		};
-	};
-
-	/* ==================== אפקטים ==================== */
-
-	// צבעי מותג לחלקיקים: אדום, שמנת, קראפט + "מוצרלה".
-	var FX_COLORS = ['#F32735', '#F0EFDD', '#B58967', '#FFDD87', '#FFFFFF'];
-	// חלקיקי זהב למשולש הזהב.
-	var FX_GOLD_COLORS = ['#F5B301', '#FFE9A8', '#FFDD87', '#FFFFFF'];
-
-	PizzaHutGame.prototype._clearFx = function () {
-		if (this.fxLayer) {
-			this.fxLayer.innerHTML = '';
-		}
-		this._hideCombo();
-	};
-
-	/**
-	 * פיצוץ חלקיקים במיקום הפגיעה.
-	 *
-	 * @param {number}  x    מיקום X בזירה.
-	 * @param {number}  y    מיקום Y בזירה.
-	 * @param {boolean} gold חלקיקי זהב (משולש זהב).
-	 */
-	PizzaHutGame.prototype._fxBurst = function (x, y, gold) {
-		if (!this.fxLayer || REDUCED_MOTION) {
-			return;
-		}
-
-		var colors = gold ? FX_GOLD_COLORS : FX_COLORS;
-		var count = gold ? 16 : 10;
-
-		for (var i = 0; i < count; i++) {
-			var p = document.createElement('span');
-			p.className = 'phsg-particle';
-			var size = 5 + Math.random() * 7;
-			p.style.width = size + 'px';
-			p.style.height = size + 'px';
-			p.style.left = x + 'px';
-			p.style.top = y + 'px';
-			p.style.background = colors[Math.floor(Math.random() * colors.length)];
-			if (Math.random() < 0.3) {
-				p.style.borderRadius = '2px'; // "פלפלוני" מרובע פה ושם.
-			}
-			this.fxLayer.appendChild(p);
-
-			var angle = Math.random() * Math.PI * 2;
-			var dist = 34 + Math.random() * 56;
-			var dx = Math.cos(angle) * dist;
-			var dy = Math.sin(angle) * dist;
-
-			if (p.animate) {
-				p.animate([
-					{ transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
-					{ transform: 'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + (dy + 22) + 'px)) scale(0.2) rotate(' + (Math.random() * 240 - 120) + 'deg)', opacity: 0 }
-				], { duration: 420 + Math.random() * 240, easing: 'cubic-bezier(0.2, 0.8, 0.4, 1)' }).onfinish = function () {
-					this.effect.target.remove();
-				};
-			} else {
-				p.remove();
-			}
-		}
-	};
-
-	/**
-	 * גל הדף (טבעת מתרחבת).
-	 *
-	 * @param {number}  x    מיקום X.
-	 * @param {number}  y    מיקום Y.
-	 * @param {boolean} miss האם החטאה (טבעת אפורה).
-	 */
-	PizzaHutGame.prototype._fxRing = function (x, y, miss) {
-		if (!this.fxLayer || REDUCED_MOTION) {
-			return;
-		}
-		var ring = document.createElement('span');
-		ring.className = 'phsg-ring' + (miss ? ' phsg-ring--miss' : '');
-		ring.style.left = x + 'px';
-		ring.style.top = y + 'px';
-		this.fxLayer.appendChild(ring);
-		window.setTimeout(function () { ring.remove(); }, 500);
-	};
-
-	/**
-	 * טקסט מרחף (+1 / שבירת קומבו).
-	 *
-	 * @param {number} x    מיקום X.
-	 * @param {number} y    מיקום Y.
-	 * @param {string} text הטקסט.
-	 * @param {string} cls  מחלקת עיצוב.
-	 */
-	PizzaHutGame.prototype._fxFloat = function (x, y, text, cls) {
-		if (!this.fxLayer) {
-			return;
-		}
-		var el = document.createElement('span');
-		el.className = 'phsg-float ' + (cls || '');
-		el.textContent = text;
-		el.style.left = x + 'px';
-		el.style.top = y + 'px';
-		this.fxLayer.appendChild(el);
-		window.setTimeout(function () { el.remove(); }, 800);
-	};
-
-	/**
-	 * רעידת מסך עדינה.
-	 */
-	PizzaHutGame.prototype._fxShake = function () {
-		if (REDUCED_MOTION) {
-			return;
-		}
-		var stage = this.root.querySelector('.phsg-stage');
-		if (!stage) {
-			return;
-		}
-		stage.classList.remove('is-shaking');
-		void stage.offsetHeight;
-		stage.classList.add('is-shaking');
-	};
-
-	PizzaHutGame.prototype._showCombo = function () {
-		if (!this.comboEl) {
-			return;
-		}
-		if (this.state.combo < 2) {
-			this._hideCombo();
-			return;
-		}
-		var fire = this.state.combo >= 5 ? ' 🔥' : '';
-		this.comboEl.textContent = ((CFG.i18n && CFG.i18n.combo) || 'קומבו') + ' x' + this.state.combo + fire;
-		this.comboEl.hidden = false;
-		this.comboEl.classList.toggle('is-hot', this.state.combo >= 5);
-		// ריסטרט אנימציית pop.
-		this.comboEl.style.animation = 'none';
-		void this.comboEl.offsetHeight;
-		this.comboEl.style.animation = '';
-	};
-
-	PizzaHutGame.prototype._hideCombo = function () {
-		if (this.comboEl) {
-			this.comboEl.hidden = true;
-		}
-	};
-
-	/**
-	 * קונפטי חגיגי במסך הסיום.
-	 */
-	PizzaHutGame.prototype._fxConfetti = function () {
-		if (!this.confettiEl || REDUCED_MOTION) {
-			return;
-		}
-		this.confettiEl.innerHTML = '';
-		for (var i = 0; i < 36; i++) {
-			var c = document.createElement('span');
-			c.className = 'phsg-confetti__piece';
-			c.style.left = (Math.random() * 100) + '%';
-			c.style.background = FX_COLORS[i % FX_COLORS.length];
-			c.style.animationDelay = (Math.random() * 0.9) + 's';
-			c.style.animationDuration = (1.6 + Math.random() * 1.6) + 's';
-			c.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
-			this.confettiEl.appendChild(c);
-		}
-		var el = this.confettiEl;
-		window.setTimeout(function () { el.innerHTML = ''; }, 4200);
-	};
-
-	/**
-	 * ספירת ניקוד עולה במסך הסיום.
-	 *
-	 * @param {number} target הניקוד הסופי.
-	 */
-	PizzaHutGame.prototype._countUpScore = function (target) {
+	Game.prototype._countUpScore = function (target) {
 		var el = this.root.querySelector('[data-result="score"]');
 		if (!el) {
 			return;
 		}
-		if (REDUCED_MOTION || target <= 0) {
-			el.textContent = target;
+		clearInterval(this.countUpTimer);
+		var cur = 0;
+		el.textContent = '0';
+		if (target <= 0) {
 			return;
 		}
-		var start = null;
-		var dur = 900;
-		var step = function (ts) {
-			if (!start) {
-				start = ts;
+		this.countUpTimer = setInterval(function () {
+			cur = Math.min(target, cur + Math.max(1, Math.ceil(target / 30)));
+			el.textContent = cur;
+			if (cur >= target) {
+				clearInterval(this.countUpTimer);
 			}
-			var t = Math.min(1, (ts - start) / dur);
-			// easing – מאט לקראת הסוף.
-			var eased = 1 - Math.pow(1 - t, 3);
-			el.textContent = Math.round(eased * target);
-			if (t < 1) {
-				window.requestAnimationFrame(step);
-			}
-		};
-		window.requestAnimationFrame(step);
+		}.bind(this), 35);
 	};
 
-	PizzaHutGame.prototype._updateHud = function () {
-		var scoreEl = this.root.querySelector('[data-hud="score"]');
-		var timeEl = this.root.querySelector('[data-hud="time"]');
-		if (scoreEl) {
-			scoreEl.textContent = this.state.score;
-		}
-		if (timeEl) {
-			timeEl.textContent = Math.ceil(this.state.timeLeft);
-		}
-		// בר הזמן המתרוקן.
-		if (this.timebar) {
-			var pct = Math.max(0, Math.min(100, (this.state.timeLeft / GAME_DURATION) * 100));
-			this.timebar.style.width = pct + '%';
-		}
-	};
-
-	PizzaHutGame.prototype._endGame = function () {
-		if (!this.state.running) {
+	Game.prototype._confetti = function () {
+		if (!this.confettiEl) {
 			return;
 		}
-		this.state.running = false;
-		this.state.endTime = Date.now();
-
-		clearInterval(this.state.timerInterval);
-		clearTimeout(this.state.sliceTimeout);
-		this.slice.hidden = true;
-		this._hideCombo();
-		this._clearFx();
-		this.arena.classList.remove('is-urgent');
-		SoundKit.stopMusic();
-		SoundKit.play('end');
-
-		var duration = (this.state.endTime - this.state.startTime) / 1000;
-		var reactions = this.state.reactions;
-		var avgReaction = 0;
-		if (reactions.length > 0) {
-			var sum = reactions.reduce(function (a, b) { return a + b; }, 0);
-			avgReaction = sum / reactions.length;
+		var palette = ['#F32735', '#F0EFDD', '#2D2A26', '#FFC93C', '#B58967'];
+		this.confettiEl.innerHTML = '';
+		for (var i = 0; i < 30; i++) {
+			var c = document.createElement('div');
+			c.className = 'phsg-confetti__piece';
+			c.style.left = (Math.random() * 100) + '%';
+			c.style.width = (7 + Math.random() * 8) + 'px';
+			c.style.height = (10 + Math.random() * 10) + 'px';
+			c.style.borderRadius = (Math.random() < 0.5 ? 999 : 2) + 'px';
+			c.style.background = palette[Math.floor(Math.random() * palette.length)];
+			c.style.animationDuration = (2.6 + Math.random() * 2.4) + 's';
+			c.style.animationDelay = (Math.random() * 2.5) + 's';
+			this.confettiEl.appendChild(c);
 		}
-
-		this._submitScore({
-			score: this.state.score,
-			clicks: this.state.clicks,
-			duration: Math.round(duration * 100) / 100,
-			avg_reaction: Math.round(avgReaction * 100) / 100
-		});
 	};
 
-	/* ==================== הגשה לשרת ==================== */
+	Game.prototype._clearConfetti = function () {
+		if (this.confettiEl) {
+			this.confettiEl.innerHTML = '';
+		}
+	};
 
-	PizzaHutGame.prototype._submitScore = function (result) {
+	Game.prototype._setMedal = function (rank) {
+		if (!this.medalEl) {
+			return;
+		}
+		var hi = '#FBFAEE';
+		var lo = '#DDDBC1';
+		if (rank === 1) { hi = '#FFE9A8'; lo = '#F2B33C'; }
+		else if (rank === 2) { hi = '#F2F1EA'; lo = '#C9C7BA'; }
+		else if (rank === 3) { hi = '#E8B98D'; lo = '#C08552'; }
+		this.medalEl.style.background = 'radial-gradient(circle at 35% 30%, ' + hi + ', ' + lo + ' 75%)';
+	};
+
+	/* ==================== שרת ==================== */
+
+	/**
+	 * בקשת טוקן חד-פעמי להגשה (אנטי-רמייה).
+	 */
+	Game.prototype._requestToken = function () {
 		var self = this;
-		this._show('end');
-		this._fillResult(result, null);
+		this.token = '';
+		var body = new URLSearchParams();
+		body.append('action', 'phsg_start_game');
+		body.append('nonce', CFG.nonce);
+		fetch(CFG.ajaxUrl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+			body: body.toString(),
+			credentials: 'same-origin'
+		})
+			.then(function (res) { return res.json(); })
+			.then(function (json) {
+				if (json && json.success && json.data && json.data.token) {
+					self.token = json.data.token;
+				}
+			})
+			.catch(function () { /* ההגשה תיכשל בעדינות בהמשך */ });
+	};
+
+	Game.prototype._submitScore = function (result) {
+		var self = this;
 		this._toggleLoader(true);
 
 		var body = new URLSearchParams();
 		body.append('action', 'phsg_submit_score');
 		body.append('nonce', CFG.nonce);
+		body.append('token', this.token);
 		body.append('full_name', this.participant.full_name);
 		body.append('phone', this.participant.phone);
 		body.append('email', this.participant.email);
@@ -1059,135 +786,68 @@
 			.then(function (json) {
 				self._toggleLoader(false);
 				if (json && json.success && json.data) {
-					self._fillResult(result, json.data);
-					// שמירת שני הלוחות והצגת הטאב הפעיל.
-					self.lastDisplayName = json.data.display_name || '';
-					self.boards.daily = json.data.daily_leaderboard || [];
-					self.boards.alltime = json.data.leaderboard || [];
-					self._switchBoard(self.activeBoard);
-					self._showDailyChamp(json.data);
+					var rank = parseInt(json.data.rank, 10) || 0;
+					self._setText('[data-result="rank"]', rank ? '#' + rank : '—');
+					self._setMedal(rank);
+					self._renderBoard(json.data.leaderboard || [], json.data.display_name || '');
 				} else {
-					var msg = (json && json.data && json.data.message) || (CFG.i18n && CFG.i18n.saveError);
-					self._showResultMessage(msg || 'שגיאה');
+					var msg = (json && json.data && json.data.message) || t('saveError', 'אירעה שגיאה בשמירה. נסו שוב.');
+					self._boardError(msg);
 				}
 			})
 			.catch(function () {
 				self._toggleLoader(false);
-				self._showResultMessage((CFG.i18n && CFG.i18n.saveError) || 'שגיאה');
+				self._boardError(t('saveError', 'אירעה שגיאה בשמירה. נסו שוב.'));
 			});
 	};
 
-	PizzaHutGame.prototype._fillResult = function (result, data) {
-		if (data) {
-			this._setText('[data-result="score"]', result.score);
-		} else {
-			// כניסה ראשונה למסך הסיום – חגיגה.
-			this._countUpScore(result.score);
-			this._fxConfetti();
-			this._maybeShowCoupon(result.score);
+	Game.prototype._renderBoard = function (rows, meName) {
+		if (!this.boardEl) {
+			return;
 		}
-		this._setText('[data-result="time"]', Math.round(result.duration));
+		var medals = ['#FFC93C', '#D6D4C8', '#D19A6A'];
+		var html = '';
+		var meMarked = false;
 
-		if (data) {
-			this._setText('[data-result="rank"]', data.rank);
-			var msg = 'דירוג #' + data.rank;
-			if (data.total) {
-				msg += ' ' + ((CFG.i18n && CFG.i18n.rankOf) || 'מתוך') + ' ' + data.total;
+		rows.slice(0, 8).forEach(function (row, i) {
+			var isMe = !meMarked && meName && row.display_name === meName;
+			if (isMe) {
+				meMarked = true;
 			}
-			this._showResultMessage(msg);
-		}
-	};
+			var rankBg = i < 3 ? medals[i] : '#FBFAEE';
+			var rowBg = isMe ? '' : (i % 2 ? '#E9E7D2' : '#F0EFDD');
+			var name = esc(row.display_name) + (isMe ? ' ' + t('youSuffix', '(את/ה!)') : '');
+			var avg = ((parseFloat(row.avg_reaction) || 0) / 1000).toFixed(1) + ' ' + t('sec', "שנ'");
 
-	PizzaHutGame.prototype._showResultMessage = function (msg) {
-		this._setText('[data-result="msg"]', msg);
-	};
-
-	/**
-	 * חשיפת הקופון אם עברו את רף הניקוד (מוגדר בשורטקוד).
-	 *
-	 * @param {number} score הניקוד הסופי.
-	 */
-	PizzaHutGame.prototype._maybeShowCoupon = function (score) {
-		if (!this.couponEl) {
-			return;
-		}
-		var min = parseInt(this.couponEl.getAttribute('data-coupon-min'), 10) || 0;
-		this.couponEl.hidden = score < min;
-	};
-
-	/**
-	 * באנר "שיאן/ית היום" + דירוג יומי במסך הסיום.
-	 *
-	 * @param {Object} data תשובת השרת.
-	 */
-	PizzaHutGame.prototype._showDailyChamp = function (data) {
-		if (!this.dailyChampEl) {
-			return;
-		}
-		var i18n = CFG.i18n || {};
-		if (data.daily_rank === 1) {
-			this.dailyChampEl.textContent = i18n.dailyChamp || 'שיאן/ית היום! 🏆';
-			this.dailyChampEl.hidden = false;
-		} else if (data.daily_rank > 1) {
-			this.dailyChampEl.textContent = (i18n.dailyRank || 'דירוג יומי') + ': #' + data.daily_rank;
-			this.dailyChampEl.hidden = false;
-		} else {
-			this.dailyChampEl.hidden = true;
-		}
-	};
-
-	PizzaHutGame.prototype._renderLeaderboard = function (rows, youName) {
-		var board = this.root.querySelector('[data-leaderboard]');
-		if (!board || !rows) {
-			return;
-		}
-
-		var i18n = CFG.i18n || {};
-		if (!rows.length) {
-			board.innerHTML = '<p class="phsg-board__empty">עדיין אין תוצאות – היו הראשונים!</p>';
-			return;
-		}
-
-		var youMarked = false;
-		var html = '<div class="phsg-board__head">' +
-			'<span>דירוג</span><span>שחקן/ית</span><span>ניקוד</span><span>זמן</span></div>';
-
-		rows.forEach(function (row) {
-			var medal = '';
-			if (row.rank === 1) { medal = ' phsg-board__row--gold'; }
-			else if (row.rank === 2) { medal = ' phsg-board__row--silver'; }
-			else if (row.rank === 3) { medal = ' phsg-board__row--bronze'; }
-
-			// סימון השחקן הנוכחי (פעם אחת) לפי שם התצוגה.
-			var you = '';
-			if (!youMarked && youName && row.display_name === youName) {
-				you = ' is-you';
-				youMarked = true;
-			}
-
-			html += '<div class="phsg-board__row' + medal + you + '">' +
-				'<span class="phsg-board__rank">' + esc(row.rank) + '</span>' +
-				'<span class="phsg-board__name">' + esc(row.display_name) + '</span>' +
+			html += '<div class="phsg-board__row' + (isMe ? ' is-me' : '') + '"' + (rowBg ? ' style="background:' + rowBg + ';"' : '') + '>' +
+				'<span class="phsg-board__rank" style="background:' + rankBg + ';">' + (i + 1) + '</span>' +
+				'<span class="phsg-board__name">' + name + '</span>' +
 				'<span class="phsg-board__score">' + esc(row.score) + '</span>' +
-				'<span class="phsg-board__time">' + esc(Math.round(row.duration)) + '"</span>' +
+				'<span class="phsg-board__avg">' + esc(avg) + '</span>' +
 				'</div>';
 		});
 
-		board.innerHTML = html;
-	};
-
-	PizzaHutGame.prototype._resetToForm = function () {
-		// סיבוב נוסף עם אותו משתתף.
-		this._startGame();
-	};
-
-	PizzaHutGame.prototype._toggleLoader = function (show) {
-		if (this.loader) {
-			this.loader.hidden = !show;
+		if (html) {
+			this.boardEl.innerHTML = html;
 		}
 	};
 
-	PizzaHutGame.prototype._setText = function (selector, value) {
+	Game.prototype._boardError = function (msg) {
+		if (this.boardEl) {
+			this.boardEl.insertAdjacentHTML(
+				'afterbegin',
+				'<div class="phsg-board__row"><span class="phsg-board__empty">' + esc(msg) + '</span></div>'
+			);
+		}
+	};
+
+	Game.prototype._toggleLoader = function (show) {
+		if (this.loaderEl) {
+			this.loaderEl.hidden = !show;
+		}
+	};
+
+	Game.prototype._setText = function (selector, value) {
 		var el = this.root.querySelector(selector);
 		if (el) {
 			el.textContent = value;
@@ -1196,30 +856,24 @@
 
 	/* ==================== UTM ==================== */
 
-	PizzaHutGame.prototype._captureUtm = function () {
+	Game.prototype._captureUtm = function () {
 		var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
 		var out = {};
-		var params;
+		var params = null;
 		try {
 			params = new URLSearchParams(window.location.search);
-		} catch (e) {
-			params = null;
-		}
+		} catch (e) { /* מתעלמים */ }
 
 		keys.forEach(function (k) {
 			var val = '';
 			if (params && params.get(k)) {
 				val = params.get(k);
 			} else {
-				// גיבוי מ-sessionStorage (למקרה שהמשתמש ניווט מהעמוד הראשון).
 				try {
 					val = window.sessionStorage.getItem('phsg_' + k) || '';
-				} catch (e2) {
-					val = '';
-				}
+				} catch (e2) { /* מתעלמים */ }
 			}
 			out[k] = (val || '').substring(0, 120);
-			// שמירה להמשך הסשן.
 			try {
 				if (out[k]) {
 					window.sessionStorage.setItem('phsg_' + k, out[k]);
@@ -1248,12 +902,9 @@
 		});
 	}
 
-	/**
-	 * אתחול – לאחר הגדרת כל מתודות ה-prototype.
-	 */
 	function init() {
 		document.querySelectorAll('.phsg-app').forEach(function (root) {
-			new PizzaHutGame(root);
+			new Game(root);
 		});
 	}
 

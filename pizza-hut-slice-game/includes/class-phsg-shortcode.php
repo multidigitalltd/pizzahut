@@ -1,6 +1,6 @@
 <?php
 /**
- * רישום השורטקוד וטעינת נכסים על פי הצורך.
+ * רישום השורטקודים וטעינת נכסים על פי הצורך.
  *
  * @package PizzaHutSliceGame
  */
@@ -10,12 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * מחלקת PHSG_Shortcode – השורטקוד [pizza_hut_slice_game].
+ * מחלקת PHSG_Shortcode – [pizza_hut_slice_game] + [pizza_slice_leaderboard].
  */
 class PHSG_Shortcode {
 
 	/**
-	 * דגל – האם השורטקוד קיים בעמוד הנוכחי (לטעינת נכסים בלבד בעת הצורך).
+	 * דגל – האם הנכסים כבר נטענו בעמוד הנוכחי.
 	 *
 	 * @var bool
 	 */
@@ -28,6 +28,7 @@ class PHSG_Shortcode {
 	 */
 	public function register() {
 		add_shortcode( 'pizza_hut_slice_game', array( $this, 'render' ) );
+		add_shortcode( 'pizza_slice_leaderboard', array( $this, 'render_leaderboard' ) );
 
 		// זיהוי מוקדם של השורטקוד כדי לרשום את הנכסים רק בעמוד הרלוונטי.
 		add_action( 'wp_enqueue_scripts', array( $this, 'maybe_register_assets' ) );
@@ -39,10 +40,18 @@ class PHSG_Shortcode {
 	 * @return void
 	 */
 	public function maybe_register_assets() {
+		// גופנים לפי אב-הטיפוס: Secular One לכותרות, Rubik לגוף.
+		wp_register_style(
+			'phsg-fonts',
+			'https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@400;500;700;900&display=swap',
+			array(),
+			PHSG_VERSION
+		);
+
 		wp_register_style(
 			'phsg-game',
 			PHSG_PLUGIN_URL . 'assets/css/game.css',
-			array(),
+			array( 'phsg-fonts' ),
 			PHSG_VERSION
 		);
 
@@ -54,10 +63,10 @@ class PHSG_Shortcode {
 			true
 		);
 
-		// אם העמוד הנוכחי מכיל את השורטקוד – סמן שנצטרך את הנכסים.
+		// אם העמוד הנוכחי מכיל שורטקוד – טוענים כאן.
 		if ( is_singular() ) {
 			$post = get_post();
-			if ( $post && has_shortcode( $post->post_content, 'pizza_hut_slice_game' ) ) {
+			if ( $post && ( has_shortcode( $post->post_content, 'pizza_hut_slice_game' ) || has_shortcode( $post->post_content, 'pizza_slice_leaderboard' ) ) ) {
 				$this->assets_needed = true;
 				$this->enqueue_assets();
 			}
@@ -70,6 +79,7 @@ class PHSG_Shortcode {
 	 * @return void
 	 */
 	private function enqueue_assets() {
+		wp_enqueue_style( 'phsg-fonts' );
 		wp_enqueue_style( 'phsg-game' );
 		wp_enqueue_script( 'phsg-game' );
 
@@ -80,60 +90,88 @@ class PHSG_Shortcode {
 				'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
 				'nonce'        => wp_create_nonce( PHSG_Ajax::NONCE_ACTION ),
 				'gameDuration' => PHSG_Anti_Cheat::GAME_DURATION,
-				'sliceTimeout' => PHSG_Anti_Cheat::SLICE_TIMEOUT,
 				'i18n'         => array(
-					'required'      => __( 'שדה חובה', 'pizza-hut-slice-game' ),
-					'invalidEmail'  => __( 'אימייל לא תקין', 'pizza-hut-slice-game' ),
-					'invalidPhone'  => __( 'טלפון לא תקין', 'pizza-hut-slice-game' ),
-					'consentNeeded' => __( 'יש לאשר את תנאי ההשתתפות', 'pizza-hut-slice-game' ),
-					'saveError'     => __( 'אירעה שגיאה בשמירה. נסו שוב.', 'pizza-hut-slice-game' ),
-					'rankOf'        => __( 'מתוך', 'pizza-hut-slice-game' ),
-					'go'            => __( 'GO!', 'pizza-hut-slice-game' ),
-					'combo'         => __( 'קומבו', 'pizza-hut-slice-game' ),
-					'comboBroken'   => __( 'הקומבו נשבר!', 'pizza-hut-slice-game' ),
-					'dailyChamp'    => __( 'שיאן/ית היום! 🏆', 'pizza-hut-slice-game' ),
-					'dailyRank'     => __( 'דירוג יומי', 'pizza-hut-slice-game' ),
-					'shareText'     => __( 'תפסתי %s משולשי פיצה ב-60 שניות במשחק של פיצה האט! 🍕 נסו לעבור אותי:', 'pizza-hut-slice-game' ),
-					'copied'        => __( 'הועתק!', 'pizza-hut-slice-game' ),
+					'errName'    => __( 'נא להזין שם מלא', 'pizza-hut-slice-game' ),
+					'errPhone'   => __( 'מספר טלפון לא תקין', 'pizza-hut-slice-game' ),
+					'errEmail'   => __( 'כתובת אימייל לא תקינה', 'pizza-hut-slice-game' ),
+					'errConsent' => __( 'יש לאשר את התקנון כדי להשתתף', 'pizza-hut-slice-game' ),
+					'saveError'  => __( 'אירעה שגיאה בשמירה. נסו שוב.', 'pizza-hut-slice-game' ),
+					'soundOn'    => __( 'צליל: פועל', 'pizza-hut-slice-game' ),
+					'soundOff'   => __( 'צליל: כבוי', 'pizza-hut-slice-game' ),
+					'streak'     => __( 'רצף', 'pizza-hut-slice-game' ),
+					'sec'        => __( "שנ'", 'pizza-hut-slice-game' ),
+					'titleChamp' => __( 'אלוף/ת הפיצה!', 'pizza-hut-slice-game' ),
+					'titleGood'  => __( 'כל הכבוד!', 'pizza-hut-slice-game' ),
+					'titleMeh'   => __( 'לא רע… עוד סיבוב?', 'pizza-hut-slice-game' ),
+					'youSuffix'  => __( '(את/ה!)', 'pizza-hut-slice-game' ),
 				),
 			)
 		);
 	}
 
 	/**
-	 * רינדור השורטקוד.
+	 * טעינת נכסים במקרה שהזיהוי המוקדם החמיץ (שורטקוד בווידג'ט וכו').
 	 *
-	 * @param array $atts תכונות השורטקוד.
-	 * @return string HTML.
+	 * @return void
 	 */
-	public function render( $atts = array() ) {
-		// גיבוי: אם הזיהוי המוקדם החמיץ (למשל שורטקוד בתוך ווידג'ט), נטען כאן.
+	private function ensure_assets() {
 		if ( ! $this->assets_needed ) {
 			$this->assets_needed = true;
-			// ודא שהנכסים רשומים.
 			if ( ! wp_style_is( 'phsg-game', 'registered' ) ) {
 				$this->maybe_register_assets();
 			}
 			$this->enqueue_assets();
 		}
+	}
+
+	/**
+	 * רינדור שורטקוד המשחק.
+	 *
+	 * @param array $atts תכונות השורטקוד.
+	 * @return string HTML.
+	 */
+	public function render( $atts = array() ) {
+		$this->ensure_assets();
 
 		$atts = shortcode_atts(
 			array(
-				'title'       => __( 'תפוס את המשולש', 'pizza-hut-slice-game' ),
-				'subtitle'    => __( 'האט אנד יו נואו איט', 'pizza-hut-slice-game' ),
-				'logo'        => '', // URL ללוגו (מומלץ SVG/PNG שקוף). ריק = לוגו ברירת מחדל.
-				'coupon_code' => '', // קוד קופון למסך הסיום. ריק = ללא קופון.
-				'coupon_min'  => 15, // רף ניקוד מינימלי לקבלת הקופון.
-				'daily_prize' => __( 'שיאן/ית היום זוכה לפיצה משפחתית! 🍕', 'pizza-hut-slice-game' ), // ריק = הסתרת באנר הפרס.
+				'title' => __( "תפוס ת'משולש", 'pizza-hut-slice-game' ),
+				'logo'  => '', // URL ללוגו. ריק = הלוגו הרשמי המצורף לתוסף.
 			),
 			$atts,
 			'pizza_hut_slice_game'
 		);
 
 		ob_start();
-		// רינדור ראשוני = הלוח היומי (הטאב הפעיל כברירת מחדל).
-		$leaderboard = PHSG_Leaderboard::get_public( 10, true );
+		$leaderboard = PHSG_Leaderboard::get_public( 8 );
 		include PHSG_PLUGIN_DIR . 'templates/game.php';
 		return ob_get_clean();
+	}
+
+	/**
+	 * רינדור שורטקוד טבלת השיאים העצמאי.
+	 *
+	 * @param array $atts תכונות השורטקוד.
+	 * @return string HTML.
+	 */
+	public function render_leaderboard( $atts = array() ) {
+		$this->ensure_assets();
+
+		$atts = shortcode_atts(
+			array( 'limit' => 8 ),
+			$atts,
+			'pizza_slice_leaderboard'
+		);
+
+		$rows = PHSG_Leaderboard::get_public( (int) $atts['limit'] );
+
+		$html  = '<div class="phsg-app phsg-app--board-only" dir="rtl" lang="he">';
+		$html .= '<div class="phsg-board">';
+		$html .= '<div class="phsg-board__head"><span>' . esc_html__( 'טבלת השיאים', 'pizza-hut-slice-game' ) . '</span>';
+		$html .= '<span class="phsg-board__head-sub">' . esc_html__( 'מתעדכן בזמן אמת', 'pizza-hut-slice-game' ) . '</span></div>';
+		$html .= phsg_render_leaderboard_rows( $rows );
+		$html .= '</div></div>';
+
+		return $html;
 	}
 }

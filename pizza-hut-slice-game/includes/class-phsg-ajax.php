@@ -29,6 +29,49 @@ class PHSG_Ajax {
 		// שליפת טבלת מובילים.
 		add_action( 'wp_ajax_phsg_get_leaderboard', array( $this, 'get_leaderboard' ) );
 		add_action( 'wp_ajax_nopriv_phsg_get_leaderboard', array( $this, 'get_leaderboard' ) );
+
+		// הנפקת טוקן משחק חד-פעמי (אנטי-רמייה).
+		add_action( 'wp_ajax_phsg_start_game', array( $this, 'start_game' ) );
+		add_action( 'wp_ajax_nopriv_phsg_start_game', array( $this, 'start_game' ) );
+	}
+
+	/**
+	 * הנפקת טוקן חד-פעמי בתחילת משחק. נדרש בהגשת התוצאה.
+	 *
+	 * @return void
+	 */
+	public function start_game() {
+		$this->verify_nonce();
+
+		$ip_hash = $this->hash_value( $this->get_client_ip() );
+
+		// הגבלת קצב הנפקה: עד 60 טוקנים לשעה לכל IP.
+		if ( ! $this->check_rate_limit( 'start_' . $ip_hash, 60 ) ) {
+			wp_send_json_error( array( 'message' => __( 'יותר מדי ניסיונות. נסו שוב מאוחר יותר.', 'pizza-hut-slice-game' ) ), 429 );
+		}
+
+		$token = wp_generate_password( 32, false, false );
+		// הטוקן תקף ל-15 דקות וקשור ל-IP שהנפיק אותו.
+		set_transient( 'phsg_tok_' . $token, $ip_hash, 15 * MINUTE_IN_SECONDS );
+
+		wp_send_json_success( array( 'token' => $token ) );
+	}
+
+	/**
+	 * מונה קצב פשוט מבוסס transient.
+	 *
+	 * @param string $key   מפתח ייחודי (פעולה + IP).
+	 * @param int    $limit מקסימום פעולות בחלון של שעה.
+	 * @return bool האם מותר להמשיך.
+	 */
+	private function check_rate_limit( $key, $limit ) {
+		$tkey  = 'phsg_rl_' . md5( $key );
+		$count = (int) get_transient( $tkey );
+		if ( $count >= $limit ) {
+			return false;
+		}
+		set_transient( $tkey, $count + 1, HOUR_IN_SECONDS );
+		return true;
 	}
 
 	/**
@@ -77,7 +120,7 @@ class PHSG_Ajax {
 		if ( '' === $full_name || ( function_exists( 'mb_strlen' ) ? mb_strlen( $full_name ) : strlen( $full_name ) ) < 2 ) {
 			$errors[] = __( 'יש להזין שם מלא.', 'pizza-hut-slice-game' );
 		}
-		if ( '' === $phone || ! preg_match( '/^[0-9]{9,15}$/', $phone ) ) {
+		if ( '' === $phone || ! preg_match( '/^0\\d{8,9}$/', $phone ) ) {
 			$errors[] = __( 'יש להזין מספר טלפון תקין.', 'pizza-hut-slice-game' );
 		}
 		if ( '' === $email || ! is_email( $email ) ) {
@@ -97,6 +140,19 @@ class PHSG_Ajax {
 			);
 		}
 
+		// --- טוקן חד-פעמי + הגבלת קצב ---.
+		$ip_hash = $this->hash_value( $this->get_client_ip() );
+		$token   = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
+
+		if ( '' === $token || get_transient( 'phsg_tok_' . $token ) !== $ip_hash ) {
+			wp_send_json_error( array( 'message' => __( 'המשחק לא אומת. רעננו את העמוד ונסו שוב.', 'pizza-hut-slice-game' ) ), 403 );
+		}
+		delete_transient( 'phsg_tok_' . $token ); // חד-פעמי.
+
+		if ( ! $this->check_rate_limit( 'submit_' . $ip_hash, 30 ) ) {
+			wp_send_json_error( array( 'message' => __( 'יותר מדי הגשות. נסו שוב מאוחר יותר.', 'pizza-hut-slice-game' ) ), 429 );
+		}
+
 		// --- אנטי-רמייה ---.
 		$check = PHSG_Anti_Cheat::validate(
 			array(
@@ -111,8 +167,7 @@ class PHSG_Ajax {
 			wp_send_json_error( array( 'message' => $check->get_error_message() ), 422 );
 		}
 
-		// --- Hash של IP ו-User Agent (לא שומרים ערכים גולמיים) ---.
-		$ip_hash = $this->hash_value( $this->get_client_ip() );
+		// --- Hash של User Agent (לא שומרים ערכים גולמיים) ---.
 		$ua_hash = $this->hash_value(
 			isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : ''
 		);
@@ -146,20 +201,17 @@ class PHSG_Ajax {
 			wp_send_json_error( array( 'message' => __( 'שמירת התוצאה נכשלה. נסו שוב.', 'pizza-hut-slice-game' ) ), 500 );
 		}
 
-		$rank       = PHSG_DB::get_rank( $row_id );
-		$daily_rank = PHSG_DB::get_daily_rank( $row_id );
-		$total      = PHSG_DB::total_players();
+		$rank  = PHSG_DB::get_rank( $row_id );
+		$total = PHSG_DB::total_players();
 
 		wp_send_json_success(
 			array(
-				'rank'              => $rank,
-				'daily_rank'        => $daily_rank,
-				'total'             => $total,
-				'display_name'      => $display_name,
-				'score'             => $score,
-				'duration'          => round( $duration, 2 ),
-				'leaderboard'       => PHSG_Leaderboard::get_public( 10 ),
-				'daily_leaderboard' => PHSG_Leaderboard::get_public( 10, true ),
+				'rank'         => $rank,
+				'total'        => $total,
+				'display_name' => $display_name,
+				'score'        => $score,
+				'duration'     => round( $duration, 2 ),
+				'leaderboard'  => PHSG_Leaderboard::get_public( 8 ),
 			)
 		);
 	}
