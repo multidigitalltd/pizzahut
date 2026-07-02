@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 3.1.1
+Stable tag: 3.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,7 +38,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 * טעינת נכסים רק כאשר השורטקוד נוכח בעמוד.
 * רספונסיבי מלא למובייל ולדסקטופ.
 * אנטי-רמייה: טוקן חד-פעמי לכל משחק, הגבלת קצב לפי IP, חסמי ניקוד/לחיצות/משך/זמן תגובה.
-* גופנים: Secular One (כותרות) + Rubik (גוף) מ-Google Fonts.
+* גופני מותג מקומיים: מכמורת (כותרות) + אלמוני (טקסט רץ) – ללא תלות ב-Google Fonts.
 
 == Installation ==
 
@@ -70,6 +70,14 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 3.2.0 =
+* גופני המותג הרשמיים: מכמורת (Mikhmoret) לכותרות ולמספרים, אלמוני (Almoni) לטקסט רץ – נטענים מקומית מהתוסף.
+* הוסרה התלות ב-Google Fonts (מהיר יותר, ידידותי לפרטיות).
+
+= 3.1.1 =
+* תיקון מסך מלא: השתלטות JS על העמוד במקום פריצת CSS – עובד בכל תבנית, כולל Twenty Twenty-Five.
+* פרמטר fullscreen בשורטקוד (ברירת מחדל 1; אפשר fullscreen="0" להטמעה בתוך עמוד).
 
 = 3.1.0 =
 * המשחק תופס עכשיו את כל רוחב המסך גם בתוך תבנית האתר, ותבנית הנחיתה עודכנה למסך מלא נקי (בלי header/footer).

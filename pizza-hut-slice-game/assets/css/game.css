@@ -4,8 +4,40 @@
  * צבעים: אדום #F32735 (גרדיאנט #FF5A63→#D01423, צל #8E0F1A) · שחור #2D2A26 ·
  * שמנת #F0EFDD (#FBFAEE/#FFFEF6/#E9E7D2/#DDDBC1) · קראפט #B58967 (#C79A75/#966E4E) ·
  * זהב #FFC93C/#FFE49A/#F2B33C. נמנעים מ-#6BA43A (שמור לגלוטן-פרי).
- * טיפוגרפיה: Secular One לכותרות, Rubik לטקסט (RTL).
+ * טיפוגרפיה: מכמורת (Mikhmoret) לכותרות, אלמוני (Almoni) לטקסט רץ (RTL).
  */
+
+/* ===== גופני המותג (מקומיים) =====
+   מכמורת – כותרות ומספרים · אלמוני – טקסט רץ.
+   משקלי 700/900 של אלמוני מסונתזים מ-medium על ידי הדפדפן. */
+@font-face {
+	font-family: "Mikhmoret";
+	src: url("../fonts/mikhmoret-regular.woff") format("woff");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Mikhmoret";
+	src: url("../fonts/mikhmoret-bold.woff") format("woff");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Almoni";
+	src: url("../fonts/almoni-regular.woff") format("woff");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Almoni";
+	src: url("../fonts/almoni-medium.woff") format("woff");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
 
 /* ===== keyframes (מהאב-טיפוס, אחד-לאחד) ===== */
 @keyframes phsg-floaty { 0%,100%{ transform:translateY(0) rotate(-4deg);} 50%{ transform:translateY(-14px) rotate(4deg);} }
@@ -50,7 +82,7 @@
 	min-height: 100vh;
 	overflow: hidden;
 	background: radial-gradient(120% 90% at 50% 0%, #C79A75 0%, #B58967 48%, #966E4E 100%);
-	font-family: "Rubik", sans-serif;
+	font-family: "Almoni", "Rubik", sans-serif;
 	color: var(--black);
 	/* סמן חותך-פיצה בכל העמוד */
 	cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='38' height='38' viewBox='0 0 38 38'%3E%3Ccircle cx='15' cy='23' r='10' fill='%23F0EFDD' stroke='%232D2A26' stroke-width='3'/%3E%3Ccircle cx='15' cy='23' r='2.6' fill='%23F32735' stroke='%232D2A26' stroke-width='1.5'/%3E%3Crect x='20.5' y='1' width='15' height='7' rx='3.5' transform='rotate(45 20.5 1)' fill='%23F32735' stroke='%232D2A26' stroke-width='2'/%3E%3C/svg%3E") 15 23, auto;
@@ -102,7 +134,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 
 .phsg-marquee__row {
 	white-space: nowrap;
-	font-family: "Secular One", sans-serif;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
 	font-size: 60px;
 	line-height: 1.15;
 	letter-spacing: 2px;
@@ -170,7 +202,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	border: 3px solid var(--black);
 	border-radius: 999px;
 	padding: 5px 16px;
-	font-family: "Secular One", sans-serif;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
 	font-size: 16px;
 	box-shadow: 0 3px 0 var(--black), inset 0 2px 0 rgba(255, 255, 255, 0.35);
 	text-shadow: 0 1px 0 rgba(45, 42, 38, 0.3);
@@ -191,7 +223,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
-	font-family: "Rubik", sans-serif;
+	font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700;
 	font-size: 13px;
 	background: linear-gradient(180deg, var(--cream-white), #EDEBD5);
@@ -246,8 +278,8 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 }
 
 .phsg-h1 {
-	font-family: "Secular One", sans-serif;
-	font-weight: 400;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
+	font-weight: 700;
 	font-size: clamp(46px, 9.5vw, 76px);
 	line-height: 1.02;
 	margin: 0;
@@ -298,7 +330,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	border: 2.5px solid var(--black);
 	border-radius: 999px;
 	padding: 3px 16px;
-	font-family: "Secular One", sans-serif;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
 	font-size: 17px;
 }
 
@@ -318,7 +350,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 
 /* ===== כפתורי CTA ===== */
 .phsg-cta {
-	font-family: "Secular One", sans-serif;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
 	font-size: 24px;
 	background: linear-gradient(180deg, var(--red-hi) 0%, var(--red) 45%, var(--red-lo) 100%);
 	color: var(--cream);
@@ -398,8 +430,8 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 }
 
 .phsg-h2 {
-	font-family: "Secular One", sans-serif;
-	font-weight: 400;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
+	font-weight: 700;
 	font-size: 32px;
 	margin: 0 0 4px;
 	color: var(--red);
@@ -413,7 +445,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-field { display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px; }
 
 .phsg-field input {
-	font-family: "Rubik", sans-serif;
+	font-family: "Almoni", "Rubik", sans-serif;
 	font-size: 16px;
 	padding: 12px 14px;
 	border: 3px solid var(--black);
@@ -468,7 +500,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 }
 
 .phsg-hud__label { font-size: 12px; font-weight: 700; opacity: 0.7; }
-.phsg-hud__value { font-family: "Secular One", sans-serif; font-size: 32px; line-height: 1; }
+.phsg-hud__value { font-family: "Mikhmoret", "Secular One", sans-serif; font-size: 32px; line-height: 1; }
 .phsg-hud__value--score { color: var(--red); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); }
 
 .phsg-hud__card--timer {
@@ -577,7 +609,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	transform: translate(-50%, 0);
 	z-index: 9;
 	pointer-events: none;
-	font-family: "Secular One", sans-serif;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
 	font-size: 36px;
 	text-shadow: 0 2px 0 var(--cream), 0 4px 4px rgba(45, 42, 38, 0.4);
 	animation: phsg-fadeUp 0.8s ease-out forwards;
@@ -609,7 +641,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	border: 3px solid var(--black);
 	border-radius: 999px;
 	padding: 7px 22px;
-	font-family: "Secular One", sans-serif;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
 	font-size: 21px;
 	box-shadow: 0 4px 0 var(--black);
 	animation: phsg-pulseBeat 0.5s ease-in-out infinite;
@@ -627,7 +659,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	border: 3px solid var(--black);
 	border-radius: 999px;
 	padding: 7px 24px;
-	font-family: "Secular One", sans-serif;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
 	font-size: 21px;
 	box-shadow: 0 4px 0 var(--black);
 	animation: phsg-pulseBeat 0.4s ease-in-out infinite;
@@ -650,7 +682,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-countdown[hidden] { display: none; }
 
 .phsg-countdown__num {
-	font-family: "Secular One", sans-serif;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
 	font-size: 130px;
 	line-height: 1;
 	color: var(--red);
@@ -720,7 +752,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 }
 
 .phsg-medal__label { font-size: 13px; font-weight: 900; color: var(--black); opacity: 0.75; }
-.phsg-medal__rank { font-family: "Secular One", sans-serif; font-size: 52px; line-height: 1; color: var(--black); direction: ltr; unicode-bidi: isolate; }
+.phsg-medal__rank { font-family: "Mikhmoret", "Secular One", sans-serif; font-size: 52px; line-height: 1; color: var(--black); direction: ltr; unicode-bidi: isolate; }
 
 .phsg-end__title { font-size: clamp(36px, 7vw, 56px); text-align: center; margin: 0; }
 
@@ -750,7 +782,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 }
 
 .phsg-stats__label { font-size: 13px; font-weight: 700; opacity: 0.8; }
-.phsg-stats__value { font-family: "Secular One", sans-serif; font-size: 42px; line-height: 1.1; }
+.phsg-stats__value { font-family: "Mikhmoret", "Secular One", sans-serif; font-size: 42px; line-height: 1.1; }
 
 /* טבלת שיאים */
 .phsg-board {
@@ -766,14 +798,14 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	background: linear-gradient(180deg, #4A453E, var(--black));
 	color: var(--cream);
 	padding: 13px 18px;
-	font-family: "Secular One", sans-serif;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
 	font-size: 23px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
 
-.phsg-board__head-sub { font-size: 13px; font-family: "Rubik", sans-serif; font-weight: 500; opacity: 0.7; }
+.phsg-board__head-sub { font-size: 13px; font-family: "Almoni", "Rubik", sans-serif; font-weight: 500; opacity: 0.7; }
 
 .phsg-board__row {
 	display: grid;
@@ -802,13 +834,13 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-family: "Secular One", sans-serif;
+	font-family: "Mikhmoret", "Secular One", sans-serif;
 	font-size: 17px;
 	box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.5);
 }
 
 .phsg-board__name { font-size: 16px; }
-.phsg-board__score { font-family: "Secular One", sans-serif; font-size: 20px; text-align: center; }
+.phsg-board__score { font-family: "Mikhmoret", "Secular One", sans-serif; font-size: 20px; text-align: center; }
 .phsg-board__avg { font-size: 13px; text-align: left; opacity: 0.75; }
 .phsg-board__empty { grid-column: 1 / -1; text-align: center; font-weight: 700; padding: 6px 0; }
 

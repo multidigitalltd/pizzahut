@@ -40,18 +40,11 @@ class PHSG_Shortcode {
 	 * @return void
 	 */
 	public function maybe_register_assets() {
-		// גופנים לפי אב-הטיפוס: Secular One לכותרות, Rubik לגוף.
-		wp_register_style(
-			'phsg-fonts',
-			'https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@400;500;700;900&display=swap',
-			array(),
-			PHSG_VERSION
-		);
-
+		// גופני המותג (מכמורת + אלמוני) נטענים מקומית מ-assets/fonts דרך ה-CSS.
 		wp_register_style(
 			'phsg-game',
 			PHSG_PLUGIN_URL . 'assets/css/game.css',
-			array( 'phsg-fonts' ),
+			array(),
 			PHSG_VERSION
 		);
 
@@ -79,7 +72,6 @@ class PHSG_Shortcode {
 	 * @return void
 	 */
 	private function enqueue_assets() {
-		wp_enqueue_style( 'phsg-fonts' );
 		wp_enqueue_style( 'phsg-game' );
 		wp_enqueue_script( 'phsg-game' );
 
