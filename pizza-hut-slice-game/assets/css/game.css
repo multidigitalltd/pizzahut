@@ -99,8 +99,7 @@ html.phsg-takeover body {
 	margin: 0 !important;
 	padding: 0 !important;
 	max-width: none !important;
-	overflow: hidden; /* המשחק מותאם ל-100vh – אין גלילה. */
-	height: 100%;
+	overflow-x: hidden;
 	background: #B58967 !important;
 }
 

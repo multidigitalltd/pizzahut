@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 3.3.0
+Stable tag: 3.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 3.3.1 =
+* בוטל כיווץ ה-100vh – הגדלים חזרו למקור (הכיווץ הקטין את התוכן מדי).
 
 = 3.3.0 =
 * כל מסך מותאם אוטומטית לגובה החלון (100vh) – בלי גלילה, בכל רזולוציה.
