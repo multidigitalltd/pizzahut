@@ -110,6 +110,11 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 					<span class="phsg-legend__name"><?php esc_html_e( 'פלפל פרנזי', 'pizza-hut-slice-game' ); ?></span>
 					<span class="phsg-vpill phsg-vpill--red"><?php esc_html_e( '×2 ל-6 שנ\'', 'pizza-hut-slice-game' ); ?></span>
 				</div>
+				<div class="phsg-legend__card phsg-legend__card--gold">
+					<svg viewBox="0 0 64 56" width="44" height="39"><path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="#FFD95C" stroke="#2D2A26" stroke-width="4"/><circle cx="24" cy="38" r="5" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2.5"/><circle cx="41" cy="41" r="4" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2.5"/><circle cx="33" cy="26" r="3.5" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2.5"/></svg>
+					<span class="phsg-legend__name"><?php esc_html_e( 'נתח גבינה', 'pizza-hut-slice-game' ); ?></span>
+					<span class="phsg-vpill phsg-vpill--gold">+2</span>
+				</div>
 			</div>
 
 			<span class="phsg-note-pill"><?php esc_html_e( '⏱ 60 שניות · רצף של 5 תפיסות = בונוס +2', 'pizza-hut-slice-game' ); ?></span>
@@ -173,6 +178,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 				</div>
 
 				<div data-obstacles></div>
+				<div class="phsg-sprite phsg-sprite--cheese" data-cheese hidden><?php echo phsg_svg_cheese(); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				<div class="phsg-sprite phsg-sprite--bonus" data-bonus hidden></div>
 				<div data-popups></div>
 
@@ -191,6 +197,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 				<span class="phsg-chip"><svg viewBox="0 0 100 110" width="18" height="20"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#6B5138" stroke="#2D2A26" stroke-width="5"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#8A6B45" stroke="#2D2A26" stroke-width="5"/></svg> &lrm;−2</span>
 				<span class="phsg-chip"><svg viewBox="0 0 60 60" width="17" height="17"><circle cx="30" cy="32" r="22" fill="#FFE49A" stroke="#2D2A26" stroke-width="5"/><path d="M30 32 L30 21 M30 32 L38 36" stroke="#F32735" stroke-width="5" stroke-linecap="round"/></svg> &lrm;<?php esc_html_e( "+5 שנ'", 'pizza-hut-slice-game' ); ?></span>
 				<span class="phsg-chip"><svg viewBox="0 0 60 60" width="17" height="17"><path d="M14 46 Q10 30 24 20 Q38 10 48 16 Q52 30 40 42 Q28 54 14 46 Z" fill="#F32735" stroke="#2D2A26" stroke-width="5"/><path d="M46 17 Q50 8 58 8" fill="none" stroke="#4C7B3A" stroke-width="6" stroke-linecap="round"/></svg> ×2</span>
+				<span class="phsg-chip phsg-chip--gold"><svg viewBox="0 0 64 56" width="18" height="16"><path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="#FFD95C" stroke="#2D2A26" stroke-width="5"/><circle cx="24" cy="38" r="5" fill="#FFF3B0"/><circle cx="41" cy="41" r="4" fill="#FFF3B0"/></svg> &lrm;+2</span>
 				<span class="phsg-chip"><?php esc_html_e( 'רצף 5 = +2', 'pizza-hut-slice-game' ); ?></span>
 			</div>
 		</section>

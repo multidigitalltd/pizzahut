@@ -38,6 +38,7 @@
 		this.slice = root.querySelector('[data-slice]');
 		this.obstaclesEl = root.querySelector('[data-obstacles]');
 		this.bonusEl = root.querySelector('[data-bonus]');
+		this.cheeseEl = root.querySelector('[data-cheese]');
 		this.popupsEl = root.querySelector('[data-popups]');
 		this.comboEl = root.querySelector('[data-combo]');
 		this.frenzyEl = root.querySelector('[data-frenzy]');
@@ -85,6 +86,9 @@
 		this.sliceGold = false;
 		this.sliceSpawn = 0;
 		this.sliceDeadline = 0;
+		this.cheese = null;
+		this.cheeseSpawn = 0;
+		this.cheeseUntil = 0;
 		this.startedAt = 0;
 		this.realStart = 0;
 		clearInterval(this.loop);
@@ -163,6 +167,46 @@
 			window.setTimeout(function () { self._tone(f, 0.12, 'square', 0.09); }, i * 60);
 		});
 	};
+	Game.prototype.playCheese = function () {
+		this._tone(700, 0.09, 'sine', 0.16);
+		this._tone(1050, 0.12, 'sine', 0.14, 0);
+	};
+
+	/* ---------- מוזיקת רקע (לופ מסונתז, מלחיץ בסוף) ---------- */
+
+	Game.prototype.startMusic = function () {
+		this.stopMusic();
+		this.musicStep = 0;
+		this.musicTense = false;
+		var self = this;
+		// בס + מלודיה קלילה; במצב לחוץ – טמפו מהיר וגובה עולה.
+		var BASS = [131, 0, 131, 0, 165, 0, 147, 0, 131, 0, 165, 0, 196, 0, 147, 0];
+		var LEAD = [523, 0, 659, 0, 784, 659, 0, 587, 523, 0, 698, 0, 880, 0, 659, 0];
+		var TENSE_BASS = [147, 147, 0, 147, 175, 175, 0, 175, 196, 196, 0, 196, 220, 220, 0, 220];
+		var step = function () {
+			if (!self.muted) {
+				var bass = self.musicTense ? TENSE_BASS : BASS;
+				var i = self.musicStep % bass.length;
+				if (bass[i]) {
+					self._tone(bass[i] * (self.musicTense ? 2 : 1), 0.09, 'triangle', self.musicTense ? 0.05 : 0.035);
+				}
+				if (!self.musicTense && LEAD[i]) {
+					self._tone(LEAD[i], 0.07, 'square', 0.018);
+				}
+			}
+			self.musicStep++;
+			self.musicTimer = window.setTimeout(step, self.musicTense ? 95 : 150);
+		};
+		step();
+	};
+
+	Game.prototype.stopMusic = function () {
+		if (this.musicTimer) {
+			window.clearTimeout(this.musicTimer);
+			this.musicTimer = null;
+		}
+	};
+
 	Game.prototype.playFanfare = function () {
 		var self = this;
 		[523, 659, 784, 1046, 1318].forEach(function (f, i) {
@@ -205,6 +249,14 @@
 				e.preventDefault();
 				e.stopPropagation();
 				self._hitBonus(e);
+			});
+		}
+
+		if (this.cheeseEl) {
+			this.cheeseEl.addEventListener('pointerdown', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				self._hitCheese(e);
 			});
 		}
 	};
@@ -358,6 +410,7 @@
 		this.timeLeft = this.dur;
 		this._spawnSlice();
 		this._renderHud();
+		this.startMusic();
 
 		clearInterval(this.loop);
 		this.loop = setInterval(function () {
@@ -375,6 +428,10 @@
 			if (Date.now() > self.sliceDeadline) {
 				self.streak = 0;
 				self._spawnSlice();
+			}
+			// נתח הגבינה נעלם אם לא נתפס בזמן.
+			if (self.cheese && Date.now() > self.cheeseUntil) {
+				self._renderCheese(null);
 			}
 			self._renderHud();
 			self._renderFrenzy();
@@ -399,11 +456,13 @@
 			var ox;
 			var oy;
 			var tries = 0;
+			// 35% מהמכשולים "אגרסיביים" – מותר להם להתקרב הרבה יותר למשולש.
+			var minDist = Math.random() < 0.35 ? 12 : 22;
 			do {
 				ox = 4 + Math.random() * 80;
 				oy = 6 + Math.random() * 70;
 				tries++;
-			} while (tries < 25 && (Math.hypot(ox - x, oy - y) < 22 || obstacles.some(function (o) { return Math.hypot(ox - o.x, oy - o.y) < 13; })));
+			} while (tries < 25 && (Math.hypot(ox - x, oy - y) < minDist || obstacles.some(function (o) { return Math.hypot(ox - o.x, oy - o.y) < 13; })));
 			var burnt = lv >= 1 && i === 0 && Math.random() < 0.45;
 			var type = burnt ? 'burnt' : types[Math.floor(Math.random() * types.length)];
 			obstacles.push({
@@ -430,13 +489,29 @@
 			bonus = { x: bx, y: by, type: Math.random() < 0.5 ? 'clock' : 'chili' };
 		}
 
+		// נתח גבינה (22%): פריט מהיר +2 שנעלם תוך ~1.8 שניות.
+		var cheese = null;
+		if (Math.random() < 0.22) {
+			var cx;
+			var cy;
+			var ctries = 0;
+			do {
+				cx = 6 + Math.random() * 80;
+				cy = 8 + Math.random() * 68;
+				ctries++;
+			} while (ctries < 25 && (Math.hypot(cx - x, cy - y) < 18 || obstacles.some(function (o) { return Math.hypot(cx - o.x, cy - o.y) < 12; })));
+			cheese = { x: cx, y: cy };
+		}
+
 		this.sliceSpawn = Date.now();
-		this.sliceDeadline = Date.now() + Math.max(1100, 4800 - lv * 900);
+		// שהות המשולש: 5 שניות בתחילת המשחק, ומתקצרת ככל שהזמן אוזל (עד 1.1 שנ').
+		this.sliceDeadline = Date.now() + Math.max(1100, 5000 - lv * 975);
 		this.sliceGold = gold;
 
 		this._renderSlice(x, y, gold, lv);
 		this._renderObstacles(obstacles);
 		this._renderBonus(bonus);
+		this._renderCheese(cheese);
 	};
 
 	/* ==================== רינדור ==================== */
@@ -485,6 +560,36 @@
 		});
 	};
 
+	Game.prototype._renderCheese = function (cheese) {
+		this.cheese = cheese;
+		if (!this.cheeseEl) {
+			return;
+		}
+		if (!cheese) {
+			this.cheeseEl.hidden = true;
+			return;
+		}
+		this.cheeseEl.style.left = cheese.x + '%';
+		this.cheeseEl.style.top = cheese.y + '%';
+		this.cheeseSpawn = Date.now();
+		this.cheeseUntil = Date.now() + 1800; // חלון תפיסה קצר – צריך להספיק!
+		this.cheeseEl.hidden = false;
+	};
+
+	Game.prototype._hitCheese = function (e) {
+		if (!this.cheese || this.timeLeft <= 0) {
+			return;
+		}
+		this.playCheese();
+		this._popup(e, '+2', '#D19A2B');
+		this._vibrate(25);
+		this.score += 2;
+		this.clicks += 1;
+		this.reactions.push(Date.now() - this.cheeseSpawn);
+		this._renderCheese(null);
+		this._renderHud();
+	};
+
 	Game.prototype._renderBonus = function (bonus) {
 		this.bonus = bonus;
 		if (!bonus) {
@@ -504,9 +609,12 @@
 		this._setText('[data-hud="time"]', timeText);
 		this._setText('[data-hud="level"]', this.level() + 1);
 
+		var danger = this.timeLeft <= 10 && this.timeLeft > 0;
 		if (this.timerCard) {
-			this.timerCard.classList.toggle('is-danger', this.timeLeft <= 10 && this.timeLeft > 0);
+			this.timerCard.classList.toggle('is-danger', danger);
 		}
+		// המוזיקה נהיית מלחיצה בשעון העצר.
+		this.musicTense = danger;
 		if (this.progressEl) {
 			this.progressEl.style.width = ((this.timeLeft / this.dur) * 100) + '%';
 		}
@@ -635,6 +743,7 @@
 
 	Game.prototype._endGame = function () {
 		clearInterval(this.loop);
+		this.stopMusic();
 		this.playFanfare();
 
 		var durationSec = (Date.now() - this.realStart) / 1000;

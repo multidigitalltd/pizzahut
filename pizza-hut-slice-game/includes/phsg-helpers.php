@@ -126,6 +126,26 @@ if ( ! function_exists( 'phsg_svg_obstacle' ) ) {
 	}
 }
 
+if ( ! function_exists( 'phsg_svg_cheese' ) ) {
+	/**
+	 * נתח גבינה צהובה – פריט נקודות מהיר (+2).
+	 *
+	 * @return string
+	 */
+	function phsg_svg_cheese() {
+		return '<svg viewBox="0 0 64 56" width="100%" height="100%" style="pointer-events:none;">
+			<defs>
+				<linearGradient id="phsgCheeseC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE566"/><stop offset="1" stop-color="#F2B33C"/></linearGradient>
+			</defs>
+			<path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="url(#phsgCheeseC)" stroke="#2D2A26" stroke-width="3.5" stroke-linejoin="round"/>
+			<circle cx="24" cy="38" r="5" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2"/>
+			<circle cx="41" cy="41" r="4" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2"/>
+			<circle cx="33" cy="26" r="3.5" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2"/>
+			<path d="M14 44 Q20 40 26 44" fill="none" stroke="#FFF3B0" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+		</svg>';
+	}
+}
+
 if ( ! function_exists( 'phsg_svg_bonus' ) ) {
 	/**
 	 * SVG של פריט בונוס – שעון (+5 שנ') או פלפל (פרנזי ×2).

@@ -3,7 +3,7 @@
  * תבנית עמוד נחיתה מלאה – ללא header/footer של התבנית הפעילה.
  *
  * נבחרת בעורך העמודים תחת "Pizza Hut – דף נחיתה מלא".
- * מציגה את תוכן העמוד (כולל השורטקוד) על רקע ממותג במסך מלא.
+ * המשחק תופס את כל המסך, מקצה לקצה, בלי שום אלמנט של התבנית.
  *
  * @package PizzaHutSliceGame
  */
@@ -19,26 +19,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<?php wp_head(); ?>
 	<style>
-		/* רקע נחיתה ממותג – קראפט כהה עם מרכוז הבמה. */
-		body.phsg-landing-body {
-			margin: 0;
+		/* עמוד נקי במסך מלא – המשחק ממלא את הכול. */
+		html, body.phsg-landing-body {
+			margin: 0 !important;
+			padding: 0 !important;
+			width: 100%;
 			min-height: 100vh;
-			background-color: #2D2A26;
-			background-image:
-				radial-gradient(circle at 20% 10%, rgba(243, 39, 53, 0.18), transparent 45%),
-				radial-gradient(circle at 80% 90%, rgba(181, 137, 103, 0.22), transparent 45%);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding: 24px 12px;
-			box-sizing: border-box;
+			background: #B58967;
 		}
 		body.phsg-landing-body .phsg-landing-content {
 			width: 100%;
-			max-width: 760px;
+			margin: 0;
+			padding: 0;
 		}
-		/* הסתרת אלמנטים גלובליים של תבניות/תוספים אחרים אם הוזרקו. */
-		body.phsg-landing-body #wpadminbar { display: none; }
+		/* ביטול מגבלות רוחב/ריווח שהתבנית עלולה להזריק לתוכן. */
+		body.phsg-landing-body .phsg-landing-content > * {
+			max-width: none !important;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+		body.phsg-landing-body .phsg-landing-content .phsg-app {
+			min-height: 100vh;
+			border-radius: 0;
+		}
+		/* הסתרת אלמנטים גלובליים של תבניות/תוספים אם הוזרקו. */
+		body.phsg-landing-body #wpadminbar,
+		body.phsg-landing-body header:not(.phsg-header),
+		body.phsg-landing-body footer:not(.phsg-footer) { display: none !important; }
 		html { margin-top: 0 !important; }
 	</style>
 </head>

@@ -16,7 +16,7 @@ class PHSG_Anti_Cheat {
 
 	// חוקי המשחק (חייבים להיות תואמים ל-JS / אב-הטיפוס).
 	const GAME_DURATION      = 60;   // משך המשחק בשניות.
-	const SLICE_TIMEOUT      = 4.8;  // חסם עליון לזמן שהות המשולש (שניות, שלב 1).
+	const SLICE_TIMEOUT      = 5;    // חסם עליון לזמן שהות המשולש (שניות, שלב 1).
 	const MIN_REACTION_MS    = 250;  // זמן תגובה אנושי מינימלי סביר (מ"ש, לפי המפרט).
 	const DURATION_TOLERANCE = 2;    // סטייה מותרת ממשך המשחק (שניות).
 	const MAX_TIME_EXTENSION = 45;   // תוספת זמן מקסימלית משעוני בונוס (שניות).
