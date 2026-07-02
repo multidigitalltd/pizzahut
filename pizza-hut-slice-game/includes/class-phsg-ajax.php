@@ -120,7 +120,7 @@ class PHSG_Ajax {
 		if ( '' === $full_name || ( function_exists( 'mb_strlen' ) ? mb_strlen( $full_name ) : strlen( $full_name ) ) < 2 ) {
 			$errors[] = __( 'יש להזין שם מלא.', 'pizza-hut-slice-game' );
 		}
-		if ( '' === $phone || ! preg_match( '/^0\\d{8,9}$/', $phone ) ) {
+		if ( '' === $phone || ! preg_match( '/^(?:0\d{8,9}|\+\d{7,15})$/', $phone ) ) {
 			$errors[] = __( 'יש להזין מספר טלפון תקין.', 'pizza-hut-slice-game' );
 		}
 		if ( '' === $email || ! is_email( $email ) ) {
@@ -235,13 +235,26 @@ class PHSG_Ajax {
 	}
 
 	/**
-	 * סניטציה של מספר טלפון – שמירת ספרות בלבד.
+	 * סניטציה ונרמול של מספר טלפון.
+	 *
+	 * שומר ספרות ו-+ מוביל; קידומת ישראלית (+972/972) מומרת למספר מקומי.
 	 *
 	 * @param string $phone קלט גולמי.
 	 * @return string
 	 */
 	private function sanitize_phone( $phone ) {
-		return preg_replace( '/[^0-9]/', '', (string) $phone );
+		$phone = preg_replace( '/[^0-9+]/', '', (string) $phone );
+		// + מותר רק בתחילת המספר.
+		$phone = preg_replace( '/(?!^)\+/', '', $phone );
+
+		if ( preg_match( '/^\+972\d{8,9}$/', $phone ) ) {
+			return '0' . substr( $phone, 4 );
+		}
+		if ( preg_match( '/^972\d{8,9}$/', $phone ) ) {
+			return '0' . substr( $phone, 3 );
+		}
+
+		return $phone;
 	}
 
 	/**

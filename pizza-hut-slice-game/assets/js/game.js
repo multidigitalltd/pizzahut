@@ -73,7 +73,38 @@
 		this._resetGameState();
 		this._syncSound();
 		this._bind();
+
+		// התאמת כל מסך לגובה החלון (בלי גלילה).
+		var self = this;
+		this._fitViewport();
+		window.addEventListener('resize', function () {
+			self._fitViewport();
+		});
 	}
+
+	/**
+	 * כיווץ התוכן כך שכל מסך ייכנס ב-100vh בלי גלילה.
+	 * אם התוכן גבוה מהחלון – מוקטן פרופורציונלית (transform: scale).
+	 */
+	Game.prototype._fitViewport = function () {
+		var col = this.root.querySelector('.phsg-col');
+		if (!col) {
+			return;
+		}
+		col.style.transform = '';
+		col.style.height = '';
+		col.style.minHeight = '';
+
+		var vh = window.innerHeight;
+		var h = col.scrollHeight;
+		if (h > vh) {
+			var f = Math.max(0.5, vh / h);
+			col.style.transformOrigin = 'top center';
+			col.style.transform = 'scale(' + f + ')';
+			col.style.height = vh + 'px';
+			col.style.minHeight = '0';
+		}
+	};
 
 	Game.prototype._resetGameState = function () {
 		this.score = 0;
@@ -303,6 +334,9 @@
 			this.screens[key].hidden = !active;
 			this.screens[key].classList.toggle('is-active', active);
 		}, this);
+		// כל מסך נמדד מחדש ומותאם לגובה החלון.
+		this._fitViewport();
+		window.scrollTo(0, 0);
 	};
 
 	/* ==================== טופס ==================== */
@@ -310,14 +344,22 @@
 	Game.prototype._submitForm = function () {
 		var f = this.form;
 		var name = (f.querySelector('[name="full_name"]').value || '').trim();
-		var phone = (f.querySelector('[name="phone"]').value || '').replace(/[-\s]/g, '');
+		var phone = (f.querySelector('[name="phone"]').value || '').replace(/[-\s()]/g, '');
 		var email = (f.querySelector('[name="email"]').value || '').trim();
 		var consent = f.querySelector('[name="consent"]').checked;
+
+		// קידומת ישראלית בינלאומית (+972 / 972) מומרת למספר מקומי.
+		if (/^\+972\d{8,9}$/.test(phone)) {
+			phone = '0' + phone.slice(4);
+		} else if (/^972\d{8,9}$/.test(phone)) {
+			phone = '0' + phone.slice(3);
+		}
 
 		if (name.length < 2) {
 			return this._showFormError(t('errName', 'נא להזין שם מלא'));
 		}
-		if (!/^0\d{8,9}$/.test(phone)) {
+		// מקומי (0XXXXXXXXX) או בינלאומי (+XXXXXXXXX...).
+		if (!/^0\d{8,9}$/.test(phone) && !/^\+\d{7,15}$/.test(phone)) {
 			return this._showFormError(t('errPhone', 'מספר טלפון לא תקין'));
 		}
 		if (!/^\S+@\S+\.\S+$/.test(email)) {
