@@ -60,14 +60,34 @@
 .phsg-app *::before,
 .phsg-app *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-/* פריצה לרוחב מלא של המסך גם בתוך אזור תוכן מוגבל של תבנית האתר. */
-.phsg-app:not(.phsg-app--board-only) {
-	width: 100vw;
-	max-width: 100vw;
-	position: relative;
-	inset-inline-start: 50%;
-	margin-inline-start: -50vw;
+/* ===== השתלטות על העמוד (fullscreen takeover) =====
+   ה-JS מעביר את המשחק ישירות ל-body ומסתיר את כל שאר תוכן העמוד. */
+html.phsg-takeover,
+html.phsg-takeover body {
+	margin: 0 !important;
+	padding: 0 !important;
+	max-width: none !important;
+	overflow-x: hidden;
+	background: #B58967 !important;
+}
+
+html.phsg-takeover { margin-top: 0 !important; } /* ביטול היסט סרגל הניהול */
+
+html.phsg-takeover body > *:not(.phsg-takeover-host) {
+	display: none !important;
+}
+
+.phsg-takeover-host {
+	width: 100%;
+	min-height: 100vh;
+}
+
+.phsg-takeover-host .phsg-app {
+	width: 100%;
+	max-width: none;
+	min-height: 100vh;
 	border-radius: 0;
+	margin: 0;
 }
 
 /* ===== רקע טיפוגרפי נע ===== */

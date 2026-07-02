@@ -29,7 +29,7 @@ $phsg_marquee_rows = array(
 );
 $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 1990 · חם מהתנור · ';
 ?>
-<div class="phsg-app" dir="rtl" lang="he" role="application" aria-label="<?php echo esc_attr__( 'משחק פיצה האט – תפוס ת\'משולש', 'pizza-hut-slice-game' ); ?>">
+<div class="phsg-app" dir="rtl" lang="he" role="application" data-fullscreen="<?php echo esc_attr( ! empty( $atts['fullscreen'] ) && '0' !== $atts['fullscreen'] ? '1' : '0' ); ?>" aria-label="<?php echo esc_attr__( 'משחק פיצה האט – תפוס ת\'משולש', 'pizza-hut-slice-game' ); ?>">
 
 	<?php // רקע טיפוגרפי נע ?>
 	<div class="phsg-marquee" aria-hidden="true">

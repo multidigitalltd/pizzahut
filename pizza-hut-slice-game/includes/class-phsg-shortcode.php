@@ -135,8 +135,9 @@ class PHSG_Shortcode {
 
 		$atts = shortcode_atts(
 			array(
-				'title' => __( "תפוס ת'משולש", 'pizza-hut-slice-game' ),
-				'logo'  => '', // URL ללוגו. ריק = הלוגו הרשמי המצורף לתוסף.
+				'title'      => __( "תפוס ת'משולש", 'pizza-hut-slice-game' ),
+				'logo'       => '', // URL ללוגו. ריק = הלוגו הרשמי המצורף לתוסף.
+				'fullscreen' => '1', // 1 = השתלטות על כל העמוד (הסתרת התבנית). 0 = הטמעה רגילה.
 			),
 			$atts,
 			'pizza_hut_slice_game'

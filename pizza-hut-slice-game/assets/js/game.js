@@ -1011,8 +1011,34 @@
 		});
 	}
 
+	/**
+	 * השתלטות על העמוד: העברת המשחק ישירות ל-body והסתרת כל שאר התוכן
+	 * (header/footer/כותרת של התבנית). עמיד בפני כל תבנית וורדפרס.
+	 *
+	 * @param {HTMLElement} root שורש האפליקציה.
+	 */
+	function takeover(root) {
+		if (root.getAttribute('data-fullscreen') !== '1') {
+			return;
+		}
+		// בתבנית הנחיתה של התוסף העמוד כבר נקי.
+		if (document.body.classList.contains('phsg-landing-body')) {
+			return;
+		}
+		if (root.closest('.phsg-takeover-host')) {
+			return;
+		}
+		var host = document.createElement('div');
+		host.className = 'phsg-takeover-host';
+		document.body.appendChild(host);
+		host.appendChild(root);
+		document.documentElement.classList.add('phsg-takeover');
+		window.scrollTo(0, 0);
+	}
+
 	function init() {
 		document.querySelectorAll('.phsg-app').forEach(function (root) {
+			takeover(root);
 			new Game(root);
 		});
 	}
