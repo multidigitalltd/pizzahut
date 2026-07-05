@@ -31,13 +31,14 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 ?>
 <div class="phsg-app" dir="rtl" lang="he" role="application" data-fullscreen="<?php echo esc_attr( ! empty( $atts['fullscreen'] ) && '0' !== $atts['fullscreen'] ? '1' : '0' ); ?>" aria-label="<?php echo esc_attr__( 'משחק פיצה האט – תפוס ת\'משולש', 'pizza-hut-slice-game' ); ?>">
 
-	<?php // רקע טיפוגרפי נע ?>
+	<?php // רקע טיפוגרפי נע – שורות במחזוריות שמכסות את כל גובה המסך ?>
 	<div class="phsg-marquee" aria-hidden="true">
-		<?php foreach ( $phsg_marquee_rows as $phsg_row ) : ?>
-			<div class="phsg-marquee__row" style="color:<?php echo esc_attr( $phsg_row[0] ); ?>; animation-duration:<?php echo esc_attr( $phsg_row[1] ); ?>s; margin-right:<?php echo esc_attr( $phsg_row[2] ); ?>px;">
+		<?php for ( $phsg_i = 0; $phsg_i < 32; $phsg_i++ ) : ?>
+			<?php $phsg_row = $phsg_marquee_rows[ $phsg_i % count( $phsg_marquee_rows ) ]; ?>
+			<div class="phsg-marquee__row" style="color:<?php echo esc_attr( $phsg_row[0] ); ?>; animation-duration:<?php echo esc_attr( $phsg_row[1] ); ?>s; margin-right:<?php echo esc_attr( $phsg_row[2] - ( $phsg_i * 7 ) % 200 ); ?>px;">
 				<?php echo esc_html( str_repeat( $phsg_marquee_txt, 5 ) ); ?>
 			</div>
-		<?php endforeach; ?>
+		<?php endfor; ?>
 	</div>
 
 	<?php // עומק – ויניטה ?>
@@ -53,7 +54,6 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 				</div>
 				<div class="phsg-header__pills">
 					<span class="phsg-pill phsg-pill--title"><?php echo esc_html( $atts['title'] ); ?></span>
-					<span class="phsg-pill phsg-pill--sub"><?php esc_html_e( 'קמפיין המשחק הרשמי', 'pizza-hut-slice-game' ); ?></span>
 				</div>
 			</div>
 			<button type="button" class="phsg-sound" data-action="toggle-sound" aria-pressed="false">
@@ -75,13 +75,21 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 
 			<?php // מסר המותג ?>
 			<div class="phsg-promo">
-				<p class="phsg-promo__text"><?php esc_html_e( 'את פיצה האט לא צריך לחפש — לכל מקום בו תצאו לטייל ולבלות תמצאו פיצה חמה, טרייה וטעימה.', 'pizza-hut-slice-game' ); ?></p>
-				<span class="phsg-promo__here"><?php esc_html_e( 'גם ממש כאן — על המסך 🍕', 'pizza-hut-slice-game' ); ?></span>
+				<p class="phsg-promo__text">
+					<?php esc_html_e( 'את פיצה האט לא צריך לחפש —', 'pizza-hut-slice-game' ); ?><br>
+					<?php esc_html_e( 'לכל מקום בו תצאו לטייל ולבלות תמצאו', 'pizza-hut-slice-game' ); ?>
+					<strong class="phsg-promo__hot"><?php esc_html_e( 'פיצה חמה, טרייה וטעימה.', 'pizza-hut-slice-game' ); ?></strong>
+				</p>
+				<button type="button" class="phsg-promo__here" data-action="promo-scroll"><?php esc_html_e( 'גם ממש כאן — על המסך 🍕', 'pizza-hut-slice-game' ); ?></button>
 			</div>
 
-			<p class="phsg-intro__lead"><?php esc_html_e( 'משולש פיצה חם קופץ על המסך — יש לך 60 שניות לתפוס כמה שיותר. זהירות מהפטריות, הזיתים, הבצל והעגבניות!', 'pizza-hut-slice-game' ); ?></p>
+			<div class="phsg-howto">
+				<h2 class="phsg-howto__title"><?php esc_html_e( 'איך משחקים?', 'pizza-hut-slice-game' ); ?></h2>
+				<p class="phsg-howto__text"><?php esc_html_e( 'משולש פיצה חם קופץ על המסך — יש לכם 60 שניות לתפוס כמה שיותר. זהירות מהפטריות, הזיתים, הבצל והעגבניות!', 'pizza-hut-slice-game' ); ?></p>
+			</div>
 
-			<?php // מקרא – קבוצת הבונוסים ?>
+			<?php // מקרא – בונוסים מימין, מכשולים משמאל (שורה אחת) ?>
+			<div class="phsg-legend-row">
 			<div class="phsg-legend-group phsg-legend-group--good">
 				<span class="phsg-legend-title phsg-legend-title--good"><?php esc_html_e( '🏆 שווה נקודות — תתפסו!', 'pizza-hut-slice-game' ); ?></span>
 				<div class="phsg-legend">
@@ -134,6 +142,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 					</div>
 				</div>
 			</div>
+			</div><?php // סוף phsg-legend-row ?>
 
 			<span class="phsg-note-pill"><?php esc_html_e( '⏱ 60 שניות · רצף של 5 תפיסות = בונוס +2', 'pizza-hut-slice-game' ); ?></span>
 			<button type="button" class="phsg-cta phsg-cta--xl" data-action="go-form"><?php esc_html_e( 'מתחילים ‹', 'pizza-hut-slice-game' ); ?></button>
@@ -186,6 +195,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 			<div class="phsg-stage" data-stage>
 				<div class="phsg-combo" data-combo hidden></div>
 
+				<div data-slices></div>
 				<div class="phsg-sprite phsg-sprite--slice" data-slice hidden>
 					<div class="phsg-sprite__wobble">
 						<span class="phsg-sprite__skin" data-skin="normal"><?php echo phsg_svg_game_slice( false ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>

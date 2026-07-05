@@ -35,7 +35,8 @@
 		}, this);
 
 		this.stage = root.querySelector('[data-stage]');
-		this.slice = root.querySelector('[data-slice]');
+		this.slice = root.querySelector('[data-slice]'); // אב-טיפוס לשכפול – נשאר נסתר.
+		this.slicesEl = root.querySelector('[data-slices]');
 		this.obstaclesEl = root.querySelector('[data-obstacles]');
 		this.bonusEl = root.querySelector('[data-bonus]');
 		this.cheeseEl = root.querySelector('[data-cheese]');
@@ -83,7 +84,6 @@
 		this.reactions = [];
 		this.clicks = 0;
 		this.frenzyUntil = 0;
-		this.sliceGold = false;
 		this.sliceSpawn = 0;
 		this.sliceDeadline = 0;
 		this.cheese = null;
@@ -237,14 +237,6 @@
 			});
 		}
 
-		if (this.slice) {
-			this.slice.addEventListener('pointerdown', function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				self._hitSlice(e);
-			});
-		}
-
 		if (this.bonusEl) {
 			this.bonusEl.addEventListener('pointerdown', function (e) {
 				e.preventDefault();
@@ -279,6 +271,14 @@
 			case 'copy-coupon':
 				this._copyCoupon();
 				break;
+			case 'promo-scroll': {
+				// גלילה חלקה לכפתור "מתחילים".
+				var cta = this.root.querySelector('.phsg-cta--xl');
+				if (cta) {
+					cta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+				break;
+			}
 			case 'toggle-sound':
 				this.muted = !this.muted;
 				try {
@@ -398,7 +398,7 @@
 		this._requestToken();
 		this._show('game');
 		this._renderHud();
-		this.slice.hidden = true;
+		this.slicesEl.innerHTML = '';
 		this.obstaclesEl.innerHTML = '';
 		this.bonusEl.hidden = true;
 		this.popupsEl.innerHTML = '';
@@ -482,11 +482,28 @@
 	/**
 	 * מיקום משולש חדש + מכשולים + בונוס (אלגוריתם האב-טיפוס).
 	 */
+	// כמות משולשים בו-זמנית לפי שלב (1-5): יותר שלבים = יותר משולשים.
+	var SLICES_BY_LEVEL = [1, 1, 2, 2, 3];
+
 	Game.prototype._spawnSlice = function () {
 		var lv = this.level();
-		var x = 5 + Math.random() * 70;
-		var y = 8 + Math.random() * 60;
-		var gold = Math.random() < 0.1;
+
+		// הגרלת מיקומי המשולשים – שומרים מרחק ביניהם.
+		var slices = [];
+		var n = SLICES_BY_LEVEL[lv] || 1;
+		for (var k = 0; k < n; k++) {
+			var sx;
+			var sy;
+			var st = 0;
+			do {
+				sx = 5 + Math.random() * 70;
+				sy = 8 + Math.random() * 60;
+				st++;
+			} while (st < 25 && slices.some(function (p) { return Math.hypot(sx - p.x, sy - p.y) < 20; }));
+			slices.push({ x: sx, y: sy, gold: Math.random() < 0.1 });
+		}
+		var x = slices[0].x;
+		var y = slices[0].y;
 
 		// מכשולים: 2 + שלב (עד 7).
 		var count = Math.min(7, 2 + lv);
@@ -503,7 +520,7 @@
 				ox = 4 + Math.random() * 80;
 				oy = 6 + Math.random() * 70;
 				tries++;
-			} while (tries < 25 && (Math.hypot(ox - x, oy - y) < minDist || obstacles.some(function (o) { return Math.hypot(ox - o.x, oy - o.y) < 13; })));
+			} while (tries < 25 && (slices.some(function (p) { return Math.hypot(ox - p.x, oy - p.y) < minDist; }) || obstacles.some(function (o) { return Math.hypot(ox - o.x, oy - o.y) < 13; })));
 			var burnt = lv >= 1 && i === 0 && Math.random() < 0.45;
 			var type = burnt ? 'burnt' : types[Math.floor(Math.random() * types.length)];
 			obstacles.push({
@@ -547,9 +564,8 @@
 		this.sliceSpawn = Date.now();
 		// שהות המשולש: 5 שניות בתחילת המשחק, ומתקצרת ככל שהזמן אוזל (עד 1.1 שנ').
 		this.sliceDeadline = Date.now() + Math.max(1100, 5000 - lv * 975);
-		this.sliceGold = gold;
 
-		this._renderSlice(x, y, gold, lv);
+		this._renderSlices(slices, lv);
 		this._renderObstacles(obstacles);
 		this._renderBonus(bonus);
 		this._renderCheese(cheese);
@@ -557,26 +573,36 @@
 
 	/* ==================== רינדור ==================== */
 
-	Game.prototype._renderSlice = function (x, y, gold, lv) {
+	Game.prototype._renderSlices = function (list, lv) {
+		var self = this;
 		var base = 116 - lv * 10;
-		this.slice.style.left = x + '%';
-		this.slice.style.top = y + '%';
-		this.slice.style.width = base + 'px';
-		this.slice.style.height = Math.round(base * 1.1) + 'px';
-		this.slice.setAttribute('data-type', gold ? 'gold' : 'normal');
-		this.slice.classList.toggle('is-gold', gold);
-		this.slice.querySelectorAll('[data-gold-only]').forEach(function (el) {
-			el.hidden = !gold;
+		this.slicesEl.innerHTML = '';
+
+		list.forEach(function (sl) {
+			var el = self.slice.cloneNode(true);
+			el.removeAttribute('data-slice');
+			el.hidden = false;
+			el.style.left = sl.x + '%';
+			el.style.top = sl.y + '%';
+			el.style.width = base + 'px';
+			el.style.height = Math.round(base * 1.1) + 'px';
+			el.setAttribute('data-type', sl.gold ? 'gold' : 'normal');
+			el.classList.toggle('is-gold', sl.gold);
+			el.querySelectorAll('[data-gold-only]').forEach(function (g) {
+				g.hidden = !sl.gold;
+			});
+			// תנועת ריחוף משלב 3.
+			if (lv >= 2) {
+				el.classList.add('is-drifting');
+				el.style.animationDuration = (3.4 - lv * 0.45).toFixed(2) + 's';
+			}
+			el.addEventListener('pointerdown', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				self._hitSlice(e, sl.gold);
+			});
+			self.slicesEl.appendChild(el);
 		});
-		// תנועת ריחוף משלב 3.
-		if (lv >= 2) {
-			this.slice.classList.add('is-drifting');
-			this.slice.style.animationDuration = (3.4 - lv * 0.45).toFixed(2) + 's';
-		} else {
-			this.slice.classList.remove('is-drifting');
-			this.slice.style.animationDuration = '';
-		}
-		this.slice.hidden = false;
 	};
 
 	Game.prototype._renderObstacles = function (list) {
@@ -704,11 +730,10 @@
 		}, 820);
 	};
 
-	Game.prototype._hitSlice = function (e) {
-		if (this.timeLeft <= 0 || this.slice.hidden) {
+	Game.prototype._hitSlice = function (e, wasGold) {
+		if (this.timeLeft <= 0 || !this.slicesEl.children.length) {
 			return;
 		}
-		var wasGold = this.sliceGold;
 		var frenzy = Date.now() < this.frenzyUntil;
 		var mult = frenzy ? 2 : 1;
 		var newStreak = this.streak + 1;
@@ -773,19 +798,28 @@
 	};
 
 	/**
-	 * חיווי "שלב N!" במרכז הבמה + צליל עלייה.
+	 * מסך התחלפות שלב – אוברליי מלא על הבמה + פנפרה.
 	 *
 	 * @param {number} levelNum מספר השלב (1-5).
 	 */
 	Game.prototype._levelUp = function (levelNum) {
 		this.playGo();
-		var el = document.createElement('div');
-		el.className = 'phsg-popup phsg-popup--level';
-		el.style.left = '50%';
-		el.style.top = '35%';
-		el.textContent = t('level', 'שלב') + ' ' + levelNum + '!';
-		this.popupsEl.appendChild(el);
-		window.setTimeout(function () { el.remove(); }, 1300);
+		this.playBonus();
+		// שלא יברח משולש בזמן ההכרזה.
+		this.sliceDeadline += 1100;
+
+		var ov = document.createElement('div');
+		ov.className = 'phsg-levelflash';
+		var num = document.createElement('span');
+		num.className = 'phsg-levelflash__num';
+		num.textContent = t('level', 'שלב') + ' ' + levelNum + '!';
+		var sub = document.createElement('span');
+		sub.className = 'phsg-levelflash__sub';
+		sub.textContent = t('levelUpSub', 'מהר יותר… קשה יותר!');
+		ov.appendChild(num);
+		ov.appendChild(sub);
+		this.stage.appendChild(ov);
+		window.setTimeout(function () { ov.remove(); }, 1150);
 	};
 
 	Game.prototype._vibrate = function (ms) {
@@ -808,7 +842,7 @@
 			? this.reactions.reduce(function (a, b) { return a + b; }, 0) / this.reactions.length
 			: 0;
 
-		this.slice.hidden = true;
+		this.slicesEl.innerHTML = '';
 		this.bonusEl.hidden = true;
 		this.frenzyEl.hidden = true;
 		this.stage.classList.remove('is-frenzy');

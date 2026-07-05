@@ -98,6 +98,7 @@ class PHSG_Shortcode {
 					'youSuffix'  => __( '(את/ה!)', 'pizza-hut-slice-game' ),
 					'copied'     => __( 'הועתק!', 'pizza-hut-slice-game' ),
 					'level'      => __( 'שלב', 'pizza-hut-slice-game' ),
+					'levelUpSub' => __( 'מהר יותר… קשה יותר!', 'pizza-hut-slice-game' ),
 				),
 			)
 		);
