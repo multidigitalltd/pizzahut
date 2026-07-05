@@ -65,6 +65,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 
 		<?php // ===== אינטרו ===== ?>
 		<section class="phsg-screen phsg-intro is-active" data-screen="intro">
+			<div class="phsg-intro__side">
 			<div class="phsg-hero">
 				<div class="phsg-hero__glow" aria-hidden="true"></div>
 				<div class="phsg-hero__float">
@@ -82,7 +83,9 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 				</p>
 				<button type="button" class="phsg-promo__here" data-action="promo-scroll"><?php esc_html_e( 'גם ממש כאן — על המסך 🍕', 'pizza-hut-slice-game' ); ?></button>
 			</div>
+			</div><?php // סוף phsg-intro__side ?>
 
+			<div class="phsg-intro__main">
 			<div class="phsg-howto">
 				<h2 class="phsg-howto__title"><?php esc_html_e( 'איך משחקים?', 'pizza-hut-slice-game' ); ?></h2>
 				<p class="phsg-howto__text"><?php esc_html_e( 'משולש פיצה חם קופץ על המסך — יש לכם 60 שניות לתפוס כמה שיותר. זהירות מהפטריות, הזיתים, הבצל והעגבניות!', 'pizza-hut-slice-game' ); ?></p>
@@ -147,6 +150,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 			<span class="phsg-note-pill"><?php esc_html_e( '⏱ 60 שניות · רצף של 5 תפיסות = בונוס +2', 'pizza-hut-slice-game' ); ?></span>
 			<button type="button" class="phsg-cta phsg-cta--xl" data-action="go-form"><?php esc_html_e( 'מתחילים ‹', 'pizza-hut-slice-game' ); ?></button>
 			<span class="phsg-legal"><?php esc_html_e( 'ההשתתפות כרוכה במילוי פרטים · בכפוף לתקנון', 'pizza-hut-slice-game' ); ?></span>
+			</div><?php // סוף phsg-intro__main ?>
 		</section>
 
 		<?php // ===== טופס משתתפים ===== ?>

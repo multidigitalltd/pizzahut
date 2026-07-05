@@ -272,10 +272,13 @@
 				this._copyCoupon();
 				break;
 			case 'promo-scroll': {
-				// גלילה חלקה לכפתור "מתחילים".
+				// גלילה חלקה לכפתור "מתחילים" – עם חסימה כדי לא לגלוש מעבר לסוף הדף.
 				var cta = this.root.querySelector('.phsg-cta--xl');
 				if (cta) {
-					cta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+					var rect = cta.getBoundingClientRect();
+					var target = window.pageYOffset + rect.top - (window.innerHeight - rect.height) / 2;
+					var max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+					window.scrollTo({ top: Math.max(0, Math.min(target, max)), behavior: 'smooth' });
 				}
 				break;
 			}

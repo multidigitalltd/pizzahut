@@ -100,7 +100,10 @@ html.phsg-takeover body {
 	padding: 0 !important;
 	max-width: none !important;
 	overflow-x: hidden;
-	background: #B58967 !important;
+	overflow-y: auto !important; /* ביטול כל נעילת גלילה של תבנית/תוסף אחר */
+	height: auto !important;
+	/* אותו גרדיאנט כמו המשחק – בלי "קו תפר" אם משהו מוסיף גובה מתחת */
+	background: radial-gradient(120% 90% at 50% 0%, #C79A75 0%, #B58967 48%, #966E4E 100%) fixed !important;
 }
 
 html.phsg-takeover { margin-top: 0 !important; } /* ביטול היסט סרגל הניהול */
@@ -261,6 +264,31 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	margin-top: 0;
 }
 
+.phsg-intro__side,
+.phsg-intro__main {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 13px;
+}
+
+/* דסקטופ: פריסה רוחבית – הירו והמסר מימין, המקרא והכפתור משמאל */
+@media (min-width: 900px) {
+	.phsg-col { max-width: 1060px; }
+
+	.phsg-intro {
+		max-width: 100%;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		gap: 40px;
+	}
+
+	.phsg-intro__side { flex: 0 0 330px; }
+	.phsg-intro__main { flex: 1; max-width: 600px; }
+}
+
 .phsg-hero { position: relative; width: 150px; height: 160px; }
 
 .phsg-hero__glow {
@@ -392,13 +420,16 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-legend-group--bad { flex: 1; }
 
 .phsg-legend-title {
-	display: inline-block;
+	display: inline-flex;
+	align-items: center;
 	border: 3px solid var(--black);
 	border-radius: 999px;
-	padding: 5px 20px;
+	padding: 4px 14px;
 	font-weight: 700;
-	font-size: 15px;
+	font-size: 13px;
 	box-shadow: 0 3px 0 var(--black);
+	white-space: nowrap; /* שהכותרת לא תישבר ותדחוף את הכרטיסים */
+	height: 34px;
 }
 
 .phsg-legend-title--good {
@@ -415,7 +446,9 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	width: 100%;
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-auto-rows: 1fr;
 	gap: 8px;
+	flex: 1;
 }
 
 /* קבוצת המכשולים – טור אחד. */
