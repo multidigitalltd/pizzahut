@@ -68,9 +68,11 @@ class PHSG_Anti_Cheat {
 			if ( $avg_reaction > ( self::SLICE_TIMEOUT * 1000 ) ) {
 				return new WP_Error( 'phsg_reaction_too_slow', __( 'זמן תגובה לא תקין.', 'pizza-hut-slice-game' ) );
 			}
-			// בדיקת עקביות: clicks * avg_reaction לא יכול לעבור את משך המשחק בפועל.
+			// בדיקת עקביות רכה: זמן התגובה המצטבר של תפיסות המשולש חסום במשך
+			// המשחק, אבל clicks כולל גם תפיסות גבינה (שנתפסות במקביל לחלון
+			// המשולש) – לכן מרווח של 40% ומרווח קבוע, כדי לא לפסול משחק כשר.
 			$spent_ms = $clicks * $avg_reaction;
-			if ( $spent_ms > ( $duration * 1000 ) + 500 ) {
+			if ( $spent_ms > ( $duration * 1000 ) * 1.4 + 1000 ) {
 				return new WP_Error( 'phsg_inconsistent', __( 'הנתונים אינם עקביים.', 'pizza-hut-slice-game' ) );
 			}
 		} elseif ( $score > 0 || $avg_reaction > 0 ) {

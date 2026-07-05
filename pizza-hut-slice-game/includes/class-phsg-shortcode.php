@@ -96,6 +96,8 @@ class PHSG_Shortcode {
 					'titleGood'  => __( 'כל הכבוד!', 'pizza-hut-slice-game' ),
 					'titleMeh'   => __( 'לא רע… עוד סיבוב?', 'pizza-hut-slice-game' ),
 					'youSuffix'  => __( '(את/ה!)', 'pizza-hut-slice-game' ),
+					'copied'     => __( 'הועתק!', 'pizza-hut-slice-game' ),
+					'level'      => __( 'שלב', 'pizza-hut-slice-game' ),
 				),
 			)
 		);
@@ -127,9 +129,11 @@ class PHSG_Shortcode {
 
 		$atts = shortcode_atts(
 			array(
-				'title'      => __( "תפוס ת'משולש", 'pizza-hut-slice-game' ),
-				'logo'       => '', // URL ללוגו. ריק = הלוגו הרשמי המצורף לתוסף.
-				'fullscreen' => '1', // 1 = השתלטות על כל העמוד (הסתרת התבנית). 0 = הטמעה רגילה.
+				'title'       => __( "תפוס ת'משולש", 'pizza-hut-slice-game' ),
+				'logo'        => '', // URL ללוגו. ריק = הלוגו הרשמי המצורף לתוסף.
+				'fullscreen'  => '1', // 1 = השתלטות על כל העמוד (הסתרת התבנית). 0 = הטמעה רגילה.
+				'coupon_code' => 'HUTGAME', // קוד הפינוק במסך הסיום. ריק = הסתרת הכרטיס.
+				'coupon_url'  => 'https://www.pizzahut.co.il/?utm_source=slice_game&utm_medium=game&utm_campaign=coupon', // יעד כפתור ההזמנה.
 			),
 			$atts,
 			'pizza_hut_slice_game'

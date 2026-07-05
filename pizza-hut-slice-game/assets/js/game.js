@@ -91,6 +91,7 @@
 		this.cheeseUntil = 0;
 		this.startedAt = 0;
 		this.realStart = 0;
+		this.lastLevel = 0;
 		clearInterval(this.loop);
 		clearInterval(this.cd);
 		clearInterval(this.countUpTimer);
@@ -275,6 +276,9 @@
 				this._clearConfetti();
 				this._show('intro');
 				break;
+			case 'copy-coupon':
+				this._copyCoupon();
+				break;
 			case 'toggle-sound':
 				this.muted = !this.muted;
 				try {
@@ -285,6 +289,28 @@
 					this.playTick();
 				}
 				break;
+		}
+	};
+
+	/**
+	 * העתקת קוד הקופון ללוח עם חיווי "הועתק!".
+	 */
+	Game.prototype._copyCoupon = function () {
+		var btn = this.root.querySelector('[data-action="copy-coupon"]');
+		if (!btn) {
+			return;
+		}
+		var code = btn.getAttribute('data-coupon-code') || '';
+		var copied = t('copied', 'הועתק!');
+		var mark = function () {
+			var original = btn.textContent;
+			btn.textContent = copied + ' ✓';
+			window.setTimeout(function () { btn.textContent = original; }, 1600);
+		};
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(code).then(mark).catch(function () { /* מתעלמים */ });
+		} else {
+			mark();
 		}
 	};
 
@@ -442,6 +468,12 @@
 			if (self.cheese && Date.now() > self.cheeseUntil) {
 				self._renderCheese(null);
 			}
+			// חיווי מעבר שלב.
+			var lv = self.level();
+			if (lv !== self.lastLevel) {
+				self.lastLevel = lv;
+				self._levelUp(lv + 1);
+			}
 			self._renderHud();
 			self._renderFrenzy();
 		}, 100);
@@ -594,7 +626,7 @@
 		this._vibrate(25);
 		this.score += 2;
 		this.clicks += 1;
-		this.reactions.push(Date.now() - this.cheeseSpawn);
+		// זמן תגובה נמדד רק על תפיסות משולש (מדד הדירוג) – לא על גבינה.
 		this._renderCheese(null);
 		this._renderHud();
 	};
@@ -738,6 +770,22 @@
 		this._renderBonus(null);
 		this._renderHud();
 		this._renderFrenzy();
+	};
+
+	/**
+	 * חיווי "שלב N!" במרכז הבמה + צליל עלייה.
+	 *
+	 * @param {number} levelNum מספר השלב (1-5).
+	 */
+	Game.prototype._levelUp = function (levelNum) {
+		this.playGo();
+		var el = document.createElement('div');
+		el.className = 'phsg-popup phsg-popup--level';
+		el.style.left = '50%';
+		el.style.top = '35%';
+		el.textContent = t('level', 'שלב') + ' ' + levelNum + '!';
+		this.popupsEl.appendChild(el);
+		window.setTimeout(function () { el.remove(); }, 1300);
 	};
 
 	Game.prototype._vibrate = function (ms) {

@@ -125,12 +125,13 @@ class PHSG_DB {
 	}
 
 	/**
-	 * חישוב דירוג של רשומה מסוימת לפי כללי הדירוג.
+	 * חישוב דירוג לפי שחקן (לא לפי שורה בודדת).
 	 *
-	 * דירוג = מספר הרשומות שמדורגות מעליה + 1.
+	 * כל שחקן (לפי אימייל) מיוצג על ידי התוצאה הטובה ביותר שלו.
+	 * דירוג = מספר השחקנים האחרים עם תוצאה טובה יותר + 1.
 	 * סדר עדיפויות: ניקוד גבוה > זמן תגובה ממוצע קצר > הגשה מוקדמת.
 	 *
-	 * @param int $row_id מזהה הרשומה.
+	 * @param int $row_id מזהה הרשומה שהוגשה כעת.
 	 * @return int הדירוג (1 = מקום ראשון), 0 אם לא נמצא.
 	 */
 	public static function get_rank( $row_id ) {
@@ -138,10 +139,10 @@ class PHSG_DB {
 
 		$table = self::table_name();
 
-		// שליפת הרשומה הנוכחית.
+		// שליפת הרשומה כדי לזהות את השחקן.
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT score, avg_reaction, created_at FROM {$table} WHERE id = %d", // phpcs:ignore WordPress.DB
+				"SELECT email FROM {$table} WHERE id = %d", // phpcs:ignore WordPress.DB
 				$row_id
 			)
 		);
@@ -150,24 +151,37 @@ class PHSG_DB {
 			return 0;
 		}
 
-		// ספירת כל הרשומות שמדורגות טוב יותר.
+		// התוצאה הטובה ביותר של השחקן הזה.
+		$best = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT score, avg_reaction, created_at FROM {$table}
+				 WHERE email = %s
+				 ORDER BY score DESC, avg_reaction ASC, created_at ASC, id ASC
+				 LIMIT 1", // phpcs:ignore WordPress.DB
+				$row->email
+			)
+		);
+
+		if ( ! $best ) {
+			return 0;
+		}
+
+		// שחקן אחר מדורג מעליי אם יש לו רשומה כלשהי שטובה מהשיא שלי
+		// (שקול לכך שהשיא שלו טוב מהשיא שלי).
 		$better = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE
+				"SELECT COUNT(DISTINCT email) FROM {$table} WHERE email != %s AND (
 					score > %d
 					OR ( score = %d AND avg_reaction < %f )
 					OR ( score = %d AND avg_reaction = %f AND created_at < %s )
-					OR ( score = %d AND avg_reaction = %f AND created_at = %s AND id < %d )", // phpcs:ignore WordPress.DB
-				$row->score,
-				$row->score,
-				$row->avg_reaction,
-				$row->score,
-				$row->avg_reaction,
-				$row->created_at,
-				$row->score,
-				$row->avg_reaction,
-				$row->created_at,
-				$row_id
+				)", // phpcs:ignore WordPress.DB
+				$row->email,
+				$best->score,
+				$best->score,
+				$best->avg_reaction,
+				$best->score,
+				$best->avg_reaction,
+				$best->created_at
 			)
 		);
 
@@ -175,7 +189,9 @@ class PHSG_DB {
 	}
 
 	/**
-	 * שליפת טבלת המובילים (ללא חשיפת טלפון/אימייל).
+	 * שליפת טבלת המובילים – שורה אחת לכל שחקן (התוצאה הטובה ביותר שלו).
+	 *
+	 * ללא חשיפת טלפון/אימייל; האימייל משמש רק לזיהוי ייחודי פנימי.
 	 *
 	 * @param int  $limit מספר השורות להחזרה.
 	 * @param bool $daily true = תוצאות מהיום בלבד (לפרס היומי).
@@ -187,31 +203,55 @@ class PHSG_DB {
 		$table = self::table_name();
 		$limit = max( 1, min( 100, (int) $limit ) );
 
+		// שולפים את הרשומות המובילות בסדר הדירוג ומסננים לשורה הטובה ביותר
+		// של כל שחקן. חלון של פי-50 מכסה גם שחקנים עם הרבה סיבובים.
+		$fetch = min( 1000, $limit * 50 );
+
 		if ( $daily ) {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT display_name, score, duration, avg_reaction
+					"SELECT email, display_name, score, duration, avg_reaction
 					 FROM {$table}
 					 WHERE DATE(created_at) = %s
 					 ORDER BY score DESC, avg_reaction ASC, created_at ASC, id ASC
 					 LIMIT %d", // phpcs:ignore WordPress.DB
 					current_time( 'Y-m-d' ),
-					$limit
+					$fetch
 				)
 			);
 		} else {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT display_name, score, duration, avg_reaction
+					"SELECT email, display_name, score, duration, avg_reaction
 					 FROM {$table}
 					 ORDER BY score DESC, avg_reaction ASC, created_at ASC, id ASC
 					 LIMIT %d", // phpcs:ignore WordPress.DB
-					$limit
+					$fetch
 				)
 			);
 		}
 
-		return is_array( $rows ) ? $rows : array();
+		if ( ! is_array( $rows ) ) {
+			return array();
+		}
+
+		// שורה ראשונה בסדר הדירוג לכל אימייל = השיא של השחקן.
+		$seen   = array();
+		$output = array();
+		foreach ( $rows as $row ) {
+			$key = strtolower( (string) $row->email );
+			if ( isset( $seen[ $key ] ) ) {
+				continue;
+			}
+			$seen[ $key ] = true;
+			unset( $row->email ); // לא חושפים אימייל החוצה.
+			$output[] = $row;
+			if ( count( $output ) >= $limit ) {
+				break;
+			}
+		}
+
+		return $output;
 	}
 
 	/**
