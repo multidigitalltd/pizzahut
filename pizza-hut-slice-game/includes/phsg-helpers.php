@@ -270,7 +270,7 @@ if ( ! function_exists( 'phsg_svg_bg_pizza' ) ) {
 		$cuts    = '';
 		$strands = '';
 		foreach ( array( 8, 68, 128, 188, 248, 308 ) as $deg ) {
-			$cuts .= '<path d="M200 200 L200 12" stroke="rgba(30,6,4,0.9)" stroke-width="9" transform="rotate(' . $deg . ' 200 200)"/>';
+			$cuts .= '<path d="M200 200 L200 12" stroke="rgba(70,18,6,0.82)" stroke-width="5.5" transform="rotate(' . $deg . ' 200 200)"/>';
 		}
 		foreach ( array( 68, 188, 308 ) as $deg ) {
 			$strands .= '<g transform="rotate(' . $deg . ' 200 200)"><path d="M195 90 q5 6 10 0" fill="none" stroke="#F7E3A0" stroke-width="2" opacity="0.9"/><path d="M194 130 q6 7 12 0" fill="none" stroke="#F2D488" stroke-width="1.6" opacity="0.85"/><path d="M196 62 q4 5 8 0" fill="none" stroke="#F7E3A0" stroke-width="1.6" opacity="0.8"/></g>';
@@ -278,21 +278,49 @@ if ( ! function_exists( 'phsg_svg_bg_pizza' ) ) {
 		return '<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 			<defs>
 				<radialGradient id="phBgCrust" cx="0.5" cy="0.5" r="0.5"><stop offset="0.82" stop-color="#D89A44"/><stop offset="0.92" stop-color="#C07E2C"/><stop offset="1" stop-color="#8E5514"/></radialGradient>
-				<radialGradient id="phBgCheese" cx="0.42" cy="0.4" r="0.75"><stop offset="0" stop-color="#F7DC85"/><stop offset="0.6" stop-color="#EBB84E"/><stop offset="1" stop-color="#CE8F2E"/></radialGradient>
+				<radialGradient id="phBgCheese" cx="0.42" cy="0.4" r="0.75"><stop offset="0" stop-color="#F2CE6E"/><stop offset="0.6" stop-color="#E0A83E"/><stop offset="1" stop-color="#B87A22"/></radialGradient>
 				<filter id="phBgT" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.028 0.032" numOctaves="3" seed="14" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="3.4" diffuseConstant="1" result="l"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
 				<filter id="phBgCrT" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.06 0.07" numOctaves="2" seed="9" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="2.6" diffuseConstant="1" result="l"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
 			</defs>
 			<circle cx="200" cy="200" r="188" fill="url(#phBgCrust)" filter="url(#phBgCrT)"/>
-			<circle cx="200" cy="200" r="162" fill="url(#phBgCheese)" filter="url(#phBgT)"/>
-			<ellipse cx="150" cy="120" rx="34" ry="24" fill="#B26A1E" opacity="0.4"/>
-			<ellipse cx="262" cy="150" rx="28" ry="20" fill="#A8611A" opacity="0.38"/>
-			<ellipse cx="235" cy="265" rx="36" ry="24" fill="#B26A1E" opacity="0.4"/>
-			<ellipse cx="130" cy="240" rx="26" ry="18" fill="#A8611A" opacity="0.35"/>
+			<circle cx="200" cy="200" r="150" fill="url(#phBgCheese)" filter="url(#phBgT)"/>
+			<ellipse cx="150" cy="120" rx="34" ry="24" fill="#A85E14" opacity="0.55"/>
+			<ellipse cx="262" cy="150" rx="28" ry="20" fill="#9C5410" opacity="0.5"/>
+			<ellipse cx="235" cy="265" rx="36" ry="24" fill="#A85E14" opacity="0.55"/>
+			<ellipse cx="130" cy="240" rx="26" ry="18" fill="#9C5410" opacity="0.5"/>
 			<ellipse cx="196" cy="180" rx="22" ry="16" fill="#C0762A" opacity="0.4"/>
 			<ellipse cx="172" cy="145" rx="18" ry="12" fill="#FFEFB0" opacity="0.4"/>
 			<ellipse cx="245" cy="205" rx="16" ry="11" fill="#FFEFB0" opacity="0.35"/>
 			<ellipse cx="160" cy="272" rx="17" ry="11" fill="#FFEFB0" opacity="0.35"/>
 			' . $cuts . $strands . '
+		</svg>';
+	}
+}
+
+if ( ! function_exists( 'phsg_svg_store' ) ) {
+	/**
+	 * חנות פיצה האט קטנה וזוהרת – מוצבת על מפת הבמה (המשולשים קופצים מחנות לחנות).
+	 *
+	 * @return string
+	 */
+	function phsg_svg_store() {
+		return '<svg viewBox="0 0 90 78" width="100%" height="100%" style="pointer-events:none;">
+			<defs>
+				<linearGradient id="phStB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF6E8"/><stop offset="1" stop-color="#E3D2BC"/></linearGradient>
+				<linearGradient id="phStR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF5A63"/><stop offset="1" stop-color="#C4101E"/></linearGradient>
+			</defs>
+			<ellipse cx="45" cy="72" rx="30" ry="5" fill="rgba(0,0,0,0.45)"/>
+			<rect x="16" y="34" width="58" height="34" rx="5" fill="url(#phStB)"/>
+			<rect x="16" y="34" width="58" height="6" fill="rgba(120,80,30,0.18)"/>
+			<rect x="22" y="44" width="14" height="12" rx="2.5" fill="#FFD968" class="phsg-store__win"/>
+			<rect x="54" y="44" width="14" height="12" rx="2.5" fill="#FFD968" class="phsg-store__win"/>
+			<rect x="39" y="46" width="12" height="22" rx="2.5" fill="#C4101E"/>
+			<rect x="40.5" y="47.5" width="4" height="19" rx="1.5" fill="#E8404E" opacity="0.7"/>
+			<path d="M6 36 Q45 4 84 36 L73 36 Q45 15 17 36 Z" fill="url(#phStR)"/>
+			<path d="M12 33 Q45 9 78 33" fill="none" stroke="#FF9BA0" stroke-width="2.4" stroke-linecap="round" opacity="0.75"/>
+			<ellipse cx="45" cy="30" rx="17" ry="8.5" fill="#FFFFFF"/>
+			<ellipse cx="45" cy="30" rx="17" ry="8.5" fill="none" stroke="#E3D2BC" stroke-width="1.2"/>
+			<text x="45" y="33" text-anchor="middle" font-size="7.5" font-weight="700" font-style="italic" fill="#E8192C" font-family="Almoni, Rubik, sans-serif">Pizza Hut</text>
 		</svg>';
 	}
 }

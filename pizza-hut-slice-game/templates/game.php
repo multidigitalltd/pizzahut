@@ -44,8 +44,20 @@ $phsg_logo_url = ! empty( $atts['logo'] ) ? $atts['logo'] : PHSG_PLUGIN_URL . 'a
 			</button>
 		</header>
 
+		<?php // ===== מסך טעינה – כמו משחק אמיתי ===== ?>
+		<section class="phsg-screen phsg-boot is-active" data-screen="boot">
+			<div class="phsg-boot__logo">
+				<img src="<?php echo esc_url( $phsg_logo_url ); ?>" alt="Pizza Hut">
+			</div>
+			<div class="phsg-boot__title"><?php esc_html_e( "תפוס ת'משולש!", 'pizza-hut-slice-game' ); ?></div>
+			<span class="phsg-boot__sub">SLICE HUNT · 2026</span>
+			<div class="phsg-boot__bar"><div class="phsg-boot__fill" data-boot-fill></div></div>
+			<div class="phsg-boot__pct" data-boot-pct>0%</div>
+			<div class="phsg-boot__tip"><?php esc_html_e( 'טיפ: משולש זהב שווה +3 נקודות ✨', 'pizza-hut-slice-game' ); ?></div>
+		</section>
+
 		<?php // ===== אינטרו ===== ?>
-		<section class="phsg-screen phsg-intro is-active" data-screen="intro">
+		<section class="phsg-screen phsg-intro" data-screen="intro" hidden>
 			<div class="phsg-intro__side">
 			<div class="phsg-hero">
 				<div class="phsg-hero__glow" aria-hidden="true"></div>
@@ -63,8 +75,8 @@ $phsg_logo_url = ! empty( $atts['logo'] ) ? $atts['logo'] : PHSG_PLUGIN_URL . 'a
 					<?php esc_html_e( 'את פיצה האט לא צריך לחפש —', 'pizza-hut-slice-game' ); ?><br>
 					<?php esc_html_e( 'לכל מקום בו תצאו לטייל ולבלות תמצאו', 'pizza-hut-slice-game' ); ?>
 					<strong class="phsg-promo__hot"><?php esc_html_e( 'פיצה חמה, טרייה וטעימה.', 'pizza-hut-slice-game' ); ?></strong>
+					<?php esc_html_e( 'גם ממש כאן — על המסך 🍕', 'pizza-hut-slice-game' ); ?>
 				</p>
-				<button type="button" class="phsg-promo__here" data-action="promo-scroll"><?php esc_html_e( 'גם ממש כאן — על המסך 🍕', 'pizza-hut-slice-game' ); ?></button>
 			</div>
 			</div><?php // סוף phsg-intro__side ?>
 
@@ -131,7 +143,7 @@ $phsg_logo_url = ! empty( $atts['logo'] ) ? $atts['logo'] : PHSG_PLUGIN_URL . 'a
 			</div><?php // סוף phsg-legend-row ?>
 
 			<span class="phsg-note-pill"><?php esc_html_e( '⏱ שלבים בלי סוף · עוברים שלב לפי תפיסות · כמה רחוק תגיעו?', 'pizza-hut-slice-game' ); ?></span>
-			<button type="button" class="phsg-cta phsg-cta--xl" data-action="go-form"><?php esc_html_e( 'מתחילים ‹', 'pizza-hut-slice-game' ); ?></button>
+			<button type="button" class="phsg-cta phsg-cta--xl" data-action="go-form"><?php esc_html_e( 'התחל משחק ‹', 'pizza-hut-slice-game' ); ?></button>
 			<span class="phsg-legal"><?php esc_html_e( 'ההשתתפות כרוכה במילוי פרטים · בכפוף לתקנון', 'pizza-hut-slice-game' ); ?></span>
 			</div><?php // סוף phsg-intro__main ?>
 		</section>
@@ -183,15 +195,31 @@ $phsg_logo_url = ! empty( $atts['logo'] ) ? $atts['logo'] : PHSG_PLUGIN_URL . 'a
 			<div class="phsg-stage" data-stage>
 				<?php // רקע הבמה – מפת ארץ ישראל מסוגננת ?>
 				<div class="phsg-stage__map" aria-hidden="true"><?php echo phsg_svg_israel_map(); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+
+				<?php // חנויות פיצה האט זוהרות – המשולשים קופצים מחנות לחנות ?>
+				<div class="phsg-stage__stores" aria-hidden="true">
+					<span class="phsg-store" style="left:46%; top:17%;"><?php echo phsg_svg_store(); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+					<span class="phsg-store phsg-store--sm" style="left:41%; top:36%;"><?php echo phsg_svg_store(); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+					<span class="phsg-store phsg-store--sm" style="left:57%; top:43%;"><?php echo phsg_svg_store(); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+					<span class="phsg-store" style="left:48%; top:60%;"><?php echo phsg_svg_store(); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+					<span class="phsg-store phsg-store--sm" style="left:18%; top:72%;"><?php echo phsg_svg_store(); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+					<span class="phsg-store" style="left:80%; top:28%;"><?php echo phsg_svg_store(); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+				</div>
+
+				<?php // אבק קסם ?>
+				<div class="phsg-stage__dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
 				<div class="phsg-stage__brand" aria-hidden="true"><?php esc_html_e( 'פיצה האט · בכל מקום בארץ 🍕', 'pizza-hut-slice-game' ); ?></div>
 
 				<div class="phsg-combo" data-combo hidden></div>
 
 				<div data-slices></div>
 				<div class="phsg-sprite phsg-sprite--slice" data-slice hidden>
+					<div class="phsg-sprite__pop">
 					<div class="phsg-sprite__wobble">
 						<span class="phsg-sprite__skin" data-skin="normal"><?php echo phsg_svg_game_slice( false ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 						<span class="phsg-sprite__skin" data-skin="gold"><?php echo phsg_svg_game_slice( true ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+					</div>
 					</div>
 					<span class="phsg-sparkle phsg-sparkle--a" data-gold-only hidden></span>
 					<span class="phsg-sparkle phsg-sparkle--b" data-gold-only hidden></span>

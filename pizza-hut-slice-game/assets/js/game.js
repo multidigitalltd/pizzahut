@@ -86,6 +86,8 @@
 		this.formErrorEl = root.querySelector('[data-form-error]');
 		this.soundBtn = root.querySelector('[data-action="toggle-sound"]');
 		this.soundLabel = root.querySelector('[data-sound-label]');
+		this.bootFill = root.querySelector('[data-boot-fill]');
+		this.bootPct = root.querySelector('[data-boot-pct]');
 
 		// אבות-טיפוס של SVG למכשולים/בונוסים.
 		this.protos = {};
@@ -105,7 +107,49 @@
 		this._resetGameState();
 		this._syncSound();
 		this._bind();
+		this._initTilt();
+		this._boot();
 	}
+
+	/* מסך טעינה בסגנון משחק – מתקדם מהר ואז נפתח האינטרו. */
+	Game.prototype._boot = function () {
+		var self = this;
+		if (!this.screens.boot || !this.bootFill) {
+			return;
+		}
+		var p = 0;
+		var iv = setInterval(function () {
+			p = Math.min(100, p + 3 + Math.random() * 9);
+			self.bootFill.style.width = p + '%';
+			if (self.bootPct) {
+				self.bootPct.textContent = Math.round(p) + '%';
+			}
+			if (p >= 100) {
+				clearInterval(iv);
+				setTimeout(function () {
+					self._show('intro');
+				}, 420);
+			}
+		}, 110);
+	};
+
+	/* אפקט הטיה תלת-ממדית לכרטיסים במעבר עכבר (דסקטופ בלבד). */
+	Game.prototype._initTilt = function () {
+		if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
+			return;
+		}
+		this.root.querySelectorAll('.phsg-legend__card, .phsg-stats__card, .phsg-coupon-card, .phsg-howto, .phsg-promo').forEach(function (card) {
+			card.addEventListener('mousemove', function (e) {
+				var r = card.getBoundingClientRect();
+				var rx = ((e.clientY - r.top) / r.height - 0.5) * -9;
+				var ry = ((e.clientX - r.left) / r.width - 0.5) * 9;
+				card.style.transform = 'perspective(700px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateY(-4px)';
+			});
+			card.addEventListener('mouseleave', function () {
+				card.style.transform = '';
+			});
+		});
+	};
 
 	Game.prototype._resetGameState = function () {
 		this.score = 0;
@@ -304,17 +348,6 @@
 			case 'copy-coupon':
 				this._copyCoupon();
 				break;
-			case 'promo-scroll': {
-				// גלילה חלקה לכפתור "מתחילים" – עם חסימה כדי לא לגלוש מעבר לסוף הדף.
-				var cta = this.root.querySelector('.phsg-cta--xl');
-				if (cta) {
-					var rect = cta.getBoundingClientRect();
-					var target = window.pageYOffset + rect.top - (window.innerHeight - rect.height) / 2;
-					var max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-					window.scrollTo({ top: Math.max(0, Math.min(target, max)), behavior: 'smooth' });
-				}
-				break;
-			}
 			case 'toggle-sound':
 				this.muted = !this.muted;
 				try {
