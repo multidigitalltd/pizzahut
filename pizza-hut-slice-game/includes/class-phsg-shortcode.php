@@ -99,6 +99,11 @@ class PHSG_Shortcode {
 					'copied'     => __( 'הועתק!', 'pizza-hut-slice-game' ),
 					'level'      => __( 'שלב', 'pizza-hut-slice-game' ),
 					'levelUpSub' => __( 'מהר יותר… קשה יותר!', 'pizza-hut-slice-game' ),
+					'levelBonus' => __( 'בונוס שלב', 'pizza-hut-slice-game' ),
+					'levelGoal'  => __( 'תפיסות ב-', 'pizza-hut-slice-game' ),
+					'strikes'    => __( 'מכשולים', 'pizza-hut-slice-game' ),
+					'titleTime'  => __( 'הזמן נגמר!', 'pizza-hut-slice-game' ),
+					'titleStrikes' => __( 'יותר מדי מכשולים…', 'pizza-hut-slice-game' ),
 				),
 			)
 		);

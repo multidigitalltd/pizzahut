@@ -88,7 +88,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 			<div class="phsg-intro__main">
 			<div class="phsg-howto">
 				<h2 class="phsg-howto__title"><?php esc_html_e( 'איך משחקים?', 'pizza-hut-slice-game' ); ?></h2>
-				<p class="phsg-howto__text"><?php esc_html_e( 'משולש פיצה חם קופץ על המסך — יש לכם 60 שניות לתפוס כמה שיותר. זהירות מהפטריות, הזיתים, הבצל והעגבניות!', 'pizza-hut-slice-game' ); ?></p>
+				<p class="phsg-howto__text"><?php esc_html_e( 'תפסו את מכסת המשולשים של כל שלב לפני שהזמן נגמר — מתחילים מ-7 תפיסות ב-60 שניות, וכל שלב קצר וקשה יותר. תפיסות מהירות ושלבים גבוהים שווים יותר נקודות. זהירות: 5 פגיעות במכשולים בשלב אחד — והמשחק נגמר!', 'pizza-hut-slice-game' ); ?></p>
 			</div>
 
 			<?php // מקרא – בונוסים מימין, מכשולים משמאל (שורה אחת) ?>
@@ -147,7 +147,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 			</div>
 			</div><?php // סוף phsg-legend-row ?>
 
-			<span class="phsg-note-pill"><?php esc_html_e( '⏱ 60 שניות · רצף של 5 תפיסות = בונוס +2', 'pizza-hut-slice-game' ); ?></span>
+			<span class="phsg-note-pill"><?php esc_html_e( '⏱ 5 שלבים · עוברים שלב לפי תפיסות · רצף של 5 = בונוס +2', 'pizza-hut-slice-game' ); ?></span>
 			<button type="button" class="phsg-cta phsg-cta--xl" data-action="go-form"><?php esc_html_e( 'מתחילים ‹', 'pizza-hut-slice-game' ); ?></button>
 			<span class="phsg-legal"><?php esc_html_e( 'ההשתתפות כרוכה במילוי פרטים · בכפוף לתקנון', 'pizza-hut-slice-game' ); ?></span>
 			</div><?php // סוף phsg-intro__main ?>
@@ -191,6 +191,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 				<div class="phsg-hud__card">
 					<span class="phsg-hud__label"><?php esc_html_e( 'שלב', 'pizza-hut-slice-game' ); ?></span>
 					<span class="phsg-hud__value" data-hud="level">1</span>
+					<span class="phsg-hud__target" data-hud="target">0/7</span>
 				</div>
 			</div>
 
@@ -215,6 +216,9 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 				<div data-popups></div>
 
 				<div class="phsg-frenzy-badge" data-frenzy hidden>🌶️ <?php esc_html_e( 'פרנזי ×2!', 'pizza-hut-slice-game' ); ?></div>
+
+				<?php // תג פסילות – פגיעות במכשולים בשלב ?>
+				<div class="phsg-strikes" data-strikes hidden></div>
 
 				<div class="phsg-countdown" data-countdown hidden>
 					<span class="phsg-countdown__num" data-countdown-num>3</span>

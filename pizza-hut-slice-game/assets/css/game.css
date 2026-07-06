@@ -1233,3 +1233,34 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-size: 19px;
 	color: var(--black);
 }
+
+/* ===== התקדמות מכסה בכרטיס השלב ===== */
+.phsg-hud__target {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--red);
+	direction: ltr;
+	unicode-bidi: isolate;
+}
+
+/* ===== תג פסילות (פגיעות במכשולים בשלב) ===== */
+.phsg-strikes {
+	position: absolute;
+	top: 18px;
+	inset-inline-end: 18px;
+	z-index: 15;
+	background: linear-gradient(180deg, #4A453E, var(--black));
+	color: var(--cream);
+	border: 3px solid var(--black);
+	border-radius: 999px;
+	padding: 6px 16px;
+	font-weight: 700;
+	font-size: 14px;
+	box-shadow: 0 4px 0 rgba(45, 42, 38, 0.5);
+	pointer-events: none;
+}
+
+.phsg-strikes.is-hot {
+	background: linear-gradient(180deg, var(--red-hi), var(--red-lo));
+	animation: phsg-pulseBeat 0.5s ease-in-out infinite;
+}

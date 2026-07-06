@@ -25,6 +25,11 @@
 	 *
 	 * @param {HTMLElement} root שורש האפליקציה.
 	 */
+	// שלבים מבוססי-תפיסות: יעד תפיסות ומגבלת זמן לכל שלב.
+	var LEVEL_TARGETS = CFG.levelTargets || [7, 9, 12, 15, 18];
+	var LEVEL_TIMES = CFG.levelTimes || [60, 45, 35, 30, 25];
+	var MAX_STRIKES = 4; // יותר מ-4 פגיעות במכשולים בשלב = סוף המשחק.
+
 	function Game(root) {
 		this.root = root;
 		this.dur = parseInt(CFG.gameDuration, 10) || 60;
@@ -91,7 +96,9 @@
 		this.cheeseUntil = 0;
 		this.startedAt = 0;
 		this.realStart = 0;
-		this.lastLevel = 0;
+		this.levelIdx = 0;
+		this.levelCatches = 0;
+		this.levelStrikes = 0;
 		clearInterval(this.loop);
 		clearInterval(this.cd);
 		clearInterval(this.countUpTimer);
@@ -390,8 +397,7 @@
 	/* ==================== זרימת משחק ==================== */
 
 	Game.prototype.level = function () {
-		var elapsed = this.dur - this.timeLeft;
-		return Math.min(4, Math.floor(elapsed / (this.dur / 5)));
+		return this.levelIdx;
 	};
 
 	Game.prototype._startCountdown = function () {
@@ -438,28 +444,34 @@
 	Game.prototype._begin = function () {
 		var self = this;
 		this.playGo();
-		this.startedAt = Date.now();
 		this.realStart = Date.now();
 		this.score = 0;
 		this.streak = 0;
 		this.bestStreak = 0;
 		this.reactions = [];
 		this.clicks = 0;
-		this.timeLeft = this.dur;
+		this.levelIdx = 0;
+		this.levelCatches = 0;
+		this.levelStrikes = 0;
+		this.startedAt = Date.now();
+		this.timeLeft = LEVEL_TIMES[0];
+		this._syncStrikes();
 		this._spawnSlice();
 		this._renderHud();
 		this.startMusic();
 
 		clearInterval(this.loop);
 		this.loop = setInterval(function () {
-			var tLeft = Math.max(0, self.dur - (Date.now() - self.startedAt) / 1000);
-			// טיק בשניות האחרונות.
+			var limit = LEVEL_TIMES[self.levelIdx];
+			var tLeft = Math.max(0, limit - (Date.now() - self.startedAt) / 1000);
+			// טיק בשניות האחרונות של השלב.
 			if (Math.ceil(tLeft) !== Math.ceil(self.timeLeft) && tLeft <= 5 && tLeft > 0) {
 				self.playTick();
 			}
 			self.timeLeft = tLeft;
+			// הזמן של השלב נגמר לפני שהושלמה המכסה – המשחק נגמר.
 			if (tLeft <= 0) {
-				self._endGame();
+				self._endGame('time');
 				return;
 			}
 			// בריחת המשולש אם לא נתפס בזמן.
@@ -471,15 +483,50 @@
 			if (self.cheese && Date.now() > self.cheeseUntil) {
 				self._renderCheese(null);
 			}
-			// חיווי מעבר שלב.
-			var lv = self.level();
-			if (lv !== self.lastLevel) {
-				self.lastLevel = lv;
-				self._levelUp(lv + 1);
-			}
 			self._renderHud();
 			self._renderFrenzy();
 		}, 100);
+	};
+
+	/**
+	 * השלמת מכסת השלב: בונוס, ואז שלב הבא או ניצחון.
+	 */
+	Game.prototype._completeLevel = function () {
+		// בונוס השלמת שלב – גדל עם השלב.
+		var bonus = (this.levelIdx + 1) * 3;
+		this.score += bonus;
+
+		if (this.levelIdx >= LEVEL_TARGETS.length - 1) {
+			this._endGame('win');
+			return;
+		}
+
+		this.levelIdx++;
+		this.levelCatches = 0;
+		this.levelStrikes = 0;
+		this._syncStrikes();
+		this.startedAt = Date.now();
+		this.timeLeft = LEVEL_TIMES[this.levelIdx];
+		this._levelUp(this.levelIdx + 1, bonus);
+		this._spawnSlice();
+		this._renderHud();
+	};
+
+	/**
+	 * עדכון תג הפסילות (פגיעות במכשולים בשלב הנוכחי).
+	 */
+	Game.prototype._syncStrikes = function () {
+		var el = this.root.querySelector('[data-strikes]');
+		if (!el) {
+			return;
+		}
+		if (this.levelStrikes <= 0) {
+			el.hidden = true;
+			return;
+		}
+		el.textContent = '⚠️ ' + t('strikes', 'מכשולים') + ' ' + this.levelStrikes + '/' + MAX_STRIKES;
+		el.classList.toggle('is-hot', this.levelStrikes >= MAX_STRIKES - 1);
+		el.hidden = false;
 	};
 
 	/**
@@ -678,6 +725,8 @@
 		this._setText('[data-hud="score"]', this.score);
 		this._setText('[data-hud="time"]', timeText);
 		this._setText('[data-hud="level"]', this.level() + 1);
+		// התקדמות המכסה בשלב הנוכחי.
+		this._setText('[data-hud="target"]', this.levelCatches + '/' + LEVEL_TARGETS[this.levelIdx]);
 
 		var danger = this.timeLeft <= 10 && this.timeLeft > 0;
 		if (this.timerCard) {
@@ -686,7 +735,7 @@
 		// המוזיקה נהיית מלחיצה בשעון העצר.
 		this.musicTense = danger;
 		if (this.progressEl) {
-			this.progressEl.style.width = ((this.timeLeft / this.dur) * 100) + '%';
+			this.progressEl.style.width = ((this.timeLeft / LEVEL_TIMES[this.levelIdx]) * 100) + '%';
 		}
 		// תג רצף מ-3 ומעלה.
 		if (this.comboEl) {
@@ -741,7 +790,11 @@
 		var mult = frenzy ? 2 : 1;
 		var newStreak = this.streak + 1;
 		var bonusPts = (newStreak > 0 && newStreak % 5 === 0) ? 2 : 0;
-		var pts = (wasGold ? 3 : 1) * mult + bonusPts;
+		var reactionNow = Date.now() - this.sliceSpawn;
+		// בונוס מהירות: תפיסה תוך 1.2 שניות = נקודה נוספת.
+		var speedBonus = reactionNow <= 1200 ? 1 : 0;
+		// שלב גבוה = יותר נקודות לכל תפיסה.
+		var pts = (wasGold ? 3 : 1) * mult + bonusPts + speedBonus + this.levelIdx;
 
 		if (wasGold) {
 			this.playGold();
@@ -754,10 +807,17 @@
 		this.score += pts;
 		this.streak = newStreak;
 		this.bestStreak = Math.max(this.bestStreak, newStreak);
-		this.reactions.push(Date.now() - this.sliceSpawn);
+		this.reactions.push(reactionNow);
 		this.clicks += 1;
+		this.levelCatches += 1;
 
 		this._renderHud();
+
+		// הושלמה מכסת השלב?
+		if (this.levelCatches >= LEVEL_TARGETS[this.levelIdx]) {
+			this._completeLevel();
+			return;
+		}
 		this._spawnSlice();
 	};
 
@@ -771,6 +831,13 @@
 		this._vibrate(60);
 		this.score = Math.max(0, this.score - pen);
 		this.streak = 0;
+		this.levelStrikes += 1;
+		this._syncStrikes();
+		// יותר מ-4 פגיעות במכשולים בשלב – המשחק נגמר.
+		if (this.levelStrikes > MAX_STRIKES) {
+			this._endGame('strikes');
+			return;
+		}
 		this.stage.classList.remove('is-shaking');
 		void this.stage.offsetHeight;
 		this.stage.classList.add('is-shaking');
@@ -805,7 +872,7 @@
 	 *
 	 * @param {number} levelNum מספר השלב (1-5).
 	 */
-	Game.prototype._levelUp = function (levelNum) {
+	Game.prototype._levelUp = function (levelNum, bonus) {
 		this.playGo();
 		this.playBonus();
 		// שלא יברח משולש בזמן ההכרזה.
@@ -818,7 +885,8 @@
 		num.textContent = t('level', 'שלב') + ' ' + levelNum + '!';
 		var sub = document.createElement('span');
 		sub.className = 'phsg-levelflash__sub';
-		sub.textContent = t('levelUpSub', 'מהר יותר… קשה יותר!');
+		sub.textContent = (bonus ? '+' + bonus + ' ' + t('levelBonus', 'בונוס שלב') + ' · ' : '') +
+			LEVEL_TARGETS[this.levelIdx] + ' ' + t('levelGoal', 'תפיסות ב-') + LEVEL_TIMES[this.levelIdx] + ' ' + t('sec', "שנ'");
 		ov.appendChild(num);
 		ov.appendChild(sub);
 		this.stage.appendChild(ov);
@@ -835,10 +903,15 @@
 
 	/* ==================== סיום ==================== */
 
-	Game.prototype._endGame = function () {
+	Game.prototype._endGame = function (reason) {
+		this.endReason = reason || 'time';
 		clearInterval(this.loop);
 		this.stopMusic();
-		this.playFanfare();
+		if (this.endReason === 'strikes') {
+			this.playBad();
+		} else {
+			this.playFanfare();
+		}
 
 		var durationSec = (Date.now() - this.realStart) / 1000;
 		var avgMs = this.reactions.length
@@ -851,10 +924,15 @@
 		this.stage.classList.remove('is-frenzy');
 		this._show('end');
 
-		// כותרת לפי ניקוד.
-		var title = this.score >= 25
-			? t('titleChamp', 'אלוף/ת הפיצה!')
-			: (this.score >= 12 ? t('titleGood', 'כל הכבוד!') : t('titleMeh', 'לא רע… עוד סיבוב?'));
+		// כותרת לפי סיבת הסיום.
+		var title;
+		if (this.endReason === 'win') {
+			title = t('titleChamp', 'אלוף/ת הפיצה!');
+		} else if (this.endReason === 'strikes') {
+			title = t('titleStrikes', 'יותר מדי מכשולים…');
+		} else {
+			title = t('titleTime', 'הזמן נגמר!');
+		}
 		this._setText('[data-end-title]', title);
 
 		// סטטיסטיקות.

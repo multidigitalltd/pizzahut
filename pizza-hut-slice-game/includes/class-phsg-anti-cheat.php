@@ -14,13 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class PHSG_Anti_Cheat {
 
-	// חוקי המשחק (חייבים להיות תואמים ל-JS / אב-הטיפוס).
-	const GAME_DURATION      = 60;   // משך המשחק בשניות.
+	// חוקי המשחק (חייבים להיות תואמים ל-JS).
+	const GAME_DURATION      = 60;   // מגבלת הזמן של שלב 1 (שניות).
 	const SLICE_TIMEOUT      = 5;    // חסם עליון לזמן שהות המשולש (שניות, שלב 1).
-	const MIN_REACTION_MS    = 250;  // זמן תגובה אנושי מינימלי סביר (מ"ש, לפי המפרט).
-	const DURATION_TOLERANCE = 2;    // סטייה מותרת ממשך המשחק (שניות).
-	const MAX_TIME_EXTENSION = 45;   // תוספת זמן מקסימלית משעוני בונוס (שניות).
-	const MAX_POINTS_PER_HIT = 8;    // זהב (3) × פרנזי (2) + בונוס רצף (2).
+	const MIN_REACTION_MS    = 250;  // זמן תגובה אנושי מינימלי סביר (מ"ש).
+	const MIN_DURATION       = 3;    // מינימום: הפסד מהיר ב-5 פסילות.
+	const MAX_DURATION       = 245;  // מקסימום: 60+45+35+30+25 + הארכות שעון + סבילות.
+	const MAX_POINTS_PER_HIT = 13;   // זהב (3) × פרנזי (2) + רצף (2) + מהירות (1) + שלב (4).
+	const FLAT_SCORE_BUFFER  = 60;   // בונוסי השלמת שלבים (3+6+9+12+15) + מרווח.
 
 	/**
 	 * בדיקת סבירות התוצאה.
@@ -39,10 +40,8 @@ class PHSG_Anti_Cheat {
 			return new WP_Error( 'phsg_invalid_score', __( 'ניקוד לא תקין.', 'pizza-hut-slice-game' ) );
 		}
 
-		// 2. משך המשחק: לפחות 60−2 שניות; שעוני בונוס יכולים להאריך עד תקרה.
-		$min_duration = self::GAME_DURATION - self::DURATION_TOLERANCE;
-		$max_duration = self::GAME_DURATION + self::MAX_TIME_EXTENSION + self::DURATION_TOLERANCE;
-		if ( $duration < $min_duration || $duration > $max_duration ) {
+		// 2. משך המשחק משתנה (שלבים לפי תפיסות): בין הפסד מהיר לניצחון מלא עם הארכות.
+		if ( $duration < self::MIN_DURATION || $duration > self::MAX_DURATION ) {
 			return new WP_Error( 'phsg_invalid_duration', __( 'משך משחק לא תקין.', 'pizza-hut-slice-game' ) );
 		}
 
@@ -55,7 +54,7 @@ class PHSG_Anti_Cheat {
 
 		// 4. הניקוד חסום על ידי התפיסות: כל תפיסה שווה לכל היותר MAX_POINTS_PER_HIT
 		//    (זהב בפרנזי + בונוס רצף), ומכשולים מורידים – לכן אין חסם תחתון מעבר ל-0.
-		if ( $score > $clicks * self::MAX_POINTS_PER_HIT ) {
+		if ( $score > $clicks * self::MAX_POINTS_PER_HIT + self::FLAT_SCORE_BUFFER ) {
 			return new WP_Error( 'phsg_score_too_high', __( 'הניקוד גבוה מהאפשרי במשחק.', 'pizza-hut-slice-game' ) );
 		}
 
