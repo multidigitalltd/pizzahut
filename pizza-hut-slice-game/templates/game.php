@@ -88,7 +88,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 			<div class="phsg-intro__main">
 			<div class="phsg-howto">
 				<h2 class="phsg-howto__title"><?php esc_html_e( 'איך משחקים?', 'pizza-hut-slice-game' ); ?></h2>
-				<p class="phsg-howto__text"><?php esc_html_e( 'תפסו את מכסת המשולשים של כל שלב לפני שהזמן נגמר — מתחילים מ-7 תפיסות ב-60 שניות, וכל שלב קצר וקשה יותר. תפיסות מהירות ושלבים גבוהים שווים יותר נקודות. זהירות: 5 פגיעות במכשולים בשלב אחד — והמשחק נגמר!', 'pizza-hut-slice-game' ); ?></p>
+				<p class="phsg-howto__text"><?php esc_html_e( 'תפסו את מכסת המשולשים של כל שלב לפני שהזמן נגמר — מתחילים מ-7 תפיסות ב-60 שניות, וכל שלב קצר וקשה יותר, בלי סוף! תפיסות מהירות ושלבים גבוהים שווים יותר נקודות. זהירות: 5 פגיעות במכשולים בשלב אחד — והמשחק נגמר!', 'pizza-hut-slice-game' ); ?></p>
 			</div>
 
 			<?php // מקרא – בונוסים מימין, מכשולים משמאל (שורה אחת) ?>
@@ -147,7 +147,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 			</div>
 			</div><?php // סוף phsg-legend-row ?>
 
-			<span class="phsg-note-pill"><?php esc_html_e( '⏱ 5 שלבים · עוברים שלב לפי תפיסות · רצף של 5 = בונוס +2', 'pizza-hut-slice-game' ); ?></span>
+			<span class="phsg-note-pill"><?php esc_html_e( '⏱ שלבים בלי סוף · עוברים שלב לפי תפיסות · כמה רחוק תגיעו?', 'pizza-hut-slice-game' ); ?></span>
 			<button type="button" class="phsg-cta phsg-cta--xl" data-action="go-form"><?php esc_html_e( 'מתחילים ‹', 'pizza-hut-slice-game' ); ?></button>
 			<span class="phsg-legal"><?php esc_html_e( 'ההשתתפות כרוכה במילוי פרטים · בכפוף לתקנון', 'pizza-hut-slice-game' ); ?></span>
 			</div><?php // סוף phsg-intro__main ?>
@@ -297,9 +297,10 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 			</div>
 		</section>
 
-		<?php // אינדיקטור טעינה בזמן שליחת התוצאה ?>
-		<div class="phsg-loader" data-loader hidden aria-hidden="true">
+		<?php // חיווי שמירת התוצאה ?>
+		<div class="phsg-loader" data-loader hidden role="status">
 			<div class="phsg-loader__spinner"></div>
+			<span class="phsg-loader__text"><?php esc_html_e( 'שומרים את התוצאה…', 'pizza-hut-slice-game' ); ?></span>
 		</div>
 
 	</div>
