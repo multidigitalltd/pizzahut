@@ -198,6 +198,9 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 			<div class="phsg-progress"><div class="phsg-progress__fill" data-progress></div></div>
 
 			<div class="phsg-stage" data-stage>
+				<?php // רקע הבמה – מפת ארץ ישראל מסוגננת ?>
+				<div class="phsg-stage__map" aria-hidden="true"><?php echo phsg_svg_israel_map(); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+
 				<div class="phsg-combo" data-combo hidden></div>
 
 				<div data-slices></div>

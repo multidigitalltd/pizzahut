@@ -1,6 +1,9 @@
 <?php
 /**
- * פונקציות עזר לרינדור – כל גרפיקת המשחק כ-SVG inline (מתוך אב-הטיפוס המאושר).
+ * פונקציות עזר לרינדור – גרפיקת המשחק כ-SVG תלת-ממדי מבריק (סגנון 2026).
+ *
+ * כל ספרייט בנוי מגרדיאנטים, הברקות ספקולריות ותאורת שפה – בלי קווי מתאר
+ * שחורים קשים. הצלליות זהות לגרסאות הקודמות כדי לא לשנות אזורי פגיעה.
  *
  * @package PizzaHutSliceGame
  */
@@ -11,67 +14,74 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! function_exists( 'phsg_svg_hero_slice' ) ) {
 	/**
-	 * משולש הפיצה הגדול של מסך הפתיחה (210×225).
+	 * משולש הפיצה הגדול של מסך הפתיחה – מבריק, עסיסי, עם אדים.
 	 *
 	 * @return string
 	 */
 	function phsg_svg_hero_slice() {
 		return '<svg viewBox="0 0 100 110" width="100%" height="100%">
 			<defs>
-				<linearGradient id="phsgCrustA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2B24E"/><stop offset="1" stop-color="#BE7526"/></linearGradient>
-				<linearGradient id="phsgCheeseA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE49A"/><stop offset="1" stop-color="#EFAC2F"/></linearGradient>
+				<linearGradient id="phCrustH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFDE9C"/><stop offset="0.5" stop-color="#EFA94A"/><stop offset="1" stop-color="#B06B24"/></linearGradient>
+				<radialGradient id="phCheeseH" cx="0.5" cy="0.3" r="0.9"><stop offset="0" stop-color="#FFF8CE"/><stop offset="0.55" stop-color="#FFD968"/><stop offset="1" stop-color="#EFA22B"/></radialGradient>
+				<radialGradient id="phPepH" cx="0.35" cy="0.3" r="0.9"><stop offset="0" stop-color="#FF9078"/><stop offset="0.55" stop-color="#E8503C"/><stop offset="1" stop-color="#A81F14"/></radialGradient>
 			</defs>
-			<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phsgCrustA)" stroke="#2D2A26" stroke-width="3.5" stroke-linejoin="round"/>
-			<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phsgCheeseA)" stroke="#2D2A26" stroke-width="3.5" stroke-linejoin="round"/>
-			<path d="M24 40 q4 12 8 1 M64 42 q3 11 7 0 M44 44 q3 9 6 0" fill="none" stroke="#FFE49A" stroke-width="6" stroke-linecap="round"/>
-			<circle cx="37" cy="52" r="8.5" fill="#E0453A" stroke="#9E2B22" stroke-width="2.5"/>
-			<circle cx="62" cy="55" r="8.5" fill="#E0453A" stroke="#9E2B22" stroke-width="2.5"/>
-			<circle cx="49" cy="73" r="8" fill="#E0453A" stroke="#9E2B22" stroke-width="2.5"/>
-			<circle cx="50" cy="90" r="5" fill="#E0453A" stroke="#9E2B22" stroke-width="2.5"/>
-			<circle cx="34.5" cy="49" r="2.4" fill="#F7A69E"/>
-			<circle cx="59.5" cy="52" r="2.4" fill="#F7A69E"/>
-			<circle cx="46.5" cy="70" r="2.2" fill="#F7A69E"/>
-			<circle cx="30" cy="63" r="2.6" fill="#FFF3C9" opacity=".9"/>
-			<circle cx="68" cy="66" r="2.2" fill="#FFF3C9" opacity=".9"/>
-			<path d="M20 38 Q35 31 50 30" fill="none" stroke="#FFF3C9" stroke-width="3.5" stroke-linecap="round" opacity=".85"/>
+			<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phCrustH)" stroke="#96601F" stroke-width="2" stroke-linejoin="round"/>
+			<path d="M9 25 Q50 6 91 25" fill="none" stroke="#FFF0C8" stroke-width="3.5" stroke-linecap="round" opacity="0.75"/>
+			<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phCheeseH)" stroke="#D08E2A" stroke-width="1.8" stroke-linejoin="round"/>
+			<path d="M24 40 q4 12 8 1 M64 42 q3 11 7 0 M44 44 q3 9 6 0" fill="none" stroke="#FFF3C0" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+			<circle cx="37" cy="52" r="8.5" fill="url(#phPepH)"/>
+			<circle cx="62" cy="55" r="8.5" fill="url(#phPepH)"/>
+			<circle cx="49" cy="73" r="8" fill="url(#phPepH)"/>
+			<circle cx="50" cy="90" r="5" fill="url(#phPepH)"/>
+			<circle cx="34" cy="49" r="2.6" fill="#FFC9B8" opacity="0.95"/>
+			<circle cx="59" cy="52" r="2.6" fill="#FFC9B8" opacity="0.95"/>
+			<circle cx="46.5" cy="70" r="2.3" fill="#FFC9B8" opacity="0.95"/>
+			<circle cx="30" cy="63" r="2.8" fill="#FFFBE2" opacity="0.9"/>
+			<circle cx="68" cy="66" r="2.3" fill="#FFFBE2" opacity="0.9"/>
+			<path d="M20 40 Q35 32 52 31" fill="none" stroke="#FFFBE2" stroke-width="3.5" stroke-linecap="round" opacity="0.8"/>
+			<path d="M40 46 Q50 42 62 44" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
 		</svg>';
 	}
 }
 
 if ( ! function_exists( 'phsg_svg_game_slice' ) ) {
 	/**
-	 * ספרייט המשולש במשחק – רגיל או זהב (גבינה בהירה יותר).
+	 * ספרייט המשולש במשחק – רגיל או זהב, מבריק ותלת-ממדי.
 	 *
 	 * @param bool $gold וריאנט זהב.
 	 * @return string
 	 */
 	function phsg_svg_game_slice( $gold = false ) {
-		$id_suffix  = $gold ? 'G' : 'N';
-		$cheese_top = $gold ? '#FFF3B0' : '#FFE49A';
-		$cheese_bot = $gold ? '#FFC93C' : '#EFAC2F';
+		$sfx        = $gold ? 'G' : 'N';
+		$cheese_in  = $gold ? '#FFFBD6' : '#FFF8CE';
+		$cheese_mid = $gold ? '#FFE47A' : '#FFD968';
+		$cheese_out = $gold ? '#F5B301' : '#EFA22B';
 		return '<svg viewBox="0 0 100 110" width="100%" height="100%" style="pointer-events:none; overflow:visible;">
 			<defs>
-				<linearGradient id="phsgCrustB' . $id_suffix . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2B24E"/><stop offset="1" stop-color="#BE7526"/></linearGradient>
-				<linearGradient id="phsgCheeseB' . $id_suffix . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' . $cheese_top . '"/><stop offset="1" stop-color="' . $cheese_bot . '"/></linearGradient>
+				<linearGradient id="phCrust' . $sfx . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFDE9C"/><stop offset="0.5" stop-color="#EFA94A"/><stop offset="1" stop-color="#B06B24"/></linearGradient>
+				<radialGradient id="phCheese' . $sfx . '" cx="0.5" cy="0.3" r="0.9"><stop offset="0" stop-color="' . $cheese_in . '"/><stop offset="0.55" stop-color="' . $cheese_mid . '"/><stop offset="1" stop-color="' . $cheese_out . '"/></radialGradient>
+				<radialGradient id="phPep' . $sfx . '" cx="0.35" cy="0.3" r="0.9"><stop offset="0" stop-color="#FF9078"/><stop offset="0.55" stop-color="#E8503C"/><stop offset="1" stop-color="#A81F14"/></radialGradient>
 			</defs>
-			<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phsgCrustB' . $id_suffix . ')" stroke="#2D2A26" stroke-width="3.5" stroke-linejoin="round"/>
-			<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phsgCheeseB' . $id_suffix . ')" stroke="#2D2A26" stroke-width="3.5" stroke-linejoin="round"/>
-			<path d="M24 40 q4 12 8 1 M64 42 q3 11 7 0" fill="none" stroke="' . $cheese_top . '" stroke-width="6" stroke-linecap="round"/>
-			<circle cx="37" cy="52" r="8.5" fill="#E0453A" stroke="#9E2B22" stroke-width="2.5"/>
-			<circle cx="62" cy="55" r="8.5" fill="#E0453A" stroke="#9E2B22" stroke-width="2.5"/>
-			<circle cx="49" cy="73" r="8" fill="#E0453A" stroke="#9E2B22" stroke-width="2.5"/>
-			<circle cx="50" cy="90" r="5" fill="#E0453A" stroke="#9E2B22" stroke-width="2.5"/>
-			<circle cx="34.5" cy="49" r="2.4" fill="#F7A69E"/>
-			<circle cx="59.5" cy="52" r="2.4" fill="#F7A69E"/>
-			<circle cx="30" cy="63" r="2.6" fill="#FFF3C9" opacity=".9"/>
-			<path d="M20 38 Q35 31 50 30" fill="none" stroke="#FFF3C9" stroke-width="3.5" stroke-linecap="round" opacity=".85"/>
+			<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phCrust' . $sfx . ')" stroke="#96601F" stroke-width="2" stroke-linejoin="round"/>
+			<path d="M9 25 Q50 6 91 25" fill="none" stroke="#FFF0C8" stroke-width="3.5" stroke-linecap="round" opacity="0.75"/>
+			<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phCheese' . $sfx . ')" stroke="#D08E2A" stroke-width="1.8" stroke-linejoin="round"/>
+			<path d="M24 40 q4 12 8 1 M64 42 q3 11 7 0" fill="none" stroke="#FFF3C0" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+			<circle cx="37" cy="52" r="8.5" fill="url(#phPep' . $sfx . ')"/>
+			<circle cx="62" cy="55" r="8.5" fill="url(#phPep' . $sfx . ')"/>
+			<circle cx="49" cy="73" r="8" fill="url(#phPep' . $sfx . ')"/>
+			<circle cx="50" cy="90" r="5" fill="url(#phPep' . $sfx . ')"/>
+			<circle cx="34" cy="49" r="2.6" fill="#FFC9B8" opacity="0.95"/>
+			<circle cx="59" cy="52" r="2.6" fill="#FFC9B8" opacity="0.95"/>
+			<circle cx="30" cy="63" r="2.8" fill="#FFFBE2" opacity="0.9"/>
+			<path d="M20 40 Q35 32 52 31" fill="none" stroke="#FFFBE2" stroke-width="3.5" stroke-linecap="round" opacity="0.8"/>
+			<path d="M40 46 Q50 42 62 44" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
 		</svg>';
 	}
 }
 
 if ( ! function_exists( 'phsg_svg_obstacle' ) ) {
 	/**
-	 * SVG של מכשול לפי סוג – פטרייה, זית, בצל, עגבנייה, משולש שרוף.
+	 * SVG של מכשול – גרסאות מבריקות תלת-ממדיות.
 	 *
 	 * @param string $type mush | olive | onion | tomato | burnt.
 	 * @return string
@@ -80,46 +90,65 @@ if ( ! function_exists( 'phsg_svg_obstacle' ) ) {
 		switch ( $type ) {
 			case 'mush':
 				return '<svg viewBox="0 0 60 62" width="100%" height="100%" style="pointer-events:none;">
-					<path d="M6 31 Q30 3 54 31 Q42 38 30 38 Q18 38 6 31 Z" fill="#C9A874" stroke="#2D2A26" stroke-width="3" stroke-linejoin="round"/>
-					<path d="M23 37 q-2 15 2 19 q5 3 10 0 q4 -4 2 -19" fill="#F0EFDD" stroke="#2D2A26" stroke-width="3" stroke-linejoin="round"/>
-					<circle cx="20" cy="24" r="3.5" fill="#F0EFDD" opacity=".85"/>
-					<circle cx="34" cy="17" r="3" fill="#F0EFDD" opacity=".85"/>
-					<circle cx="43" cy="26" r="3.5" fill="#F0EFDD" opacity=".85"/>
+					<defs>
+						<radialGradient id="phMushCap" cx="0.35" cy="0.25" r="1"><stop offset="0" stop-color="#F2DCBB"/><stop offset="0.55" stop-color="#CDa276"/><stop offset="1" stop-color="#96683C"/></radialGradient>
+						<linearGradient id="phMushStem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFDF2"/><stop offset="1" stop-color="#DBD1B4"/></linearGradient>
+					</defs>
+					<path d="M6 31 Q30 3 54 31 Q42 38 30 38 Q18 38 6 31 Z" fill="url(#phMushCap)" stroke="#7C5530" stroke-width="1.6" stroke-linejoin="round"/>
+					<path d="M23 37 q-2 15 2 19 q5 3 10 0 q4 -4 2 -19" fill="url(#phMushStem)" stroke="#B8A984" stroke-width="1.4" stroke-linejoin="round"/>
+					<ellipse cx="21" cy="17" rx="7" ry="4" fill="#FFFFFF" opacity="0.5" transform="rotate(-18 21 17)"/>
+					<circle cx="20" cy="25" r="3.2" fill="#FFF6E3" opacity="0.9"/>
+					<circle cx="34" cy="16" r="2.8" fill="#FFF6E3" opacity="0.9"/>
+					<circle cx="43" cy="26" r="3.2" fill="#FFF6E3" opacity="0.9"/>
 				</svg>';
 			case 'olive':
 				return '<svg viewBox="0 0 60 60" width="100%" height="100%" style="pointer-events:none;">
-					<circle cx="30" cy="30" r="23" fill="#3B3830" stroke="#2D2A26" stroke-width="3"/>
-					<ellipse cx="30" cy="30" rx="9" ry="12" fill="#6E6754"/>
-					<ellipse cx="30" cy="30" rx="4" ry="6.5" fill="#8A8168"/>
-					<circle cx="21" cy="20" r="5" fill="#57534A"/>
+					<defs>
+						<radialGradient id="phOlive" cx="0.35" cy="0.28" r="1"><stop offset="0" stop-color="#6E6650"/><stop offset="0.55" stop-color="#403A2E"/><stop offset="1" stop-color="#221E17"/></radialGradient>
+					</defs>
+					<circle cx="30" cy="30" r="23" fill="url(#phOlive)"/>
+					<ellipse cx="30" cy="30" rx="9" ry="12" fill="#7E7357"/>
+					<ellipse cx="30" cy="30" rx="4" ry="6.5" fill="#A89A73"/>
+					<ellipse cx="21" cy="19" rx="7" ry="4.5" fill="#FFFFFF" opacity="0.45" transform="rotate(-24 21 19)"/>
 				</svg>';
 			case 'onion':
 				return '<svg viewBox="0 0 60 60" width="100%" height="100%" style="pointer-events:none;">
-					<circle cx="30" cy="30" r="23" fill="#EFE0F0" stroke="#2D2A26" stroke-width="3"/>
-					<circle cx="30" cy="30" r="16.5" fill="none" stroke="#B0729E" stroke-width="4" opacity=".8"/>
-					<circle cx="30" cy="30" r="10" fill="none" stroke="#B0729E" stroke-width="3.5" opacity=".7"/>
-					<circle cx="30" cy="30" r="4" fill="#B0729E" opacity=".8"/>
-					<path d="M14 18 Q22 12 30 11" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+					<defs>
+						<radialGradient id="phOnion" cx="0.4" cy="0.3" r="1"><stop offset="0" stop-color="#FDF4FD"/><stop offset="0.6" stop-color="#EBD6EC"/><stop offset="1" stop-color="#C9A4C8"/></radialGradient>
+					</defs>
+					<circle cx="30" cy="30" r="23" fill="url(#phOnion)"/>
+					<circle cx="30" cy="30" r="16.5" fill="none" stroke="#B478B0" stroke-width="3.5" opacity="0.75"/>
+					<circle cx="30" cy="30" r="10" fill="none" stroke="#B478B0" stroke-width="3" opacity="0.65"/>
+					<circle cx="30" cy="30" r="4" fill="#B478B0" opacity="0.75"/>
+					<ellipse cx="21" cy="18" rx="8" ry="4.5" fill="#FFFFFF" opacity="0.7" transform="rotate(-24 21 18)"/>
 				</svg>';
 			case 'tomato':
 				return '<svg viewBox="0 0 60 60" width="100%" height="100%" style="pointer-events:none;">
-					<circle cx="30" cy="30" r="23" fill="#E85D3A" stroke="#2D2A26" stroke-width="3"/>
-					<circle cx="30" cy="30" r="17" fill="#F49B75"/>
+					<defs>
+						<radialGradient id="phTomato" cx="0.35" cy="0.28" r="1"><stop offset="0" stop-color="#FF8E68"/><stop offset="0.5" stop-color="#F05336"/><stop offset="1" stop-color="#C22B18"/></radialGradient>
+					</defs>
+					<circle cx="30" cy="30" r="23" fill="url(#phTomato)"/>
+					<circle cx="30" cy="30" r="17" fill="#F99C77" opacity="0.85"/>
 					<circle cx="30" cy="30" r="5" fill="#E85D3A"/>
-					<ellipse cx="30" cy="17.5" rx="3" ry="5" fill="#F7C59B"/>
-					<ellipse cx="30" cy="42.5" rx="3" ry="5" fill="#F7C59B"/>
-					<ellipse cx="17.5" cy="30" rx="5" ry="3" fill="#F7C59B"/>
-					<ellipse cx="42.5" cy="30" rx="5" ry="3" fill="#F7C59B"/>
-					<path d="M15 17 Q22 11 30 10" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+					<ellipse cx="30" cy="17.5" rx="3" ry="5" fill="#FBC9A6" opacity="0.9"/>
+					<ellipse cx="30" cy="42.5" rx="3" ry="5" fill="#FBC9A6" opacity="0.9"/>
+					<ellipse cx="17.5" cy="30" rx="5" ry="3" fill="#FBC9A6" opacity="0.9"/>
+					<ellipse cx="42.5" cy="30" rx="5" ry="3" fill="#FBC9A6" opacity="0.9"/>
+					<ellipse cx="21" cy="17" rx="8" ry="4.5" fill="#FFFFFF" opacity="0.6" transform="rotate(-24 21 17)"/>
 				</svg>';
 			case 'burnt':
 				return '<svg viewBox="0 0 100 110" width="100%" height="100%" style="pointer-events:none;">
-					<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#6B5138" stroke="#2D2A26" stroke-width="3.5" stroke-linejoin="round"/>
-					<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#8A6B45" stroke="#2D2A26" stroke-width="3.5" stroke-linejoin="round"/>
-					<circle cx="37" cy="52" r="8" fill="#4A3B2A" stroke="#2D2A26" stroke-width="2.5"/>
-					<circle cx="62" cy="55" r="8" fill="#4A3B2A" stroke="#2D2A26" stroke-width="2.5"/>
-					<circle cx="49" cy="73" r="7.5" fill="#4A3B2A" stroke="#2D2A26" stroke-width="2.5"/>
-					<path d="M30 20 q3 -8 0 -14 M50 16 q3 -8 0 -14 M70 20 q3 -8 0 -14" fill="none" stroke="#57534A" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+					<defs>
+						<linearGradient id="phBurntCrust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7E6142"/><stop offset="1" stop-color="#4A3520"/></linearGradient>
+						<radialGradient id="phBurntCheese" cx="0.5" cy="0.3" r="0.9"><stop offset="0" stop-color="#9A7A4E"/><stop offset="1" stop-color="#5E4327"/></radialGradient>
+					</defs>
+					<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phBurntCrust)" stroke="#3A2A16" stroke-width="1.8" stroke-linejoin="round"/>
+					<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phBurntCheese)" stroke="#3A2A16" stroke-width="1.6" stroke-linejoin="round"/>
+					<circle cx="37" cy="52" r="8" fill="#2F2314"/>
+					<circle cx="62" cy="55" r="8" fill="#2F2314"/>
+					<circle cx="49" cy="73" r="7.5" fill="#2F2314"/>
+					<path d="M30 20 q3 -8 0 -14 M50 16 q3 -8 0 -14 M70 20 q3 -8 0 -14" fill="none" stroke="#A9A29A" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+					<path d="M20 38 Q35 31 50 30" fill="none" stroke="#B79A6C" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
 				</svg>';
 		}
 		return '';
@@ -128,27 +157,28 @@ if ( ! function_exists( 'phsg_svg_obstacle' ) ) {
 
 if ( ! function_exists( 'phsg_svg_cheese' ) ) {
 	/**
-	 * נתח גבינה צהובה – פריט נקודות מהיר (+2).
+	 * נתח גבינה צהובה מבריק – פריט נקודות מהיר (+2).
 	 *
 	 * @return string
 	 */
 	function phsg_svg_cheese() {
 		return '<svg viewBox="0 0 64 56" width="100%" height="100%" style="pointer-events:none;">
 			<defs>
-				<linearGradient id="phsgCheeseC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE566"/><stop offset="1" stop-color="#F2B33C"/></linearGradient>
+				<linearGradient id="phCheeseC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3A6"/><stop offset="0.55" stop-color="#FFD84E"/><stop offset="1" stop-color="#EFA22B"/></linearGradient>
 			</defs>
-			<path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="url(#phsgCheeseC)" stroke="#2D2A26" stroke-width="3.5" stroke-linejoin="round"/>
-			<circle cx="24" cy="38" r="5" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2"/>
-			<circle cx="41" cy="41" r="4" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2"/>
-			<circle cx="33" cy="26" r="3.5" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2"/>
-			<path d="M14 44 Q20 40 26 44" fill="none" stroke="#FFF3B0" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+			<path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="url(#phCheeseC)" stroke="#D08E2A" stroke-width="1.8" stroke-linejoin="round"/>
+			<circle cx="24" cy="38" r="5" fill="#FFEFA0"/><path d="M21 36 a5 5 0 0 1 6 -1" fill="none" stroke="#D19A2B" stroke-width="1.6" opacity="0.7"/>
+			<circle cx="41" cy="41" r="4" fill="#FFEFA0"/><path d="M38.6 39.4 a4 4 0 0 1 4.8 -0.8" fill="none" stroke="#D19A2B" stroke-width="1.4" opacity="0.7"/>
+			<circle cx="33" cy="26" r="3.5" fill="#FFEFA0"/><path d="M30.9 24.6 a3.5 3.5 0 0 1 4.2 -0.7" fill="none" stroke="#D19A2B" stroke-width="1.3" opacity="0.7"/>
+			<path d="M30 9 L36 9" stroke="#FFFBE2" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+			<path d="M14 44 Q20 40 26 44" fill="none" stroke="#FFFBE2" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
 		</svg>';
 	}
 }
 
 if ( ! function_exists( 'phsg_svg_bonus' ) ) {
 	/**
-	 * SVG של פריט בונוס – שעון (+5 שנ') או פלפל (פרנזי ×2).
+	 * SVG של פריט בונוס מבריק – שעון (+5 שנ') או פלפל (פרנזי ×2).
 	 *
 	 * @param string $type clock | chili.
 	 * @return string
@@ -156,16 +186,54 @@ if ( ! function_exists( 'phsg_svg_bonus' ) ) {
 	function phsg_svg_bonus( $type ) {
 		if ( 'clock' === $type ) {
 			return '<svg viewBox="0 0 60 60" width="100%" height="100%" style="pointer-events:none;">
-				<circle cx="30" cy="32" r="22" fill="#FFE49A" stroke="#2D2A26" stroke-width="3.5"/>
-				<circle cx="30" cy="32" r="16" fill="#FFFEF6" stroke="#2D2A26" stroke-width="2"/>
-				<path d="M30 32 L30 21 M30 32 L38 36" stroke="#F32735" stroke-width="3.5" stroke-linecap="round"/>
-				<rect x="25" y="4" width="10" height="6" rx="2" fill="#F32735" stroke="#2D2A26" stroke-width="2.5"/>
+				<defs>
+					<radialGradient id="phClock" cx="0.35" cy="0.28" r="1"><stop offset="0" stop-color="#FFF3C2"/><stop offset="0.6" stop-color="#FFD968"/><stop offset="1" stop-color="#E8A62B"/></radialGradient>
+				</defs>
+				<circle cx="30" cy="32" r="22" fill="url(#phClock)" stroke="#C98A22" stroke-width="1.8"/>
+				<circle cx="30" cy="32" r="16" fill="#FFFEF8" stroke="#E3C173" stroke-width="1.4"/>
+				<path d="M30 32 L30 21 M30 32 L38 36" stroke="#F03A2E" stroke-width="3.5" stroke-linecap="round"/>
+				<circle cx="30" cy="32" r="2" fill="#F03A2E"/>
+				<rect x="25" y="4" width="10" height="6" rx="3" fill="#F03A2E" stroke="#C22B1F" stroke-width="1.4"/>
+				<ellipse cx="22" cy="21" rx="7" ry="4" fill="#FFFFFF" opacity="0.65" transform="rotate(-24 22 21)"/>
 			</svg>';
 		}
 		return '<svg viewBox="0 0 60 60" width="100%" height="100%" style="pointer-events:none;">
-			<path d="M14 46 Q10 30 24 20 Q38 10 48 16 Q52 30 40 42 Q28 54 14 46 Z" fill="#F32735" stroke="#2D2A26" stroke-width="3.5" stroke-linejoin="round"/>
-			<path d="M46 17 Q50 8 58 8" fill="none" stroke="#4C7B3A" stroke-width="5" stroke-linecap="round"/>
-			<path d="M20 42 Q16 32 26 24" fill="none" stroke="#FF8A8F" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+			<defs>
+				<radialGradient id="phChili" cx="0.35" cy="0.3" r="1.1"><stop offset="0" stop-color="#FF7A62"/><stop offset="0.5" stop-color="#F03A2E"/><stop offset="1" stop-color="#B01A12"/></radialGradient>
+			</defs>
+			<path d="M14 46 Q10 30 24 20 Q38 10 48 16 Q52 30 40 42 Q28 54 14 46 Z" fill="url(#phChili)" stroke="#8E1710" stroke-width="1.6" stroke-linejoin="round"/>
+			<path d="M46 17 Q50 8 58 8" fill="none" stroke="#4C8A3A" stroke-width="5" stroke-linecap="round"/>
+			<path d="M46 17 Q49 11 55 9" fill="none" stroke="#7DBF63" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+			<path d="M20 42 Q16 32 26 24" fill="none" stroke="#FFB0A0" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+			<ellipse cx="34" cy="21" rx="7" ry="3.5" fill="#FFFFFF" opacity="0.5" transform="rotate(-28 34 21)"/>
+		</svg>';
+	}
+}
+
+if ( ! function_exists( 'phsg_svg_israel_map' ) ) {
+	/**
+	 * מפת ארץ ישראל מסוגננת – רקע הבמה. ים בהיר, יבשה בגוון חול,
+	 * הכנרת וים המלח, נקודות ערים ומסלול מקווקו.
+	 *
+	 * @return string
+	 */
+	function phsg_svg_israel_map() {
+		return '<svg class="phsg-map-svg" viewBox="6 0 70 256" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+			<defs>
+				<linearGradient id="phLand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDF3D9"/><stop offset="0.6" stop-color="#F7E6BC"/><stop offset="1" stop-color="#EED9A8"/></linearGradient>
+			</defs>
+			<g transform="translate(40 0) scale(1.6 1) translate(-40 0)">
+			<path d="M38 6 C34 20 30 40 31 55 C29 70 26 80 25 90 C23 105 24 118 27 128 L22 138 C24 146 28 150 32 152 L47 247 L54 240 C58 200 60 170 55 155 C58 140 58 125 54 115 C57 105 57 95 54 88 C56 70 55 55 52 45 C55 35 56 25 52 18 C50 12 44 8 38 6 Z"
+				fill="url(#phLand)" stroke="#D9BC85" stroke-width="1.6" stroke-linejoin="round"/>
+			<ellipse cx="52" cy="23" rx="3.5" ry="6" fill="#A9D4EA"/>
+			<ellipse cx="54" cy="100" rx="3.5" ry="12" fill="#A9D4EA"/>
+			<path d="M31 55 L44 102 L35 130 L47 247" fill="none" stroke="#F03A2E" stroke-width="1.6" stroke-dasharray="4 5" opacity="0.55" stroke-linecap="round"/>
+			<circle cx="31" cy="55" r="3" fill="#F03A2E" opacity="0.85"/>
+			<circle cx="26" cy="86" r="3" fill="#F03A2E" opacity="0.85"/>
+			<circle cx="44" cy="102" r="3" fill="#F03A2E" opacity="0.85"/>
+			<circle cx="35" cy="130" r="3" fill="#F03A2E" opacity="0.85"/>
+			<circle cx="47" cy="245" r="3" fill="#F03A2E" opacity="0.85"/>
+			</g>
 		</svg>';
 	}
 }
@@ -179,9 +247,9 @@ if ( ! function_exists( 'phsg_svg_sound' ) ) {
 	 */
 	function phsg_svg_sound( $on = true ) {
 		if ( $on ) {
-			return '<svg viewBox="0 0 24 24" width="20" height="20" style="flex-shrink:0;"><path d="M4 9 L8 9 L13 4.5 L13 19.5 L8 15 L4 15 Z" fill="#F32735" stroke="#2D2A26" stroke-width="1.8" stroke-linejoin="round"/><path d="M16 9 Q18 12 16 15 M18.5 6.5 Q22 12 18.5 17.5" fill="none" stroke="#2D2A26" stroke-width="2" stroke-linecap="round"/></svg>';
+			return '<svg viewBox="0 0 24 24" width="20" height="20" style="flex-shrink:0;"><path d="M4 9 L8 9 L13 4.5 L13 19.5 L8 15 L4 15 Z" fill="#F32735"/><path d="M16 9 Q18 12 16 15 M18.5 6.5 Q22 12 18.5 17.5" fill="none" stroke="#2D2A26" stroke-width="2" stroke-linecap="round"/></svg>';
 		}
-		return '<svg viewBox="0 0 24 24" width="20" height="20" style="flex-shrink:0;"><path d="M4 9 L8 9 L13 4.5 L13 19.5 L8 15 L4 15 Z" fill="#B5B2A4" stroke="#2D2A26" stroke-width="1.8" stroke-linejoin="round"/><path d="M16.5 9.5 L21.5 14.5 M21.5 9.5 L16.5 14.5" fill="none" stroke="#F32735" stroke-width="2.4" stroke-linecap="round"/></svg>';
+		return '<svg viewBox="0 0 24 24" width="20" height="20" style="flex-shrink:0;"><path d="M4 9 L8 9 L13 4.5 L13 19.5 L8 15 L4 15 Z" fill="#B5B2A4"/><path d="M16.5 9.5 L21.5 14.5 M21.5 9.5 L16.5 14.5" fill="none" stroke="#F32735" stroke-width="2.4" stroke-linecap="round"/></svg>';
 	}
 }
 
@@ -207,7 +275,7 @@ if ( ! function_exists( 'phsg_render_leaderboard_rows' ) ) {
 			$score   = isset( $row['score'] ) ? (int) $row['score'] : 0;
 			$avg     = isset( $row['avg_reaction'] ) ? (float) $row['avg_reaction'] : 0;
 			$rank_bg = $rank <= 3 ? $medals[ $rank - 1 ] : '#FBFAEE';
-			$row_bg  = ( $i % 2 ) ? '#E9E7D2' : '#F0EFDD';
+			$row_bg  = ( $i % 2 ) ? '#F4F2E4' : '#FCFBF2';
 
 			$html .= '<div class="phsg-board__row" style="background:' . esc_attr( $row_bg ) . ';">';
 			$html .= '<span class="phsg-board__rank" style="background:' . esc_attr( $rank_bg ) . ';">' . esc_html( $rank ) . '</span>';
