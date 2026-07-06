@@ -15,31 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $phsg_logo_url = ! empty( $atts['logo'] ) ? $atts['logo'] : PHSG_PLUGIN_URL . 'assets/img/pizza-hut-logo.png';
-
-// שורות תבנית הטיפוגרפיה – צבע לסירוגין + היסט התחלתי, כמו באב-הטיפוס.
-$phsg_marquee_rows = array(
-	array( '#F32735', 32, 0 ),
-	array( '#2D2A26', 44, -160 ),
-	array( '#F0EFDD', 36, -80 ),
-	array( '#F32735', 48, -200 ),
-	array( '#2D2A26', 34, 0 ),
-	array( '#F0EFDD', 42, -120 ),
-	array( '#F32735', 38, -180 ),
-	array( '#2D2A26', 46, -40 ),
-);
-$phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 1990 · חם מהתנור · ';
 ?>
 <div class="phsg-app" dir="rtl" lang="he" role="application" data-fullscreen="<?php echo esc_attr( ! empty( $atts['fullscreen'] ) && '0' !== $atts['fullscreen'] ? '1' : '0' ); ?>" aria-label="<?php echo esc_attr__( 'משחק פיצה האט – תפוס ת\'משולש', 'pizza-hut-slice-game' ); ?>">
 
-	<?php // רקע טיפוגרפי נע – שורות במחזוריות שמכסות את כל גובה המסך ?>
-	<div class="phsg-marquee" aria-hidden="true">
-		<?php for ( $phsg_i = 0; $phsg_i < 32; $phsg_i++ ) : ?>
-			<?php $phsg_row = $phsg_marquee_rows[ $phsg_i % count( $phsg_marquee_rows ) ]; ?>
-			<div class="phsg-marquee__row" style="color:<?php echo esc_attr( $phsg_row[0] ); ?>; animation-duration:<?php echo esc_attr( $phsg_row[1] ); ?>s; margin-right:<?php echo esc_attr( $phsg_row[2] - ( $phsg_i * 7 ) % 200 ); ?>px;">
-				<?php echo esc_html( str_repeat( $phsg_marquee_txt, 5 ) ); ?>
-			</div>
-		<?php endfor; ?>
-	</div>
+	<?php // פיצה אמיתית בפינת הרקע – בהשראת תמונת המותג ?>
+	<div class="phsg-bgpizza" aria-hidden="true"><?php echo phsg_svg_bg_pizza(); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 
 	<?php // עומק – ויניטה ?>
 	<div class="phsg-vignette" aria-hidden="true"></div>

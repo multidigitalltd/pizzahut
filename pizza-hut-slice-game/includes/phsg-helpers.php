@@ -19,27 +19,70 @@ if ( ! function_exists( 'phsg_svg_hero_slice' ) ) {
 	 * @return string
 	 */
 	function phsg_svg_hero_slice() {
-		return '<svg viewBox="0 0 100 110" width="100%" height="100%">
+		return phsg_slice_svg( 'H', false, true );
+	}
+}
+
+if ( ! function_exists( 'phsg_slice_svg' ) ) {
+	/**
+	 * בונה משולש פיצה תלת-ממדי: קראסט אפוי עם שלפוחיות, גבינה מבעבעת
+	 * (תאורת-בליטות feDiffuseLighting), טפטופי גבינה ופפרוני עסיסי.
+	 *
+	 * @param string $sfx  סיומת ייחודית ל-IDs.
+	 * @param bool   $gold וריאנט זהב.
+	 * @param bool   $hero גרסת הירו (פרט נוסף + אדים).
+	 * @return string
+	 */
+	function phsg_slice_svg( $sfx, $gold = false, $hero = false ) {
+		$ch_in  = $gold ? '#FFFDE2' : '#FFF9D6';
+		$ch_mid = $gold ? '#FFE178' : '#FFD75E';
+		$ch_out = $gold ? '#F2AC05' : '#E89B23';
+		$steam  = $hero ? '<path d="M38 -2 q-4 -7 1 -13 q4 -5 1 -11" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" opacity="0.3"/><path d="M60 0 q4 -7 -1 -13 q-4 -5 -1 -11" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity="0.24"/>' : '';
+		return '<svg viewBox="0 0 100 110" width="100%" height="100%" style="pointer-events:none; overflow:visible;">
 			<defs>
-				<linearGradient id="phCrustH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFDE9C"/><stop offset="0.5" stop-color="#EFA94A"/><stop offset="1" stop-color="#B06B24"/></linearGradient>
-				<radialGradient id="phCheeseH" cx="0.5" cy="0.3" r="0.9"><stop offset="0" stop-color="#FFF8CE"/><stop offset="0.55" stop-color="#FFD968"/><stop offset="1" stop-color="#EFA22B"/></radialGradient>
-				<radialGradient id="phPepH" cx="0.35" cy="0.3" r="0.9"><stop offset="0" stop-color="#FF9078"/><stop offset="0.55" stop-color="#E8503C"/><stop offset="1" stop-color="#A81F14"/></radialGradient>
+				<linearGradient id="phCr' . $sfx . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE3A6"/><stop offset="0.45" stop-color="#F0A94E"/><stop offset="1" stop-color="#A5641F"/></linearGradient>
+				<radialGradient id="phCh' . $sfx . '" cx="0.5" cy="0.22" r="1"><stop offset="0" stop-color="' . $ch_in . '"/><stop offset="0.55" stop-color="' . $ch_mid . '"/><stop offset="1" stop-color="' . $ch_out . '"/></radialGradient>
+				<radialGradient id="phPp' . $sfx . '" cx="0.38" cy="0.3" r="1"><stop offset="0" stop-color="#FF8A70"/><stop offset="0.5" stop-color="#DE4633"/><stop offset="1" stop-color="#8F1B10"/></radialGradient>
+				<filter id="phChT' . $sfx . '" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.05 0.07" numOctaves="2" seed="8" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="2.6" diffuseConstant="1.05" result="l"><feDistantLight azimuth="235" elevation="62"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
+				<filter id="phCrT' . $sfx . '" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.12 0.16" numOctaves="2" seed="4" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="1.8" diffuseConstant="1.05" result="l"><feDistantLight azimuth="235" elevation="60"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
 			</defs>
-			<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phCrustH)" stroke="#96601F" stroke-width="2" stroke-linejoin="round"/>
-			<path d="M9 25 Q50 6 91 25" fill="none" stroke="#FFF0C8" stroke-width="3.5" stroke-linecap="round" opacity="0.75"/>
-			<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phCheeseH)" stroke="#D08E2A" stroke-width="1.8" stroke-linejoin="round"/>
-			<path d="M24 40 q4 12 8 1 M64 42 q3 11 7 0 M44 44 q3 9 6 0" fill="none" stroke="#FFF3C0" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
-			<circle cx="37" cy="52" r="8.5" fill="url(#phPepH)"/>
-			<circle cx="62" cy="55" r="8.5" fill="url(#phPepH)"/>
-			<circle cx="49" cy="73" r="8" fill="url(#phPepH)"/>
-			<circle cx="50" cy="90" r="5" fill="url(#phPepH)"/>
-			<circle cx="34" cy="49" r="2.6" fill="#FFC9B8" opacity="0.95"/>
-			<circle cx="59" cy="52" r="2.6" fill="#FFC9B8" opacity="0.95"/>
-			<circle cx="46.5" cy="70" r="2.3" fill="#FFC9B8" opacity="0.95"/>
-			<circle cx="30" cy="63" r="2.8" fill="#FFFBE2" opacity="0.9"/>
-			<circle cx="68" cy="66" r="2.3" fill="#FFFBE2" opacity="0.9"/>
-			<path d="M20 40 Q35 32 52 31" fill="none" stroke="#FFFBE2" stroke-width="3.5" stroke-linecap="round" opacity="0.8"/>
-			<path d="M40 46 Q50 42 62 44" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+			' . $steam . '
+			<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phCr' . $sfx . ')" filter="url(#phCrT' . $sfx . ')"/>
+			<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="none" stroke="#8F5A1C" stroke-width="1.5" opacity="0.5" stroke-linejoin="round"/>
+			<path d="M10 24.5 Q50 5 90 24.5" fill="none" stroke="#FFF2CC" stroke-width="3.2" stroke-linecap="round" opacity="0.8"/>
+			<ellipse cx="26" cy="26" rx="2.6" ry="1.7" fill="#7E4A14" opacity="0.5"/><ellipse cx="25.4" cy="25.3" rx="1" ry="0.7" fill="#FFE9B8" opacity="0.9"/>
+			<ellipse cx="58" cy="20" rx="2.2" ry="1.5" fill="#7E4A14" opacity="0.45"/><ellipse cx="57.5" cy="19.4" rx="0.9" ry="0.6" fill="#FFE9B8" opacity="0.85"/>
+			<ellipse cx="76" cy="27" rx="2.4" ry="1.6" fill="#7E4A14" opacity="0.5"/><ellipse cx="75.4" cy="26.4" rx="0.9" ry="0.6" fill="#FFE9B8" opacity="0.85"/>
+			<path d="M12.5 35.5 Q50 18 87.5 35.5" fill="none" stroke="#C4571E" stroke-width="3.2" opacity="0.5"/>
+			<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phCh' . $sfx . ')" filter="url(#phChT' . $sfx . ')"/>
+			<path d="M20.5 50 q7.5 1.5 6 9 q-1.2 6 -7 4 Z" fill="' . $ch_mid . '"/>
+			<path d="M74.5 53 q-7.5 1.5 -6 9 q1.2 6 7 4 Z" fill="' . $ch_mid . '"/>
+			<path d="M45 100 q5 8 10 0 q-2 9 -5 9 q-3 0 -5 -9 Z" fill="' . $ch_out . '"/>
+			<path d="M24 41 q4 12 8 1 M63 43 q3 11 7 0" fill="none" stroke="#FFF6CA" stroke-width="5.5" stroke-linecap="round" opacity="0.85"/>
+			<g>
+				<circle cx="37" cy="52" r="9" fill="url(#phPp' . $sfx . ')"/>
+				<circle cx="37" cy="52" r="9" fill="none" stroke="#7E150C" stroke-width="1.2" opacity="0.55"/>
+				<circle cx="34.6" cy="55" r="1.1" fill="#8F1B10" opacity="0.6"/><circle cx="40.2" cy="55.8" r="0.9" fill="#8F1B10" opacity="0.5"/>
+				<path d="M32 48.5 a6.5 6.5 0 0 1 6.5 -2.6" stroke="#FFC9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.95"/>
+				<circle cx="32.6" cy="47.6" r="1.2" fill="#FFE3DB" opacity="0.95"/>
+			</g>
+			<g>
+				<circle cx="62" cy="55" r="9" fill="url(#phPp' . $sfx . ')"/>
+				<circle cx="62" cy="55" r="9" fill="none" stroke="#7E150C" stroke-width="1.2" opacity="0.55"/>
+				<circle cx="59.6" cy="58" r="1.1" fill="#8F1B10" opacity="0.6"/><circle cx="65" cy="58.6" r="0.9" fill="#8F1B10" opacity="0.5"/>
+				<path d="M57 51.5 a6.5 6.5 0 0 1 6.5 -2.6" stroke="#FFC9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.95"/>
+				<circle cx="57.6" cy="50.6" r="1.2" fill="#FFE3DB" opacity="0.95"/>
+			</g>
+			<g>
+				<circle cx="49" cy="73" r="8" fill="url(#phPp' . $sfx . ')"/>
+				<circle cx="49" cy="73" r="8" fill="none" stroke="#7E150C" stroke-width="1.1" opacity="0.55"/>
+				<circle cx="47" cy="75.6" r="1" fill="#8F1B10" opacity="0.6"/>
+				<path d="M44.6 69.8 a5.8 5.8 0 0 1 5.8 -2.3" stroke="#FFC9B8" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.95"/>
+			</g>
+			<g><circle cx="50" cy="90" r="5" fill="url(#phPp' . $sfx . ')"/><circle cx="50" cy="90" r="5" fill="none" stroke="#7E150C" stroke-width="1" opacity="0.5"/><circle cx="48.6" cy="88.6" r="0.9" fill="#FFE3DB" opacity="0.95"/></g>
+			<circle cx="30" cy="63" r="2.8" fill="#FFFBE2" opacity="0.85"/>
+			<circle cx="68" cy="66" r="2.3" fill="#FFFBE2" opacity="0.8"/>
+			<path d="M18 42 Q50 30 82 42" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.3"/>
 		</svg>';
 	}
 }
@@ -52,30 +95,7 @@ if ( ! function_exists( 'phsg_svg_game_slice' ) ) {
 	 * @return string
 	 */
 	function phsg_svg_game_slice( $gold = false ) {
-		$sfx        = $gold ? 'G' : 'N';
-		$cheese_in  = $gold ? '#FFFBD6' : '#FFF8CE';
-		$cheese_mid = $gold ? '#FFE47A' : '#FFD968';
-		$cheese_out = $gold ? '#F5B301' : '#EFA22B';
-		return '<svg viewBox="0 0 100 110" width="100%" height="100%" style="pointer-events:none; overflow:visible;">
-			<defs>
-				<linearGradient id="phCrust' . $sfx . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFDE9C"/><stop offset="0.5" stop-color="#EFA94A"/><stop offset="1" stop-color="#B06B24"/></linearGradient>
-				<radialGradient id="phCheese' . $sfx . '" cx="0.5" cy="0.3" r="0.9"><stop offset="0" stop-color="' . $cheese_in . '"/><stop offset="0.55" stop-color="' . $cheese_mid . '"/><stop offset="1" stop-color="' . $cheese_out . '"/></radialGradient>
-				<radialGradient id="phPep' . $sfx . '" cx="0.35" cy="0.3" r="0.9"><stop offset="0" stop-color="#FF9078"/><stop offset="0.55" stop-color="#E8503C"/><stop offset="1" stop-color="#A81F14"/></radialGradient>
-			</defs>
-			<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phCrust' . $sfx . ')" stroke="#96601F" stroke-width="2" stroke-linejoin="round"/>
-			<path d="M9 25 Q50 6 91 25" fill="none" stroke="#FFF0C8" stroke-width="3.5" stroke-linecap="round" opacity="0.75"/>
-			<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phCheese' . $sfx . ')" stroke="#D08E2A" stroke-width="1.8" stroke-linejoin="round"/>
-			<path d="M24 40 q4 12 8 1 M64 42 q3 11 7 0" fill="none" stroke="#FFF3C0" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
-			<circle cx="37" cy="52" r="8.5" fill="url(#phPep' . $sfx . ')"/>
-			<circle cx="62" cy="55" r="8.5" fill="url(#phPep' . $sfx . ')"/>
-			<circle cx="49" cy="73" r="8" fill="url(#phPep' . $sfx . ')"/>
-			<circle cx="50" cy="90" r="5" fill="url(#phPep' . $sfx . ')"/>
-			<circle cx="34" cy="49" r="2.6" fill="#FFC9B8" opacity="0.95"/>
-			<circle cx="59" cy="52" r="2.6" fill="#FFC9B8" opacity="0.95"/>
-			<circle cx="30" cy="63" r="2.8" fill="#FFFBE2" opacity="0.9"/>
-			<path d="M20 40 Q35 32 52 31" fill="none" stroke="#FFFBE2" stroke-width="3.5" stroke-linecap="round" opacity="0.8"/>
-			<path d="M40 46 Q50 42 62 44" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
-		</svg>';
+		return phsg_slice_svg( $gold ? 'G' : 'N', $gold, false );
 	}
 }
 
@@ -91,64 +111,83 @@ if ( ! function_exists( 'phsg_svg_obstacle' ) ) {
 			case 'mush':
 				return '<svg viewBox="0 0 60 62" width="100%" height="100%" style="pointer-events:none;">
 					<defs>
-						<radialGradient id="phMushCap" cx="0.35" cy="0.25" r="1"><stop offset="0" stop-color="#F2DCBB"/><stop offset="0.55" stop-color="#CDa276"/><stop offset="1" stop-color="#96683C"/></radialGradient>
-						<linearGradient id="phMushStem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFDF2"/><stop offset="1" stop-color="#DBD1B4"/></linearGradient>
+						<radialGradient id="phMushCap" cx="0.35" cy="0.22" r="1"><stop offset="0" stop-color="#F5E2C4"/><stop offset="0.55" stop-color="#CDA276"/><stop offset="1" stop-color="#8E5F33"/></radialGradient>
+						<linearGradient id="phMushStem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFDF2"/><stop offset="1" stop-color="#D3C7A6"/></linearGradient>
+						<filter id="phMushT" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.14 0.18" numOctaves="2" seed="5" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="1.6" diffuseConstant="1.05" result="l"><feDistantLight azimuth="235" elevation="62"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
 					</defs>
-					<path d="M6 31 Q30 3 54 31 Q42 38 30 38 Q18 38 6 31 Z" fill="url(#phMushCap)" stroke="#7C5530" stroke-width="1.6" stroke-linejoin="round"/>
-					<path d="M23 37 q-2 15 2 19 q5 3 10 0 q4 -4 2 -19" fill="url(#phMushStem)" stroke="#B8A984" stroke-width="1.4" stroke-linejoin="round"/>
-					<ellipse cx="21" cy="17" rx="7" ry="4" fill="#FFFFFF" opacity="0.5" transform="rotate(-18 21 17)"/>
-					<circle cx="20" cy="25" r="3.2" fill="#FFF6E3" opacity="0.9"/>
-					<circle cx="34" cy="16" r="2.8" fill="#FFF6E3" opacity="0.9"/>
-					<circle cx="43" cy="26" r="3.2" fill="#FFF6E3" opacity="0.9"/>
+					<path d="M6 31 Q30 3 54 31 Q42 38 30 38 Q18 38 6 31 Z" fill="url(#phMushCap)" filter="url(#phMushT)"/>
+					<path d="M6 31 Q30 3 54 31 Q42 38 30 38 Q18 38 6 31 Z" fill="none" stroke="#6E4A28" stroke-width="1.4" opacity="0.5" stroke-linejoin="round"/>
+					<path d="M10 31.5 Q30 37 50 31.5" fill="none" stroke="#8A6238" stroke-width="2.2" opacity="0.55"/>
+					<path d="M15 33.5 L15.5 36.4 M22 35.4 L22.3 38 M30 36 L30 38.6 M38 35.4 L37.7 38 M45 33.5 L44.5 36.4" stroke="#B99568" stroke-width="1.4" opacity="0.7" stroke-linecap="round"/>
+					<path d="M23 37 q-2 15 2 19 q5 3 10 0 q4 -4 2 -19" fill="url(#phMushStem)"/>
+					<path d="M25 40 q-1.4 11 1.2 15" fill="none" stroke="#B9AD8C" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+					<ellipse cx="20" cy="15" rx="8" ry="4.5" fill="#FFFFFF" opacity="0.55" transform="rotate(-18 20 15)"/>
+					<circle cx="20" cy="25" r="3" fill="#FFF6E3" opacity="0.85"/>
+					<circle cx="35" cy="15" r="2.6" fill="#FFF6E3" opacity="0.8"/>
+					<circle cx="43" cy="25" r="3" fill="#FFF6E3" opacity="0.85"/>
 				</svg>';
 			case 'olive':
 				return '<svg viewBox="0 0 60 60" width="100%" height="100%" style="pointer-events:none;">
 					<defs>
-						<radialGradient id="phOlive" cx="0.35" cy="0.28" r="1"><stop offset="0" stop-color="#6E6650"/><stop offset="0.55" stop-color="#403A2E"/><stop offset="1" stop-color="#221E17"/></radialGradient>
+						<radialGradient id="phOlive" cx="0.34" cy="0.26" r="1.05"><stop offset="0" stop-color="#7E7458"/><stop offset="0.5" stop-color="#443E30"/><stop offset="1" stop-color="#1C1913"/></radialGradient>
+						<radialGradient id="phOliveIn" cx="0.4" cy="0.35" r="1"><stop offset="0" stop-color="#C4523E"/><stop offset="1" stop-color="#8E2E1E"/></radialGradient>
 					</defs>
 					<circle cx="30" cy="30" r="23" fill="url(#phOlive)"/>
-					<ellipse cx="30" cy="30" rx="9" ry="12" fill="#7E7357"/>
-					<ellipse cx="30" cy="30" rx="4" ry="6.5" fill="#A89A73"/>
-					<ellipse cx="21" cy="19" rx="7" ry="4.5" fill="#FFFFFF" opacity="0.45" transform="rotate(-24 21 19)"/>
+					<ellipse cx="30" cy="30" rx="9.5" ry="12.5" fill="#161310"/>
+					<ellipse cx="30" cy="30.5" rx="6.5" ry="9" fill="url(#phOliveIn)"/>
+					<ellipse cx="28.4" cy="27" rx="2" ry="2.8" fill="#E88A70" opacity="0.8"/>
+					<path d="M22.5 24 a9.5 12.5 0 0 1 6 -6" fill="none" stroke="#0E0C09" stroke-width="2" opacity="0.7"/>
+					<ellipse cx="20" cy="17.5" rx="8" ry="4.5" fill="#FFFFFF" opacity="0.5" transform="rotate(-24 20 17.5)"/>
+					<path d="M14 41 a23 23 0 0 0 25 6" fill="none" stroke="#8E8264" stroke-width="2.4" opacity="0.4" stroke-linecap="round"/>
 				</svg>';
 			case 'onion':
 				return '<svg viewBox="0 0 60 60" width="100%" height="100%" style="pointer-events:none;">
 					<defs>
-						<radialGradient id="phOnion" cx="0.4" cy="0.3" r="1"><stop offset="0" stop-color="#FDF4FD"/><stop offset="0.6" stop-color="#EBD6EC"/><stop offset="1" stop-color="#C9A4C8"/></radialGradient>
+						<radialGradient id="phOnion" cx="0.38" cy="0.28" r="1"><stop offset="0" stop-color="#FEF8FE"/><stop offset="0.6" stop-color="#EED9EF"/><stop offset="1" stop-color="#BE93BD"/></radialGradient>
 					</defs>
 					<circle cx="30" cy="30" r="23" fill="url(#phOnion)"/>
-					<circle cx="30" cy="30" r="16.5" fill="none" stroke="#B478B0" stroke-width="3.5" opacity="0.75"/>
-					<circle cx="30" cy="30" r="10" fill="none" stroke="#B478B0" stroke-width="3" opacity="0.65"/>
-					<circle cx="30" cy="30" r="4" fill="#B478B0" opacity="0.75"/>
-					<ellipse cx="21" cy="18" rx="8" ry="4.5" fill="#FFFFFF" opacity="0.7" transform="rotate(-24 21 18)"/>
+					<circle cx="30" cy="30" r="19.5" fill="none" stroke="#C9A0C8" stroke-width="1.6" opacity="0.6"/>
+					<circle cx="30" cy="30" r="16" fill="none" stroke="#B478B0" stroke-width="3.2" opacity="0.7"/>
+					<circle cx="30" cy="30" r="12.5" fill="none" stroke="#C9A0C8" stroke-width="1.4" opacity="0.55"/>
+					<circle cx="30" cy="30" r="9.5" fill="none" stroke="#B478B0" stroke-width="2.8" opacity="0.6"/>
+					<circle cx="30" cy="30" r="4" fill="#B478B0" opacity="0.7"/>
+					<circle cx="30" cy="30" r="1.8" fill="#9A5C96" opacity="0.8"/>
+					<ellipse cx="20.5" cy="17.5" rx="9" ry="5" fill="#FFFFFF" opacity="0.75" transform="rotate(-24 20.5 17.5)"/>
+					<path d="M15 42 a23 23 0 0 0 22 7" fill="none" stroke="#FFFFFF" stroke-width="2.2" opacity="0.5" stroke-linecap="round"/>
 				</svg>';
 			case 'tomato':
 				return '<svg viewBox="0 0 60 60" width="100%" height="100%" style="pointer-events:none;">
 					<defs>
-						<radialGradient id="phTomato" cx="0.35" cy="0.28" r="1"><stop offset="0" stop-color="#FF8E68"/><stop offset="0.5" stop-color="#F05336"/><stop offset="1" stop-color="#C22B18"/></radialGradient>
+						<radialGradient id="phTomato" cx="0.35" cy="0.26" r="1.05"><stop offset="0" stop-color="#FF9670"/><stop offset="0.5" stop-color="#EF4E30"/><stop offset="1" stop-color="#B22412"/></radialGradient>
+						<radialGradient id="phTomatoIn" cx="0.42" cy="0.36" r="1"><stop offset="0" stop-color="#FFB68E"/><stop offset="1" stop-color="#F07048"/></radialGradient>
 					</defs>
 					<circle cx="30" cy="30" r="23" fill="url(#phTomato)"/>
-					<circle cx="30" cy="30" r="17" fill="#F99C77" opacity="0.85"/>
-					<circle cx="30" cy="30" r="5" fill="#E85D3A"/>
-					<ellipse cx="30" cy="17.5" rx="3" ry="5" fill="#FBC9A6" opacity="0.9"/>
-					<ellipse cx="30" cy="42.5" rx="3" ry="5" fill="#FBC9A6" opacity="0.9"/>
-					<ellipse cx="17.5" cy="30" rx="5" ry="3" fill="#FBC9A6" opacity="0.9"/>
-					<ellipse cx="42.5" cy="30" rx="5" ry="3" fill="#FBC9A6" opacity="0.9"/>
-					<ellipse cx="21" cy="17" rx="8" ry="4.5" fill="#FFFFFF" opacity="0.6" transform="rotate(-24 21 17)"/>
+					<circle cx="30" cy="30" r="17.5" fill="url(#phTomatoIn)"/>
+					<path d="M30 14.5 L30 45.5 M14.5 30 L45.5 30 M19 19 L41 41 M41 19 L19 41" stroke="#E85D3A" stroke-width="2.2" opacity="0.6"/>
+					<circle cx="30" cy="30" r="4.6" fill="#F2B790"/>
+					<ellipse cx="26" cy="21.5" rx="1.4" ry="2.4" fill="#F7D34E" transform="rotate(24 26 21.5)"/>
+					<ellipse cx="35.5" cy="22.5" rx="1.4" ry="2.4" fill="#F7D34E" transform="rotate(-28 35.5 22.5)"/>
+					<ellipse cx="38.5" cy="35.5" rx="1.4" ry="2.4" fill="#F7D34E" transform="rotate(58 38.5 35.5)"/>
+					<ellipse cx="24" cy="37.5" rx="1.4" ry="2.4" fill="#F7D34E" transform="rotate(-58 24 37.5)"/>
+					<ellipse cx="20.5" cy="17" rx="8.5" ry="4.5" fill="#FFFFFF" opacity="0.6" transform="rotate(-24 20.5 17)"/>
 				</svg>';
 			case 'burnt':
 				return '<svg viewBox="0 0 100 110" width="100%" height="100%" style="pointer-events:none;">
 					<defs>
-						<linearGradient id="phBurntCrust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7E6142"/><stop offset="1" stop-color="#4A3520"/></linearGradient>
-						<radialGradient id="phBurntCheese" cx="0.5" cy="0.3" r="0.9"><stop offset="0" stop-color="#9A7A4E"/><stop offset="1" stop-color="#5E4327"/></radialGradient>
+						<linearGradient id="phBurntCrust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6E5236"/><stop offset="1" stop-color="#382613"/></linearGradient>
+						<radialGradient id="phBurntCheese" cx="0.5" cy="0.28" r="0.95"><stop offset="0" stop-color="#8A6A40"/><stop offset="0.6" stop-color="#5E4327"/><stop offset="1" stop-color="#382614"/></radialGradient>
+						<filter id="phBurntT" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.09 0.12" numOctaves="3" seed="11" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="2.4" diffuseConstant="0.9" result="l"><feDistantLight azimuth="235" elevation="55"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
 					</defs>
-					<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phBurntCrust)" stroke="#3A2A16" stroke-width="1.8" stroke-linejoin="round"/>
-					<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phBurntCheese)" stroke="#3A2A16" stroke-width="1.6" stroke-linejoin="round"/>
-					<circle cx="37" cy="52" r="8" fill="#2F2314"/>
-					<circle cx="62" cy="55" r="8" fill="#2F2314"/>
-					<circle cx="49" cy="73" r="7.5" fill="#2F2314"/>
-					<path d="M30 20 q3 -8 0 -14 M50 16 q3 -8 0 -14 M70 20 q3 -8 0 -14" fill="none" stroke="#A9A29A" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
-					<path d="M20 38 Q35 31 50 30" fill="none" stroke="#B79A6C" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+					<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phBurntCrust)" filter="url(#phBurntT)"/>
+					<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phBurntCheese)" filter="url(#phBurntT)"/>
+					<circle cx="37" cy="52" r="8" fill="#1F1609"/><path d="M31.8 47.5 a8 8 0 0 1 6 -3" stroke="#4A3A22" stroke-width="1.6" fill="none" opacity="0.8"/>
+					<circle cx="62" cy="55" r="8" fill="#1F1609"/><path d="M56.8 50.5 a8 8 0 0 1 6 -3" stroke="#4A3A22" stroke-width="1.6" fill="none" opacity="0.8"/>
+					<circle cx="49" cy="73" r="7.5" fill="#1F1609"/>
+					<circle cx="27" cy="45" r="1.3" fill="#FF6A3C" opacity="0.7"/>
+					<circle cx="70" cy="47" r="1.1" fill="#FF8A4C" opacity="0.6"/>
+					<circle cx="52" cy="86" r="1.2" fill="#FF6A3C" opacity="0.65"/>
+					<path d="M30 20 q3 -8 0 -14 M50 16 q3 -8 0 -14 M70 20 q3 -8 0 -14" fill="none" stroke="#9C948A" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+					<path d="M20 38 Q35 31 50 30" fill="none" stroke="#A98B60" stroke-width="2.4" stroke-linecap="round" opacity="0.45"/>
 				</svg>';
 		}
 		return '';
@@ -164,14 +203,16 @@ if ( ! function_exists( 'phsg_svg_cheese' ) ) {
 	function phsg_svg_cheese() {
 		return '<svg viewBox="0 0 64 56" width="100%" height="100%" style="pointer-events:none;">
 			<defs>
-				<linearGradient id="phCheeseC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3A6"/><stop offset="0.55" stop-color="#FFD84E"/><stop offset="1" stop-color="#EFA22B"/></linearGradient>
+				<linearGradient id="phCheeseC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF5AE"/><stop offset="0.55" stop-color="#FFD84E"/><stop offset="1" stop-color="#E8961F"/></linearGradient>
+				<filter id="phCheeseCT" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.07 0.09" numOctaves="2" seed="6" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="1.8" diffuseConstant="1.05" result="l"><feDistantLight azimuth="235" elevation="64"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
 			</defs>
-			<path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="url(#phCheeseC)" stroke="#D08E2A" stroke-width="1.8" stroke-linejoin="round"/>
-			<circle cx="24" cy="38" r="5" fill="#FFEFA0"/><path d="M21 36 a5 5 0 0 1 6 -1" fill="none" stroke="#D19A2B" stroke-width="1.6" opacity="0.7"/>
-			<circle cx="41" cy="41" r="4" fill="#FFEFA0"/><path d="M38.6 39.4 a4 4 0 0 1 4.8 -0.8" fill="none" stroke="#D19A2B" stroke-width="1.4" opacity="0.7"/>
-			<circle cx="33" cy="26" r="3.5" fill="#FFEFA0"/><path d="M30.9 24.6 a3.5 3.5 0 0 1 4.2 -0.7" fill="none" stroke="#D19A2B" stroke-width="1.3" opacity="0.7"/>
-			<path d="M30 9 L36 9" stroke="#FFFBE2" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
-			<path d="M14 44 Q20 40 26 44" fill="none" stroke="#FFFBE2" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+			<path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="url(#phCheeseC)" filter="url(#phCheeseCT)"/>
+			<path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="none" stroke="#C9821E" stroke-width="1.5" opacity="0.55" stroke-linejoin="round"/>
+			<circle cx="24" cy="38" r="5" fill="#F2B637"/><path d="M20.4 35.4 a5 5 0 0 1 5.4 -2.2" fill="none" stroke="#B26F14" stroke-width="1.6" opacity="0.7"/><ellipse cx="26" cy="40.4" rx="2.6" ry="1.4" fill="#FFEFA0" opacity="0.85"/>
+			<circle cx="41" cy="41" r="4" fill="#F2B637"/><path d="M38.2 38.9 a4 4 0 0 1 4.4 -1.8" fill="none" stroke="#B26F14" stroke-width="1.4" opacity="0.7"/><ellipse cx="42.6" cy="42.6" rx="2" ry="1.1" fill="#FFEFA0" opacity="0.85"/>
+			<circle cx="33" cy="26" r="3.5" fill="#F2B637"/><path d="M30.6 24.2 a3.5 3.5 0 0 1 3.8 -1.5" fill="none" stroke="#B26F14" stroke-width="1.2" opacity="0.7"/>
+			<path d="M29 10 L35.5 10" stroke="#FFFBE2" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+			<path d="M13 44.5 Q20 40.5 27 44.5" fill="none" stroke="#FFFBE2" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
 		</svg>';
 	}
 }
@@ -187,25 +228,71 @@ if ( ! function_exists( 'phsg_svg_bonus' ) ) {
 		if ( 'clock' === $type ) {
 			return '<svg viewBox="0 0 60 60" width="100%" height="100%" style="pointer-events:none;">
 				<defs>
-					<radialGradient id="phClock" cx="0.35" cy="0.28" r="1"><stop offset="0" stop-color="#FFF3C2"/><stop offset="0.6" stop-color="#FFD968"/><stop offset="1" stop-color="#E8A62B"/></radialGradient>
+					<radialGradient id="phClock" cx="0.35" cy="0.26" r="1"><stop offset="0" stop-color="#FFF6CC"/><stop offset="0.55" stop-color="#FFD35A"/><stop offset="1" stop-color="#D89218"/></radialGradient>
+					<radialGradient id="phClockFace" cx="0.42" cy="0.34" r="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F2E7C9"/></radialGradient>
 				</defs>
-				<circle cx="30" cy="32" r="22" fill="url(#phClock)" stroke="#C98A22" stroke-width="1.8"/>
-				<circle cx="30" cy="32" r="16" fill="#FFFEF8" stroke="#E3C173" stroke-width="1.4"/>
-				<path d="M30 32 L30 21 M30 32 L38 36" stroke="#F03A2E" stroke-width="3.5" stroke-linecap="round"/>
-				<circle cx="30" cy="32" r="2" fill="#F03A2E"/>
-				<rect x="25" y="4" width="10" height="6" rx="3" fill="#F03A2E" stroke="#C22B1F" stroke-width="1.4"/>
-				<ellipse cx="22" cy="21" rx="7" ry="4" fill="#FFFFFF" opacity="0.65" transform="rotate(-24 22 21)"/>
+				<circle cx="30" cy="32" r="22" fill="url(#phClock)"/>
+				<path d="M12.5 41 a22 22 0 0 0 30 9" fill="none" stroke="#B27412" stroke-width="2.6" opacity="0.5" stroke-linecap="round"/>
+				<circle cx="30" cy="32" r="16" fill="url(#phClockFace)"/>
+				<path d="M17.8 24.5 a16 16 0 0 1 10 -7.5" fill="none" stroke="#C9B274" stroke-width="1.6" opacity="0.7"/>
+				<path d="M30 18.5 L30 21 M43.5 32 L41 32 M30 45.5 L30 43 M16.5 32 L19 32" stroke="#B79A4E" stroke-width="2" stroke-linecap="round"/>
+				<path d="M30 32 L30 21.5 M30 32 L38 36" stroke="#F03A2E" stroke-width="3.5" stroke-linecap="round"/>
+				<circle cx="30" cy="32" r="2.2" fill="#F03A2E"/><circle cx="29.3" cy="31.3" r="0.8" fill="#FF9A90"/>
+				<rect x="25" y="4" width="10" height="6" rx="3" fill="#F03A2E"/>
+				<path d="M26.5 6 a4 3 0 0 1 4 -1" stroke="#FF9A90" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+				<ellipse cx="21.5" cy="20" rx="7.5" ry="4" fill="#FFFFFF" opacity="0.7" transform="rotate(-24 21.5 20)"/>
 			</svg>';
 		}
 		return '<svg viewBox="0 0 60 60" width="100%" height="100%" style="pointer-events:none;">
 			<defs>
-				<radialGradient id="phChili" cx="0.35" cy="0.3" r="1.1"><stop offset="0" stop-color="#FF7A62"/><stop offset="0.5" stop-color="#F03A2E"/><stop offset="1" stop-color="#B01A12"/></radialGradient>
+				<radialGradient id="phChili" cx="0.32" cy="0.26" r="1.15"><stop offset="0" stop-color="#FF8A6E"/><stop offset="0.45" stop-color="#F03A2E"/><stop offset="1" stop-color="#9C130C"/></radialGradient>
+				<linearGradient id="phChiliStem" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#3E7A2E"/><stop offset="1" stop-color="#7DBF63"/></linearGradient>
 			</defs>
-			<path d="M14 46 Q10 30 24 20 Q38 10 48 16 Q52 30 40 42 Q28 54 14 46 Z" fill="url(#phChili)" stroke="#8E1710" stroke-width="1.6" stroke-linejoin="round"/>
-			<path d="M46 17 Q50 8 58 8" fill="none" stroke="#4C8A3A" stroke-width="5" stroke-linecap="round"/>
-			<path d="M46 17 Q49 11 55 9" fill="none" stroke="#7DBF63" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
-			<path d="M20 42 Q16 32 26 24" fill="none" stroke="#FFB0A0" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-			<ellipse cx="34" cy="21" rx="7" ry="3.5" fill="#FFFFFF" opacity="0.5" transform="rotate(-28 34 21)"/>
+			<path d="M14 46 Q10 30 24 20 Q38 10 48 16 Q52 30 40 42 Q28 54 14 46 Z" fill="url(#phChili)"/>
+			<path d="M14 46 Q10 30 24 20 Q38 10 48 16 Q52 30 40 42 Q28 54 14 46 Z" fill="none" stroke="#7E100A" stroke-width="1.4" opacity="0.5" stroke-linejoin="round"/>
+			<path d="M17 44 Q13.5 31 25 22.5" fill="none" stroke="#FFB0A0" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+			<path d="M22 40 Q19.5 33 26 27" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" opacity="0.6"/>
+			<path d="M38 39 Q46 31 47.5 22" fill="none" stroke="#B01A12" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+			<path d="M46 17 Q50 8 58 8" fill="none" stroke="url(#phChiliStem)" stroke-width="5" stroke-linecap="round"/>
+			<path d="M46 17 Q49 11 55 9" fill="none" stroke="#A8D98A" stroke-width="1.8" stroke-linecap="round" opacity="0.85"/>
+			<ellipse cx="34" cy="20" rx="7" ry="3.2" fill="#FFFFFF" opacity="0.55" transform="rotate(-28 34 20)"/>
+		</svg>';
+	}
+}
+
+if ( ! function_exists( 'phsg_svg_bg_pizza' ) ) {
+	/**
+	 * פיצה עגולה חתוכה למשולשים – רקע דקורטיבי בפינת העמוד (בהשראת תמונת המותג).
+	 *
+	 * @return string
+	 */
+	function phsg_svg_bg_pizza() {
+		$cuts    = '';
+		$strands = '';
+		foreach ( array( 8, 68, 128, 188, 248, 308 ) as $deg ) {
+			$cuts .= '<path d="M200 200 L200 12" stroke="rgba(30,6,4,0.9)" stroke-width="9" transform="rotate(' . $deg . ' 200 200)"/>';
+		}
+		foreach ( array( 68, 188, 308 ) as $deg ) {
+			$strands .= '<g transform="rotate(' . $deg . ' 200 200)"><path d="M195 90 q5 6 10 0" fill="none" stroke="#F7E3A0" stroke-width="2" opacity="0.9"/><path d="M194 130 q6 7 12 0" fill="none" stroke="#F2D488" stroke-width="1.6" opacity="0.85"/><path d="M196 62 q4 5 8 0" fill="none" stroke="#F7E3A0" stroke-width="1.6" opacity="0.8"/></g>';
+		}
+		return '<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+			<defs>
+				<radialGradient id="phBgCrust" cx="0.5" cy="0.5" r="0.5"><stop offset="0.82" stop-color="#D89A44"/><stop offset="0.92" stop-color="#C07E2C"/><stop offset="1" stop-color="#8E5514"/></radialGradient>
+				<radialGradient id="phBgCheese" cx="0.42" cy="0.4" r="0.75"><stop offset="0" stop-color="#F7DC85"/><stop offset="0.6" stop-color="#EBB84E"/><stop offset="1" stop-color="#CE8F2E"/></radialGradient>
+				<filter id="phBgT" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.028 0.032" numOctaves="3" seed="14" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="3.4" diffuseConstant="1" result="l"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
+				<filter id="phBgCrT" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.06 0.07" numOctaves="2" seed="9" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="2.6" diffuseConstant="1" result="l"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
+			</defs>
+			<circle cx="200" cy="200" r="188" fill="url(#phBgCrust)" filter="url(#phBgCrT)"/>
+			<circle cx="200" cy="200" r="162" fill="url(#phBgCheese)" filter="url(#phBgT)"/>
+			<ellipse cx="150" cy="120" rx="34" ry="24" fill="#B26A1E" opacity="0.4"/>
+			<ellipse cx="262" cy="150" rx="28" ry="20" fill="#A8611A" opacity="0.38"/>
+			<ellipse cx="235" cy="265" rx="36" ry="24" fill="#B26A1E" opacity="0.4"/>
+			<ellipse cx="130" cy="240" rx="26" ry="18" fill="#A8611A" opacity="0.35"/>
+			<ellipse cx="196" cy="180" rx="22" ry="16" fill="#C0762A" opacity="0.4"/>
+			<ellipse cx="172" cy="145" rx="18" ry="12" fill="#FFEFB0" opacity="0.4"/>
+			<ellipse cx="245" cy="205" rx="16" ry="11" fill="#FFEFB0" opacity="0.35"/>
+			<ellipse cx="160" cy="272" rx="17" ry="11" fill="#FFEFB0" opacity="0.35"/>
+			' . $cuts . $strands . '
 		</svg>';
 	}
 }

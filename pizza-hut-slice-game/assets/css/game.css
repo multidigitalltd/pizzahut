@@ -48,7 +48,6 @@
 @keyframes phsg-pulseBeat { 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.1);} }
 @keyframes phsg-wobble { 0%,100%{ transform:rotate(-6deg) scale(1);} 50%{ transform:rotate(6deg) scale(1.07);} }
 @keyframes phsg-burst { 0%{ transform:translate(-50%,-50%) scale(.2); opacity:.95;} 100%{ transform:translate(-50%,-50%) scale(2.1); opacity:0;} }
-@keyframes phsg-marquee { 0%{ transform:translateX(0);} 100%{ transform:translateX(240px);} }
 @keyframes phsg-countZoom { 0%{ transform:scale(2.4);} 30%{ transform:scale(1);} 100%{ transform:scale(1);} }
 @keyframes phsg-spinSlow { 0%{ transform:rotate(0deg);} 100%{ transform:rotate(360deg);} }
 @keyframes phsg-confettiFall { 0%{ transform:translateY(-8vh) rotate(0deg);} 100%{ transform:translateY(105vh) rotate(720deg);} }
@@ -87,9 +86,9 @@
 		radial-gradient(130% 105% at 50% 18%, rgba(18, 10, 13, 0) 34%, rgba(6, 3, 5, 0.88) 92%),
 		radial-gradient(640px 500px at 88% 4%, rgba(255, 110, 40, 0.16), transparent 70%),
 		radial-gradient(420px 340px at 96% 0%, rgba(210, 60, 25, 0.28), transparent 72%),
-		linear-gradient(to left, rgba(228, 62, 66, 0.15) 0 2px, transparent 2px),
-		linear-gradient(to bottom, rgba(228, 62, 66, 0.15) 0 2px, transparent 2px),
-		radial-gradient(950px 680px at 12% 0%, rgba(190, 24, 34, 0.5), transparent 64%),
+		linear-gradient(to left, rgba(255, 178, 168, 0.16) 0 3px, transparent 3px),
+		linear-gradient(to bottom, rgba(255, 178, 168, 0.16) 0 3px, transparent 3px),
+		radial-gradient(1100px 780px at 14% 0%, rgba(205, 26, 38, 0.62), transparent 66%),
 		linear-gradient(180deg, #1A0F13, #0D0709);
 	background-size: 100% 100%, 100% 100%, 100% 100%, 112px 112px, 112px 112px, 100% 100%, 100% 100%;
 	font-family: "Almoni", "Rubik", sans-serif;
@@ -135,26 +134,22 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	margin: 0;
 }
 
-/* ===== רקע טיפוגרפי נע ===== */
-.phsg-marquee {
+.phsg-bgpizza {
 	position: absolute;
-	inset: -60px;
-	overflow: hidden;
-	opacity: 0.03;
+	top: -140px;
+	right: -180px;
+	width: 640px;
+	height: 640px;
 	pointer-events: none;
-	transform: rotate(-6deg);
+	opacity: 0.8;
+	transform: rotate(-14deg);
+	filter: brightness(0.58) saturate(1.08) drop-shadow(0 40px 80px rgba(0, 0, 0, 0.65));
+	-webkit-mask-image: radial-gradient(circle at 60% 34%, #000 44%, transparent 76%);
+	mask-image: radial-gradient(circle at 60% 34%, #000 44%, transparent 76%);
 }
 
-.phsg-marquee .phsg-marquee__row { color: #FFFFFF !important; }
-
-.phsg-marquee__row {
-	white-space: nowrap;
-	font-family: "Almoni", "Rubik", sans-serif;
-	font-weight: 700;
-	font-size: 60px;
-	line-height: 1.15;
-	letter-spacing: 2px;
-	animation: phsg-marquee linear infinite;
+@media (max-width: 700px) {
+	.phsg-bgpizza { width: 430px; height: 430px; top: -100px; right: -150px; }
 }
 
 .phsg-vignette {
@@ -1239,7 +1234,6 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 
 /* ===== צמצום אנימציות ===== */
 @media (prefers-reduced-motion: reduce) {
-	.phsg-marquee__row,
 	.phsg-hero__float,
 	.phsg-hero__glow,
 	.phsg-sprite__wobble,
