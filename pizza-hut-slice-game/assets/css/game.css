@@ -81,16 +81,19 @@
 	width: 100%;
 	min-height: 100vh;
 	overflow: hidden;
-	/* אריחים אדומים מבריקים – שפת המותג 2026 */
-	background-color: #D31F2B;
+	/* לילה-ניאון 2026 – אריחים אדומים כהים, זוהר חם ופינת פיצה */
+	background-color: #120A0D;
 	background-image:
-		linear-gradient(118deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.07) 30%, rgba(0, 0, 0, 0.04) 62%, rgba(80, 0, 6, 0.22) 100%),
-		linear-gradient(to left, rgba(255, 216, 200, 0.5) 0 3px, transparent 3px),
-		linear-gradient(to bottom, rgba(255, 216, 200, 0.5) 0 3px, transparent 3px),
-		linear-gradient(180deg, #EA2632, #C41722);
-	background-size: 104px 104px, 104px 104px, 104px 104px, 100% 100%;
+		radial-gradient(130% 105% at 50% 18%, rgba(18, 10, 13, 0) 34%, rgba(6, 3, 5, 0.88) 92%),
+		radial-gradient(640px 500px at 88% 4%, rgba(255, 110, 40, 0.16), transparent 70%),
+		radial-gradient(420px 340px at 96% 0%, rgba(210, 60, 25, 0.28), transparent 72%),
+		linear-gradient(to left, rgba(228, 62, 66, 0.15) 0 2px, transparent 2px),
+		linear-gradient(to bottom, rgba(228, 62, 66, 0.15) 0 2px, transparent 2px),
+		radial-gradient(950px 680px at 12% 0%, rgba(190, 24, 34, 0.5), transparent 64%),
+		linear-gradient(180deg, #1A0F13, #0D0709);
+	background-size: 100% 100%, 100% 100%, 100% 100%, 112px 112px, 112px 112px, 100% 100%, 100% 100%;
 	font-family: "Almoni", "Rubik", sans-serif;
-	color: var(--black);
+	color: #F2EEE8;
 	/* סמן חותך-פיצה בכל העמוד */
 	cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='38' height='38' viewBox='0 0 38 38'%3E%3Ccircle cx='15' cy='23' r='10' fill='%23F0EFDD' stroke='%232D2A26' stroke-width='3'/%3E%3Ccircle cx='15' cy='23' r='2.6' fill='%23F32735' stroke='%232D2A26' stroke-width='1.5'/%3E%3Crect x='20.5' y='1' width='15' height='7' rx='3.5' transform='rotate(45 20.5 1)' fill='%23F32735' stroke='%232D2A26' stroke-width='2'/%3E%3C/svg%3E") 15 23, auto;
 }
@@ -110,7 +113,7 @@ html.phsg-takeover body {
 	overflow-y: auto !important; /* ביטול כל נעילת גלילה של תבנית/תוסף אחר */
 	height: auto !important;
 	/* אותו רקע אריחים – בלי "קו תפר" אם משהו מוסיף גובה מתחת */
-	background: #D31F2B fixed !important;
+	background: #0D0709 fixed !important;
 }
 
 html.phsg-takeover { margin-top: 0 !important; } /* ביטול היסט סרגל הניהול */
@@ -137,7 +140,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	position: absolute;
 	inset: -60px;
 	overflow: hidden;
-	opacity: 0.06;
+	opacity: 0.03;
 	pointer-events: none;
 	transform: rotate(-6deg);
 }
@@ -158,7 +161,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	background: radial-gradient(95% 75% at 50% 38%, transparent 52%, rgba(70, 0, 8, 0.5) 100%);
+	background: radial-gradient(95% 75% at 50% 38%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
 }
 
 /* ===== עמודת תוכן ===== */
@@ -210,28 +213,28 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-header__pills { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
 
 .phsg-pill--title {
-	background: rgba(255, 255, 255, 0.16);
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
+	background: linear-gradient(135deg, #FF5A63, #D01423);
 	color: #fff;
-	border: 1px solid rgba(255, 255, 255, 0.45);
+	border: none;
 	border-radius: 999px;
 	padding: 6px 18px;
 	font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700;
 	font-size: 16px;
-	box-shadow: 0 8px 22px rgba(90, 0, 8, 0.3);
+	box-shadow: 0 10px 26px rgba(243, 39, 53, 0.45);
 	transform: rotate(-1deg);
 }
 
 .phsg-pill--sub {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 700;
-	color: var(--cream);
-	text-shadow: 0 1px 0 rgba(45, 42, 38, 0.5);
-	background: rgba(45, 42, 38, 0.25);
+	letter-spacing: 2px;
+	color: #C9C1BA;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.14);
 	border-radius: 999px;
-	padding: 2px 12px;
+	padding: 3px 14px;
+	white-space: nowrap;
 }
 
 .phsg-sound {
@@ -241,17 +244,18 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700;
 	font-size: 13px;
-	background: rgba(255, 255, 255, 0.92);
-	color: var(--black);
-	border: none;
+	white-space: nowrap;
+	background: rgba(32, 25, 30, 0.85);
+	color: #EDE8E2;
+	border: 1px solid rgba(255, 255, 255, 0.12);
 	border-radius: 999px;
 	padding: 10px 18px;
 	cursor: pointer;
-	box-shadow: 0 10px 26px rgba(90, 0, 8, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+	box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
 	transition: all 0.15s ease;
 }
 
-.phsg-sound:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(90, 0, 8, 0.4); }
+.phsg-sound:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5); }
 .phsg-sound:active { transform: translateY(1px); }
 
 .phsg-sound__icon { display: none; line-height: 0; }
@@ -285,18 +289,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 
 /* דסקטופ: פריסה רוחבית – הירו והמסר מימין, המקרא והכפתור משמאל */
 @media (min-width: 900px) {
-	.phsg-col { max-width: 1060px; }
-
-	.phsg-intro {
-		max-width: 100%;
-		flex-direction: row;
-		align-items: center;
-		justify-content: center;
-		gap: 40px;
-	}
-
-	.phsg-intro__side { flex: 0 0 330px; }
-	.phsg-intro__main { flex: 1; max-width: 600px; }
+	.phsg-intro { max-width: 740px; }
 }
 
 .phsg-hero { position: relative; width: 150px; height: 160px; }
@@ -305,7 +298,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	position: absolute;
 	inset: -30px;
 	border-radius: 50%;
-	background: radial-gradient(circle, rgba(243, 39, 53, 0.35) 0%, transparent 65%);
+	background: radial-gradient(circle, rgba(243, 39, 53, 0.5) 0%, transparent 65%);
 	animation: phsg-glowPulse 2.4s ease-in-out infinite;
 }
 
@@ -314,7 +307,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	width: 100%;
 	height: 100%;
 	animation: phsg-floaty 3.2s ease-in-out infinite;
-	filter: drop-shadow(0 16px 10px rgba(45, 42, 38, 0.35));
+	filter: drop-shadow(0 20px 18px rgba(0, 0, 0, 0.55));
 }
 
 .phsg-h1 {
@@ -324,16 +317,20 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	line-height: 1.02;
 	margin: 0;
 	color: #FFFFFF;
-	text-shadow: 0 4px 22px rgba(70, 0, 8, 0.55), 0 1px 2px rgba(70, 0, 8, 0.4);
+	background: linear-gradient(115deg, #FF4E58 10%, #FF9BA0 34%, #FFFFFF 64%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	filter: drop-shadow(0 8px 30px rgba(243, 39, 53, 0.35));
 }
 
 .phsg-intro__lead {
 	margin: 0;
 	font-size: 18px;
 	font-weight: 500;
-	max-width: 440px;
+	max-width: 470px;
 	line-height: 1.55;
-	color: var(--black);
+	color: #CBC4BD;
 }
 
 /* ===== מסר המותג מתחת לכותרת – מודגש ובולט ===== */
@@ -343,11 +340,11 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	align-items: center;
 	gap: 12px;
 	max-width: 560px;
-	background: rgba(255, 255, 255, 0.96);
-	border: none;
+	background: rgba(28, 22, 27, 0.92);
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 26px;
 	padding: 18px 28px 20px;
-	box-shadow: 0 24px 55px rgba(90, 0, 8, 0.45), inset 0 1px 0 #fff;
+	box-shadow: 0 24px 55px rgba(0, 0, 0, 0.5);
 }
 
 .phsg-promo__text {
@@ -355,7 +352,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-size: 21px;
 	font-weight: 700;
 	line-height: 1.5;
-	color: var(--black);
+	color: #EDE8E2;
 }
 
 .phsg-promo__hot {
@@ -386,13 +383,13 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 /* ===== איך משחקים ===== */
 .phsg-howto {
 	max-width: 560px;
-	background: rgba(255, 255, 255, 0.14);
+	background: rgba(26, 20, 25, 0.75);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
-	border: 1px solid rgba(255, 255, 255, 0.4);
+	border: 1px solid rgba(255, 255, 255, 0.09);
 	border-radius: 20px;
 	padding: 14px 24px 16px;
-	box-shadow: 0 14px 34px rgba(90, 0, 8, 0.25);
+	box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
 }
 
 .phsg-howto__title {
@@ -409,7 +406,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-size: 16px;
 	font-weight: 500;
 	line-height: 1.5;
-	color: #FFF4F2;
+	color: #D9D3CC;
 }
 
 /* מקרא – בונוסים מימין ומכשולים משמאל, שורה אחת בלי גלילה */
@@ -470,11 +467,12 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 }
 
 .phsg-legend__card--bad {
-	background: linear-gradient(160deg, #F6EFEA, #E9DAD2);
+	background: #221A1F;
 }
 
 .phsg-legend__card {
-	background: rgba(255, 255, 255, 0.95);
+	background: #1D171C;
+	color: #EDE8E2;
 	border: none;
 	border-radius: 18px;
 	padding: 10px 6px;
@@ -483,7 +481,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	align-items: center;
 	justify-content: center;
 	gap: 4px;
-	box-shadow: 0 14px 30px rgba(90, 0, 8, 0.35), inset 0 1px 0 #fff;
+	box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 	transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -492,10 +490,13 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 
 .phsg-legend__card:hover {
 	transform: translateY(-5px) rotate(-1deg) scale(1.03);
-	box-shadow: 0 22px 44px rgba(90, 0, 8, 0.45), inset 0 1px 0 #fff;
+	box-shadow: 0 22px 44px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-.phsg-legend__card--gold { background: linear-gradient(160deg, #FFFBEA, #FFE9AE); }
+.phsg-legend__card--gold {
+	background: linear-gradient(160deg, #2C2312, #211A0E);
+	box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 201, 60, 0.4), 0 0 24px rgba(255, 180, 50, 0.14);
+}
 .phsg-legend__icons { display: flex; gap: 2px; align-items: center; }
 .phsg-legend__name { font-weight: 700; font-size: 12.5px; }
 
@@ -514,11 +515,11 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-vpill--dark { background: linear-gradient(135deg, #4A453E, #211D24); color: #FFD9D4; box-shadow: 0 6px 14px rgba(30, 0, 4, 0.4); }
 
 .phsg-note-pill {
-	background: rgba(255, 255, 255, 0.16);
+	background: rgba(255, 255, 255, 0.06);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
-	color: #fff;
-	border: 1px solid rgba(255, 255, 255, 0.4);
+	color: #E8E2DB;
+	border: 1px solid rgba(255, 255, 255, 0.14);
 	border-radius: 999px;
 	padding: 9px 24px;
 	font-weight: 700;
@@ -578,29 +579,29 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-cta--xl { font-size: 31px; padding: 17px 60px; margin-top: 6px; }
 
 .phsg-cta--cream {
-	background: rgba(255, 255, 255, 0.95);
-	color: var(--black);
-	box-shadow: 0 14px 32px rgba(90, 0, 8, 0.35), inset 0 1px 0 #fff;
+	background: rgba(40, 32, 38, 0.95);
+	color: #F2EEE8;
+	box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.14);
 }
 
-.phsg-cta--cream:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(90, 0, 8, 0.4); }
+.phsg-cta--cream:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55); }
 .phsg-cta--cream:active { transform: translateY(1px); }
 
 .phsg-cta:focus-visible,
-.phsg-sound:focus-visible { outline: 3px dashed var(--black); outline-offset: 3px; }
+.phsg-sound:focus-visible { outline: 3px dashed rgba(255, 255, 255, 0.7); outline-offset: 3px; }
 
-.phsg-legal { font-size: 13px; color: #FFE3DF; opacity: 0.85; font-weight: 500; }
+.phsg-legal { font-size: 13px; color: #BFB0AD; opacity: 0.85; font-weight: 500; }
 
 /* ===== טופס ===== */
 .phsg-form-card {
 	width: 100%;
 	max-width: 440px;
 	flex-direction: column;
-	background: rgba(255, 255, 255, 0.97);
-	border: none;
+	background: #1B1419;
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 30px;
 	padding: 30px 28px;
-	box-shadow: 0 30px 70px rgba(90, 0, 8, 0.5), inset 0 1px 0 #fff;
+	box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
 	animation: phsg-popIn 0.4s ease both;
 	margin-top: 2vh;
 	text-align: right;
@@ -611,8 +612,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-weight: 700;
 	font-size: 32px;
 	margin: 0 0 4px;
-	color: var(--red);
-	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+	color: #FFFFFF;
 }
 
 .phsg-form-card__sub { margin: 0 0 20px; font-size: 15px; font-weight: 500; opacity: 0.8; }
@@ -626,15 +626,17 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-weight: 700;
 	font-size: 16px;
 	padding: 13px 16px;
-	border: 2px solid #E8E4D8;
+	border: 2px solid #3B3138;
 	border-radius: 16px;
-	background: #FAF8F1;
+	background: #251D23;
+	color: #F2EEE8;
 	outline: none;
 	transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .phsg-field input[dir="ltr"] { text-align: right; }
-.phsg-field input:focus { border-color: var(--red); box-shadow: 0 0 0 4px rgba(243, 39, 53, 0.15); }
+.phsg-field input::placeholder { color: #8E8289; opacity: 1; }
+.phsg-field input:focus { border-color: var(--red); box-shadow: 0 0 0 4px rgba(243, 39, 53, 0.25); }
 
 .phsg-consent {
 	display: flex;
@@ -667,21 +669,23 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 
 .phsg-hud__card {
 	flex: 1;
-	background: rgba(255, 255, 255, 0.95);
-	border: none;
+	background: rgba(31, 24, 29, 0.82);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 20px;
 	padding: 9px 14px;
-	box-shadow: 0 14px 30px rgba(90, 0, 8, 0.35), inset 0 1px 0 #fff;
+	box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 }
 
-.phsg-hud__label { font-size: 12px; font-weight: 700; opacity: 0.7; }
+.phsg-hud__label { font-size: 12px; font-weight: 700; color: #B7AFA9; }
 .phsg-hud__value { font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700; font-size: 32px; line-height: 1; }
-.phsg-hud__value--score { color: var(--red); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); }
+.phsg-hud__value--score { color: #FF5A63; }
 
 .phsg-hud__card--timer {
 	flex: 1.4;
@@ -701,7 +705,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-progress {
 	width: 100%;
 	height: 14px;
-	background: rgba(40, 0, 5, 0.45);
+	background: rgba(255, 255, 255, 0.08);
 	border: none;
 	border-radius: 999px;
 	overflow: hidden;
@@ -711,10 +715,10 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-progress__fill {
 	height: 100%;
 	width: 100%;
-	background: linear-gradient(90deg, #FFD968, #FF9A3C 55%, #FF6B4A);
+	background: linear-gradient(90deg, #FF3B30, #FF6B4A 55%, #FF9A3C);
 	border-radius: 999px;
 	transition: width 0.1s linear;
-	box-shadow: 0 0 14px rgba(255, 200, 90, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	box-shadow: 0 0 16px rgba(255, 80, 60, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 /* במה */
@@ -723,10 +727,14 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	width: 100%;
 	height: min(60vh, 540px);
 	min-height: 340px;
-	background: linear-gradient(90deg, #C6E4F4 0%, #DDF0FA 50%, #C6E4F4 100%);
-	border: none;
+	background-color: #150C10;
+	background-image:
+		radial-gradient(rgba(255, 255, 255, 0.055) 1.2px, transparent 1.7px),
+		radial-gradient(120% 130% at 50% 0%, rgba(56, 26, 32, 0.6) 0%, rgba(21, 12, 16, 0) 60%);
+	background-size: 26px 26px, 100% 100%;
+	border: 1px solid rgba(255, 255, 255, 0.06);
 	border-radius: 30px;
-	box-shadow: 0 34px 70px rgba(90, 0, 8, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.65), inset 0 -20px 40px rgba(60, 110, 150, 0.15);
+	box-shadow: 0 34px 70px rgba(0, 0, 0, 0.6), inset 0 0 60px rgba(0, 0, 0, 0.45);
 	overflow: hidden;
 	cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Ccircle cx='22' cy='22' r='16' fill='none' stroke='%23F32735' stroke-width='4'/%3E%3Ccircle cx='22' cy='22' r='4' fill='%23F32735'/%3E%3Cpath d='M22 1 L22 10 M22 34 L22 43 M1 22 L10 22 M34 22 L43 22' stroke='%232D2A26' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") 22 22, crosshair;
 	touch-action: manipulation;
@@ -745,17 +753,29 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	align-items: center;
 	justify-content: center;
 	pointer-events: none;
-	opacity: 0.85;
+	opacity: 0.9;
 }
 
-.phsg-map-svg { height: 104%; width: auto; filter: drop-shadow(0 10px 24px rgba(60, 110, 150, 0.35)); }
+.phsg-map-svg { height: 104%; width: auto; filter: drop-shadow(0 0 22px rgba(240, 69, 58, 0.28)); }
+
+/* חתימת מותג בפינת הבמה */
+.phsg-stage__brand {
+	position: absolute;
+	bottom: 12px;
+	inset-inline-end: 18px;
+	z-index: 2;
+	font-size: 12.5px;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.35);
+	pointer-events: none;
+}
 
 /* ספרייטים */
 .phsg-sprite { position: absolute; cursor: pointer; }
 .phsg-sprite[hidden] { display: none; }
 
-.phsg-sprite--slice { z-index: 5; filter: drop-shadow(0 8px 6px rgba(45, 42, 38, 0.3)); }
-.phsg-sprite--slice.is-gold { filter: drop-shadow(0 8px 6px rgba(45, 42, 38, 0.3)) drop-shadow(0 0 16px rgba(255, 201, 60, 0.95)); }
+.phsg-sprite--slice { z-index: 5; filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 24px rgba(255, 170, 60, 0.35)); }
+.phsg-sprite--slice.is-gold { filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 28px rgba(255, 201, 60, 0.95)); }
 .phsg-sprite--slice.is-drifting { animation: phsg-drift 3.4s ease-in-out infinite; }
 
 .phsg-sprite__wobble { width: 100%; height: 100%; animation: phsg-wobble 1s ease-in-out infinite; }
@@ -777,7 +797,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	cursor: pointer;
 	z-index: 4;
 	animation: phsg-floaty 2.4s ease-in-out infinite;
-	filter: drop-shadow(0 5px 4px rgba(45, 42, 38, 0.3));
+	filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.55));
 }
 
 .phsg-sprite--bonus {
@@ -785,7 +805,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	width: 58px;
 	height: 58px;
 	animation: phsg-pulseBeat 0.8s ease-in-out infinite;
-	filter: drop-shadow(0 0 16px rgba(255, 201, 60, 1)) drop-shadow(0 0 6px rgba(255, 228, 154, 0.9)) drop-shadow(0 5px 4px rgba(45, 42, 38, 0.3));
+	filter: drop-shadow(0 0 16px rgba(255, 201, 60, 1)) drop-shadow(0 0 6px rgba(255, 228, 154, 0.9)) drop-shadow(0 8px 10px rgba(0, 0, 0, 0.55));
 }
 
 /* נתח גבינה – פריט מהיר +2, מהבהב כדי לסמן שהוא נעלם תכף. */
@@ -794,7 +814,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	width: 54px;
 	height: 47px;
 	animation: phsg-pulseBeat 0.5s ease-in-out infinite;
-	filter: drop-shadow(0 0 16px rgba(255, 217, 92, 1)) drop-shadow(0 0 6px rgba(255, 228, 154, 0.9)) drop-shadow(0 5px 4px rgba(45, 42, 38, 0.3));
+	filter: drop-shadow(0 0 16px rgba(255, 217, 92, 1)) drop-shadow(0 0 6px rgba(255, 228, 154, 0.9)) drop-shadow(0 8px 10px rgba(0, 0, 0, 0.55));
 }
 
 /* נצנוצי זהב על הבונוסים – שיהיה ברור שזה פרס, לא מכשול. */
@@ -837,7 +857,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700;
 	font-size: 36px;
-	text-shadow: 0 2px 0 rgba(255, 255, 255, 0.85), 0 6px 14px rgba(45, 42, 38, 0.35);
+	text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55), 0 6px 16px rgba(0, 0, 0, 0.5);
 	animation: phsg-fadeUp 0.8s ease-out forwards;
 	direction: ltr;
 	unicode-bidi: isolate;
@@ -903,7 +923,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	background: rgba(255, 255, 255, 0.5);
+	background: rgba(8, 5, 7, 0.62);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
 	z-index: 20;
@@ -921,7 +941,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	animation: phsg-countZoom 0.8s ease both;
 }
 
-.phsg-countdown__sub { font-weight: 700; font-size: 18px; }
+.phsg-countdown__sub { font-weight: 700; font-size: 18px; color: #EDE8E2; }
 
 /* מקרא קומפקטי */
 .phsg-chips { display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -930,16 +950,17 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	background: rgba(255, 255, 255, 0.92);
-	border: none;
+	background: rgba(31, 24, 29, 0.85);
+	color: #E8E2DB;
+	border: 1px solid rgba(255, 255, 255, 0.09);
 	border-radius: 999px;
 	padding: 6px 14px;
 	font-weight: 700;
 	font-size: 13px;
-	box-shadow: 0 8px 18px rgba(90, 0, 8, 0.3);
+	box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
 }
 
-.phsg-chip--gold { background: linear-gradient(135deg, #FFFBEA, #FFE9AE); }
+.phsg-chip--gold { background: linear-gradient(135deg, #2C2312, #211A0E); color: #FFD968; border-color: rgba(255, 201, 60, 0.4); }
 
 /* ===== מסך סיום ===== */
 .phsg-end {
@@ -991,12 +1012,13 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
 
 .phsg-stats__card {
-	background: rgba(255, 255, 255, 0.96);
-	border: none;
+	background: #1D171C;
+	color: #F2EEE8;
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 22px;
 	padding: 15px 8px;
 	text-align: center;
-	box-shadow: 0 16px 36px rgba(90, 0, 8, 0.35), inset 0 1px 0 #fff;
+	box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
 }
 
 .phsg-stats__card--red {
@@ -1020,11 +1042,11 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 /* טבלת שיאים */
 .phsg-board {
 	width: 100%;
-	background: rgba(255, 255, 255, 0.97);
-	border: none;
+	background: #191319;
+	border: 1px solid rgba(255, 255, 255, 0.07);
 	border-radius: 26px;
 	overflow: hidden;
-	box-shadow: 0 26px 60px rgba(90, 0, 8, 0.45), inset 0 1px 0 #fff;
+	box-shadow: 0 26px 60px rgba(0, 0, 0, 0.55);
 }
 
 .phsg-board__head {
@@ -1047,9 +1069,10 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	align-items: center;
 	gap: 8px;
 	padding: 11px 16px;
-	border-top: 1px solid rgba(45, 42, 38, 0.08);
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
 	font-weight: 500;
-	background: #FCFBF2;
+	color: #E8E2DB;
+	background: #1D171C;
 }
 
 .phsg-board__row.is-me {
@@ -1084,8 +1107,8 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 /* ===== כרטיס הקופון (מתחת לטבלת השיאים) ===== */
 .phsg-coupon-card {
 	width: 100%;
-	background: linear-gradient(160deg, #FFFBEA, #FFE9AE);
-	border: 3px dashed rgba(243, 39, 53, 0.75);
+	background: linear-gradient(160deg, #251D10, #1C150C);
+	border: 3px dashed rgba(255, 201, 60, 0.5);
 	border-radius: 28px;
 	padding: 24px 20px;
 	text-align: center;
@@ -1093,7 +1116,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	flex-direction: column;
 	align-items: center;
 	gap: 10px;
-	box-shadow: 0 20px 46px rgba(90, 0, 8, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+	box-shadow: 0 20px 46px rgba(0, 0, 0, 0.5);
 }
 
 .phsg-coupon-card__title {
@@ -1101,7 +1124,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700;
 	font-size: 26px;
-	color: var(--black);
+	color: #FFE49A;
 }
 
 .phsg-coupon-card__text {
@@ -1109,6 +1132,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-size: 16px;
 	font-weight: 500;
 	line-height: 1.45;
+	color: #D9D3CC;
 }
 
 .phsg-coupon-code {
@@ -1116,19 +1140,19 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-weight: 700;
 	font-size: 26px;
 	letter-spacing: 3px;
-	color: var(--red);
-	background: #fff;
+	color: #FFD968;
+	background: #141014;
 	border: none;
 	border-radius: 16px;
 	padding: 12px 28px;
 	cursor: pointer;
-	box-shadow: 0 12px 28px rgba(200, 130, 10, 0.4), inset 0 1px 0 #fff;
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 18px rgba(255, 180, 50, 0.25);
 	transition: transform 0.12s ease, box-shadow 0.12s ease;
 	direction: ltr;
 	unicode-bidi: isolate;
 }
 
-.phsg-coupon-code:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(200, 130, 10, 0.5); }
+.phsg-coupon-code:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(0, 0, 0, 0.55), 0 0 24px rgba(255, 180, 50, 0.3); }
 .phsg-coupon-code:active { transform: translateY(1px); }
 
 .phsg-coupon-card__cta {
@@ -1142,7 +1166,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-popup--level {
 	font-size: 52px;
 	color: var(--red);
-	text-shadow: 0 3px 0 var(--cream), 0 6px 8px rgba(45, 42, 38, 0.4);
+	text-shadow: 0 3px 0 rgba(0, 0, 0, 0.6), 0 8px 20px rgba(0, 0, 0, 0.5);
 	animation-duration: 1.25s;
 }
 
@@ -1256,7 +1280,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
-	background: rgba(255, 255, 255, 0.55);
+	background: rgba(8, 5, 7, 0.66);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
 	animation: phsg-levelflash 1.15s ease both;
@@ -1276,14 +1300,14 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-levelflash__sub {
 	font-weight: 700;
 	font-size: 19px;
-	color: var(--black);
+	color: #EDE8E2;
 }
 
 /* ===== התקדמות מכסה בכרטיס השלב ===== */
 .phsg-hud__target {
 	font-size: 12.5px;
 	font-weight: 700;
-	color: #E8641E;
+	color: #FF9A3C;
 	direction: ltr;
 	unicode-bidi: isolate;
 }

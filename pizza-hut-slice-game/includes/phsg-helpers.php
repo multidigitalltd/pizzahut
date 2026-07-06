@@ -218,21 +218,24 @@ if ( ! function_exists( 'phsg_svg_israel_map' ) ) {
 	 * @return string
 	 */
 	function phsg_svg_israel_map() {
-		return '<svg class="phsg-map-svg" viewBox="6 0 70 256" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-			<defs>
-				<linearGradient id="phLand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDF3D9"/><stop offset="0.6" stop-color="#F7E6BC"/><stop offset="1" stop-color="#EED9A8"/></linearGradient>
-			</defs>
+		return '<svg class="phsg-map-svg" viewBox="6 0 74 262" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 			<g transform="translate(40 0) scale(1.6 1) translate(-40 0)">
-			<path d="M38 6 C34 20 30 40 31 55 C29 70 26 80 25 90 C23 105 24 118 27 128 L22 138 C24 146 28 150 32 152 L47 247 L54 240 C58 200 60 170 55 155 C58 140 58 125 54 115 C57 105 57 95 54 88 C56 70 55 55 52 45 C55 35 56 25 52 18 C50 12 44 8 38 6 Z"
-				fill="url(#phLand)" stroke="#D9BC85" stroke-width="1.6" stroke-linejoin="round"/>
-			<ellipse cx="52" cy="23" rx="3.5" ry="6" fill="#A9D4EA"/>
-			<ellipse cx="54" cy="100" rx="3.5" ry="12" fill="#A9D4EA"/>
-			<path d="M31 55 L44 102 L35 130 L47 247" fill="none" stroke="#F03A2E" stroke-width="1.6" stroke-dasharray="4 5" opacity="0.55" stroke-linecap="round"/>
-			<circle cx="31" cy="55" r="3" fill="#F03A2E" opacity="0.85"/>
-			<circle cx="26" cy="86" r="3" fill="#F03A2E" opacity="0.85"/>
-			<circle cx="44" cy="102" r="3" fill="#F03A2E" opacity="0.85"/>
-			<circle cx="35" cy="130" r="3" fill="#F03A2E" opacity="0.85"/>
-			<circle cx="47" cy="245" r="3" fill="#F03A2E" opacity="0.85"/>
+				<path d="M38 6 C34 20 30 40 31 55 C29 70 26 80 25 90 C23 105 24 118 27 128 L22 138 C24 146 28 150 32 152 L47 247 L54 240 C58 200 60 170 55 155 C58 140 58 125 54 115 C57 105 57 95 54 88 C56 70 55 55 52 45 C55 35 56 25 52 18 C50 12 44 8 38 6 Z"
+					fill="rgba(240,69,58,0.05)" stroke="#E8443B" stroke-width="1.1" stroke-linejoin="round" opacity="0.8"/>
+			</g>
+			<g fill="#F0453A">
+				<circle cx="25.6" cy="55" r="3.4" opacity="0.22"/><circle cx="25.6" cy="55" r="1.9"/>
+				<circle cx="17.6" cy="86" r="3.4" opacity="0.22"/><circle cx="17.6" cy="86" r="1.9"/>
+				<circle cx="46.4" cy="102" r="3.4" opacity="0.22"/><circle cx="46.4" cy="102" r="1.9"/>
+				<circle cx="32" cy="130" r="3.4" opacity="0.22"/><circle cx="32" cy="130" r="1.9"/>
+				<circle cx="51.2" cy="245" r="3.4" opacity="0.22"/><circle cx="51.2" cy="245" r="1.9"/>
+			</g>
+			<g font-family="Almoni, Rubik, sans-serif" font-size="6" font-weight="500" fill="#E4574C" opacity="0.9" text-anchor="middle">
+				<text x="36" y="57">חיפה</text>
+				<text x="28" y="88">ת״א</text>
+				<text x="57" y="104">י-ם</text>
+				<text x="42" y="132">ב״ש</text>
+				<text x="51.2" y="256">אילת</text>
 			</g>
 		</svg>';
 	}
@@ -275,7 +278,7 @@ if ( ! function_exists( 'phsg_render_leaderboard_rows' ) ) {
 			$score   = isset( $row['score'] ) ? (int) $row['score'] : 0;
 			$avg     = isset( $row['avg_reaction'] ) ? (float) $row['avg_reaction'] : 0;
 			$rank_bg = $rank <= 3 ? $medals[ $rank - 1 ] : '#FBFAEE';
-			$row_bg  = ( $i % 2 ) ? '#F4F2E4' : '#FCFBF2';
+			$row_bg  = ( $i % 2 ) ? '#231C22' : '#1D171C';
 
 			$html .= '<div class="phsg-board__row" style="background:' . esc_attr( $row_bg ) . ';">';
 			$html .= '<span class="phsg-board__rank" style="background:' . esc_attr( $rank_bg ) . ';">' . esc_html( $rank ) . '</span>';

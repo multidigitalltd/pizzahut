@@ -54,6 +54,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 				</div>
 				<div class="phsg-header__pills">
 					<span class="phsg-pill phsg-pill--title"><?php echo esc_html( $atts['title'] ); ?></span>
+					<span class="phsg-pill phsg-pill--sub">SLICE HUNT · 2026</span>
 				</div>
 			</div>
 			<button type="button" class="phsg-sound" data-action="toggle-sound" aria-pressed="false">
@@ -73,6 +74,8 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 				</div>
 			</div>
 			<h1 class="phsg-h1"><?php esc_html_e( "תפוס ת'משולש!", 'pizza-hut-slice-game' ); ?></h1>
+
+			<p class="phsg-intro__lead"><?php esc_html_e( 'משולש פיצה חם קופץ על מפת הארץ — כי פיצה האט נמצאת בכל מקום. תפסו כמה שיותר לפני שהזמן נגמר, וזהירות מהתוספות המזויפות!', 'pizza-hut-slice-game' ); ?></p>
 
 			<?php // מסר המותג ?>
 			<div class="phsg-promo">
@@ -97,27 +100,27 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 				<span class="phsg-legend-title phsg-legend-title--good"><?php esc_html_e( '🏆 שווה נקודות — תתפסו!', 'pizza-hut-slice-game' ); ?></span>
 				<div class="phsg-legend">
 					<div class="phsg-legend__card">
-						<svg viewBox="0 0 100 110" width="44" height="48"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#E8A33D" stroke="#2D2A26" stroke-width="4"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#F2B33C" stroke="#2D2A26" stroke-width="4"/><circle cx="40" cy="52" r="9" fill="#E0453A" stroke="#9E2B22" stroke-width="3"/><circle cx="58" cy="68" r="8" fill="#E0453A" stroke="#9E2B22" stroke-width="3"/></svg>
+						<svg viewBox="0 0 100 110" width="44" height="48"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#E8A33D" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#F2B33C" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><circle cx="40" cy="52" r="9" fill="#E0453A" stroke="#9E2B22" stroke-width="3"/><circle cx="58" cy="68" r="8" fill="#E0453A" stroke="#9E2B22" stroke-width="3"/></svg>
 						<span class="phsg-legend__name"><?php esc_html_e( 'משולש פיצה', 'pizza-hut-slice-game' ); ?></span>
 						<span class="phsg-vpill phsg-vpill--red">+1</span>
 					</div>
 					<div class="phsg-legend__card phsg-legend__card--gold">
-						<svg viewBox="0 0 100 110" width="44" height="48"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#F2B24E" stroke="#2D2A26" stroke-width="4"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#FFD95C" stroke="#2D2A26" stroke-width="4"/><circle cx="40" cy="52" r="9" fill="#E0453A" stroke="#9E2B22" stroke-width="3"/><circle cx="78" cy="18" r="7" fill="#FFE49A" stroke="#D19A2B" stroke-width="3"/></svg>
+						<svg viewBox="0 0 100 110" width="44" height="48"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#F2B24E" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#FFD95C" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><circle cx="40" cy="52" r="9" fill="#E0453A" stroke="#9E2B22" stroke-width="3"/><circle cx="78" cy="18" r="7" fill="#FFE49A" stroke="#D19A2B" stroke-width="3"/></svg>
 						<span class="phsg-legend__name"><?php esc_html_e( 'משולש זהב', 'pizza-hut-slice-game' ); ?></span>
 						<span class="phsg-vpill phsg-vpill--gold">+3</span>
 					</div>
 					<div class="phsg-legend__card phsg-legend__card--gold">
-						<svg viewBox="0 0 64 56" width="44" height="39"><path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="#FFD95C" stroke="#2D2A26" stroke-width="4"/><circle cx="24" cy="38" r="5" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2.5"/><circle cx="41" cy="41" r="4" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2.5"/><circle cx="33" cy="26" r="3.5" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2.5"/></svg>
+						<svg viewBox="0 0 64 56" width="44" height="39"><path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="#FFD95C" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><circle cx="24" cy="38" r="5" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2.5"/><circle cx="41" cy="41" r="4" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2.5"/><circle cx="33" cy="26" r="3.5" fill="#FFF3B0" stroke="#D19A2B" stroke-width="2.5"/></svg>
 						<span class="phsg-legend__name"><?php esc_html_e( 'נתח גבינה', 'pizza-hut-slice-game' ); ?></span>
 						<span class="phsg-vpill phsg-vpill--gold">+2</span>
 					</div>
 					<div class="phsg-legend__card phsg-legend__card--gold">
-						<svg viewBox="0 0 60 60" width="44" height="44"><circle cx="30" cy="32" r="22" fill="#FFE49A" stroke="#2D2A26" stroke-width="4"/><circle cx="30" cy="32" r="16" fill="#FFFEF6" stroke="#2D2A26" stroke-width="2.5"/><path d="M30 32 L30 21 M30 32 L38 36" stroke="#F32735" stroke-width="4" stroke-linecap="round"/><rect x="25" y="4" width="10" height="6" rx="2" fill="#F32735" stroke="#2D2A26" stroke-width="3"/></svg>
+						<svg viewBox="0 0 60 60" width="44" height="44"><circle cx="30" cy="32" r="22" fill="#FFE49A" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><circle cx="30" cy="32" r="16" fill="#FFFEF6" stroke="rgba(0,0,0,0.35)" stroke-width="2.5"/><path d="M30 32 L30 21 M30 32 L38 36" stroke="#F32735" stroke-width="4" stroke-linecap="round"/><rect x="25" y="4" width="10" height="6" rx="2" fill="#F32735" stroke="rgba(0,0,0,0.35)" stroke-width="3"/></svg>
 						<span class="phsg-legend__name"><?php esc_html_e( 'שעון בונוס', 'pizza-hut-slice-game' ); ?></span>
 						<span class="phsg-vpill phsg-vpill--gold"><?php esc_html_e( "+5 שנ'", 'pizza-hut-slice-game' ); ?></span>
 					</div>
 					<div class="phsg-legend__card phsg-legend__card--gold">
-						<svg viewBox="0 0 60 60" width="44" height="44"><path d="M14 46 Q10 30 24 20 Q38 10 48 16 Q52 30 40 42 Q28 54 14 46 Z" fill="#F32735" stroke="#2D2A26" stroke-width="4"/><path d="M46 17 Q50 8 58 8" fill="none" stroke="#4C7B3A" stroke-width="5" stroke-linecap="round"/><path d="M20 42 Q16 32 26 24" fill="none" stroke="#FF8A8F" stroke-width="4" stroke-linecap="round"/></svg>
+						<svg viewBox="0 0 60 60" width="44" height="44"><path d="M14 46 Q10 30 24 20 Q38 10 48 16 Q52 30 40 42 Q28 54 14 46 Z" fill="#F32735" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><path d="M46 17 Q50 8 58 8" fill="none" stroke="#4C7B3A" stroke-width="5" stroke-linecap="round"/><path d="M20 42 Q16 32 26 24" fill="none" stroke="#FF8A8F" stroke-width="4" stroke-linecap="round"/></svg>
 						<span class="phsg-legend__name"><?php esc_html_e( 'פלפל פרנזי', 'pizza-hut-slice-game' ); ?></span>
 						<span class="phsg-vpill phsg-vpill--red"><?php esc_html_e( '×2 ל-6 שנ\'', 'pizza-hut-slice-game' ); ?></span>
 					</div>
@@ -130,16 +133,16 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 				<div class="phsg-legend phsg-legend--bad">
 					<div class="phsg-legend__card phsg-legend__card--bad">
 						<div class="phsg-legend__icons">
-							<svg viewBox="0 0 60 62" width="26" height="27"><path d="M6 31 Q30 3 54 31 Q42 38 30 38 Q18 38 6 31 Z" fill="#C9A874" stroke="#2D2A26" stroke-width="4"/><path d="M23 37 q-2 15 2 19 q5 3 10 0 q4 -4 2 -19" fill="#F0EFDD" stroke="#2D2A26" stroke-width="4"/></svg>
-							<svg viewBox="0 0 60 60" width="24" height="24"><circle cx="30" cy="30" r="23" fill="#3B3830" stroke="#2D2A26" stroke-width="4"/><ellipse cx="30" cy="30" rx="9" ry="12" fill="#6E6754"/></svg>
-							<svg viewBox="0 0 60 60" width="24" height="24"><circle cx="30" cy="30" r="23" fill="#EFE0F0" stroke="#2D2A26" stroke-width="4"/><circle cx="30" cy="30" r="15" fill="none" stroke="#B0729E" stroke-width="5"/></svg>
-							<svg viewBox="0 0 60 60" width="24" height="24"><circle cx="30" cy="30" r="23" fill="#E85D3A" stroke="#2D2A26" stroke-width="4"/><circle cx="30" cy="30" r="15" fill="#F49B75"/></svg>
+							<svg viewBox="0 0 60 62" width="26" height="27"><path d="M6 31 Q30 3 54 31 Q42 38 30 38 Q18 38 6 31 Z" fill="#C9A874" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><path d="M23 37 q-2 15 2 19 q5 3 10 0 q4 -4 2 -19" fill="#F0EFDD" stroke="rgba(0,0,0,0.35)" stroke-width="4"/></svg>
+							<svg viewBox="0 0 60 60" width="24" height="24"><circle cx="30" cy="30" r="23" fill="#3B3830" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><ellipse cx="30" cy="30" rx="9" ry="12" fill="#6E6754"/></svg>
+							<svg viewBox="0 0 60 60" width="24" height="24"><circle cx="30" cy="30" r="23" fill="#EFE0F0" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><circle cx="30" cy="30" r="15" fill="none" stroke="#B0729E" stroke-width="5"/></svg>
+							<svg viewBox="0 0 60 60" width="24" height="24"><circle cx="30" cy="30" r="23" fill="#E85D3A" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><circle cx="30" cy="30" r="15" fill="#F49B75"/></svg>
 						</div>
 						<span class="phsg-legend__name"><?php esc_html_e( 'תוספות על הבמה', 'pizza-hut-slice-game' ); ?></span>
 						<span class="phsg-vpill phsg-vpill--dark">−1</span>
 					</div>
 					<div class="phsg-legend__card phsg-legend__card--bad">
-						<svg viewBox="0 0 100 110" width="44" height="48"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#6B5138" stroke="#2D2A26" stroke-width="4"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#8A6B45" stroke="#2D2A26" stroke-width="4"/><circle cx="40" cy="52" r="9" fill="#4A3B2A" stroke="#2D2A26" stroke-width="3"/><path d="M35 18 q3 -8 0 -13 M60 16 q3 -8 0 -13" fill="none" stroke="#57534A" stroke-width="4" stroke-linecap="round"/></svg>
+						<svg viewBox="0 0 100 110" width="44" height="48"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#6B5138" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#8A6B45" stroke="rgba(0,0,0,0.35)" stroke-width="4"/><circle cx="40" cy="52" r="9" fill="#4A3B2A" stroke="rgba(0,0,0,0.35)" stroke-width="3"/><path d="M35 18 q3 -8 0 -13 M60 16 q3 -8 0 -13" fill="none" stroke="#57534A" stroke-width="4" stroke-linecap="round"/></svg>
 						<span class="phsg-legend__name"><?php esc_html_e( 'משולש שרוף', 'pizza-hut-slice-game' ); ?></span>
 						<span class="phsg-vpill phsg-vpill--dark">−2</span>
 					</div>
@@ -200,6 +203,7 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 			<div class="phsg-stage" data-stage>
 				<?php // רקע הבמה – מפת ארץ ישראל מסוגננת ?>
 				<div class="phsg-stage__map" aria-hidden="true"><?php echo phsg_svg_israel_map(); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+				<div class="phsg-stage__brand" aria-hidden="true"><?php esc_html_e( 'פיצה האט · בכל מקום בארץ 🍕', 'pizza-hut-slice-game' ); ?></div>
 
 				<div class="phsg-combo" data-combo hidden></div>
 
@@ -230,13 +234,13 @@ $phsg_marquee_txt  = 'פיצה חמה · מוצרלה · עוד ביס · SINCE 
 			</div>
 
 			<div class="phsg-chips">
-				<span class="phsg-chip"><svg viewBox="0 0 100 110" width="18" height="20"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#E8A33D" stroke="#2D2A26" stroke-width="5"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#F2B33C" stroke="#2D2A26" stroke-width="5"/></svg> &lrm;+1</span>
-				<span class="phsg-chip phsg-chip--gold"><svg viewBox="0 0 100 110" width="18" height="20"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#F2B24E" stroke="#2D2A26" stroke-width="5"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#FFD95C" stroke="#2D2A26" stroke-width="5"/></svg> &lrm;+3</span>
-				<span class="phsg-chip"><svg viewBox="0 0 60 62" width="17" height="18"><path d="M6 31 Q30 3 54 31 Q42 38 30 38 Q18 38 6 31 Z" fill="#C9A874" stroke="#2D2A26" stroke-width="5"/><path d="M23 37 q-2 15 2 19 q5 3 10 0 q4 -4 2 -19" fill="#F0EFDD" stroke="#2D2A26" stroke-width="5"/></svg><svg viewBox="0 0 60 60" width="16" height="16"><circle cx="30" cy="30" r="23" fill="#3B3830" stroke="#2D2A26" stroke-width="5"/><ellipse cx="30" cy="30" rx="9" ry="12" fill="#6E6754"/></svg> &lrm;−1</span>
-				<span class="phsg-chip"><svg viewBox="0 0 100 110" width="18" height="20"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#6B5138" stroke="#2D2A26" stroke-width="5"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#8A6B45" stroke="#2D2A26" stroke-width="5"/></svg> &lrm;−2</span>
-				<span class="phsg-chip"><svg viewBox="0 0 60 60" width="17" height="17"><circle cx="30" cy="32" r="22" fill="#FFE49A" stroke="#2D2A26" stroke-width="5"/><path d="M30 32 L30 21 M30 32 L38 36" stroke="#F32735" stroke-width="5" stroke-linecap="round"/></svg> &lrm;<?php esc_html_e( "+5 שנ'", 'pizza-hut-slice-game' ); ?></span>
-				<span class="phsg-chip"><svg viewBox="0 0 60 60" width="17" height="17"><path d="M14 46 Q10 30 24 20 Q38 10 48 16 Q52 30 40 42 Q28 54 14 46 Z" fill="#F32735" stroke="#2D2A26" stroke-width="5"/><path d="M46 17 Q50 8 58 8" fill="none" stroke="#4C7B3A" stroke-width="6" stroke-linecap="round"/></svg> ×2</span>
-				<span class="phsg-chip phsg-chip--gold"><svg viewBox="0 0 64 56" width="18" height="16"><path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="#FFD95C" stroke="#2D2A26" stroke-width="5"/><circle cx="24" cy="38" r="5" fill="#FFF3B0"/><circle cx="41" cy="41" r="4" fill="#FFF3B0"/></svg> &lrm;+2</span>
+				<span class="phsg-chip"><svg viewBox="0 0 100 110" width="18" height="20"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#E8A33D" stroke="rgba(0,0,0,0.35)" stroke-width="5"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#F2B33C" stroke="rgba(0,0,0,0.35)" stroke-width="5"/></svg> &lrm;+1</span>
+				<span class="phsg-chip phsg-chip--gold"><svg viewBox="0 0 100 110" width="18" height="20"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#F2B24E" stroke="rgba(0,0,0,0.35)" stroke-width="5"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#FFD95C" stroke="rgba(0,0,0,0.35)" stroke-width="5"/></svg> &lrm;+3</span>
+				<span class="phsg-chip"><svg viewBox="0 0 60 62" width="17" height="18"><path d="M6 31 Q30 3 54 31 Q42 38 30 38 Q18 38 6 31 Z" fill="#C9A874" stroke="rgba(0,0,0,0.35)" stroke-width="5"/><path d="M23 37 q-2 15 2 19 q5 3 10 0 q4 -4 2 -19" fill="#F0EFDD" stroke="rgba(0,0,0,0.35)" stroke-width="5"/></svg><svg viewBox="0 0 60 60" width="16" height="16"><circle cx="30" cy="30" r="23" fill="#3B3830" stroke="rgba(0,0,0,0.35)" stroke-width="5"/><ellipse cx="30" cy="30" rx="9" ry="12" fill="#6E6754"/></svg> &lrm;−1</span>
+				<span class="phsg-chip"><svg viewBox="0 0 100 110" width="18" height="20"><path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="#6B5138" stroke="rgba(0,0,0,0.35)" stroke-width="5"/><path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="#8A6B45" stroke="rgba(0,0,0,0.35)" stroke-width="5"/></svg> &lrm;−2</span>
+				<span class="phsg-chip"><svg viewBox="0 0 60 60" width="17" height="17"><circle cx="30" cy="32" r="22" fill="#FFE49A" stroke="rgba(0,0,0,0.35)" stroke-width="5"/><path d="M30 32 L30 21 M30 32 L38 36" stroke="#F32735" stroke-width="5" stroke-linecap="round"/></svg> &lrm;<?php esc_html_e( "+5 שנ'", 'pizza-hut-slice-game' ); ?></span>
+				<span class="phsg-chip"><svg viewBox="0 0 60 60" width="17" height="17"><path d="M14 46 Q10 30 24 20 Q38 10 48 16 Q52 30 40 42 Q28 54 14 46 Z" fill="#F32735" stroke="rgba(0,0,0,0.35)" stroke-width="5"/><path d="M46 17 Q50 8 58 8" fill="none" stroke="#4C7B3A" stroke-width="6" stroke-linecap="round"/></svg> ×2</span>
+				<span class="phsg-chip phsg-chip--gold"><svg viewBox="0 0 64 56" width="18" height="16"><path d="M4 46 L32 6 Q34 3 37 5 L60 46 Q62 50 57 50 L7 50 Q2 50 4 46 Z" fill="#FFD95C" stroke="rgba(0,0,0,0.35)" stroke-width="5"/><circle cx="24" cy="38" r="5" fill="#FFF3B0"/><circle cx="41" cy="41" r="4" fill="#FFF3B0"/></svg> &lrm;+2</span>
 				<span class="phsg-chip"><?php esc_html_e( 'רצף 5 = +2', 'pizza-hut-slice-game' ); ?></span>
 			</div>
 		</section>

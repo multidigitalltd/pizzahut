@@ -1129,7 +1129,7 @@
 				meMarked = true;
 			}
 			var rankBg = i < 3 ? medals[i] : '#FBFAEE';
-			var rowBg = isMe ? '' : (i % 2 ? '#E9E7D2' : '#F0EFDD');
+			var rowBg = isMe ? '' : (i % 2 ? '#231C22' : '#1D171C');
 			var name = esc(row.display_name) + (isMe ? ' ' + t('youSuffix', '(את/ה!)') : '');
 			var avg = ((parseFloat(row.avg_reaction) || 0) / 1000).toFixed(1) + ' ' + t('sec', "שנ'");
 
