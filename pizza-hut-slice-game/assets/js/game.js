@@ -72,6 +72,7 @@
 		this.bonusEl = root.querySelector('[data-bonus]');
 		this.cheeseEl = root.querySelector('[data-cheese]');
 		this.popupsEl = root.querySelector('[data-popups]');
+		this.burstsEl = root.querySelector('[data-bursts]');
 		this.comboEl = root.querySelector('[data-combo]');
 		this.frenzyEl = root.querySelector('[data-frenzy]');
 		this.countdownEl = root.querySelector('[data-countdown]');
@@ -348,6 +349,20 @@
 			case 'copy-coupon':
 				this._copyCoupon();
 				break;
+			case 'toggle-instructions': {
+				var panel = this.root.querySelector('[data-instructions]');
+				var btn = this.root.querySelector('[data-action="toggle-instructions"]');
+				if (panel) {
+					var open = panel.hasAttribute('hidden');
+					if (open) { panel.removeAttribute('hidden'); } else { panel.setAttribute('hidden', ''); }
+					if (btn) { btn.setAttribute('aria-expanded', open ? 'true' : 'false'); btn.classList.toggle('is-open', open); }
+					if (open) {
+						var self2 = this;
+						window.setTimeout(function () { panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 40);
+					}
+				}
+				break;
+			}
 			case 'toggle-sound':
 				this.muted = !this.muted;
 				try {
@@ -469,9 +484,10 @@
 		this.slicesEl.innerHTML = '';
 		this.obstaclesEl.innerHTML = '';
 		this.bonusEl.hidden = true;
+		this.cheeseEl.hidden = true;
 		this.popupsEl.innerHTML = '';
 		this.comboEl.hidden = true;
-		this.frenzyEl.hidden = true;
+		if (this.frenzyEl) { this.frenzyEl.hidden = true; }
 		this.stage.classList.remove('is-frenzy');
 
 		var count = 3;
@@ -610,37 +626,37 @@
 		var x = slices[0].x;
 		var y = slices[0].y;
 
-		// מכשולים: 2 + שלב (עד 7).
+		// מכשולים: 2 + שלב (עד 7). בצל/עגבנייה/פטרייה = ‎−1, פלפל חריף = ‎−2.
 		var count = Math.min(7, 2 + lv);
-		var types = ['mush', 'olive', 'onion', 'tomato'];
+		var types = ['onion', 'tomato', 'mushroom'];
 		var obstacles = [];
 		var i;
 		for (i = 0; i < count; i++) {
 			var ox;
 			var oy;
 			var tries = 0;
-			// 35% מהמכשולים "אגרסיביים" – מותר להם להתקרב הרבה יותר למשולש.
+			// 35% מהמכשולים "אגרסיביים" – מותר להם להתקרב הרבה יותר לפיצה.
 			var minDist = Math.random() < 0.35 ? 12 : 22;
 			do {
 				ox = 4 + Math.random() * 80;
 				oy = 6 + Math.random() * 70;
 				tries++;
 			} while (tries < 25 && (slices.some(function (p) { return Math.hypot(ox - p.x, oy - p.y) < minDist; }) || obstacles.some(function (o) { return Math.hypot(ox - o.x, oy - o.y) < 13; })));
-			var burnt = lv >= 1 && i === 0 && Math.random() < 0.45;
-			var type = burnt ? 'burnt' : types[Math.floor(Math.random() * types.length)];
+			var hot = lv >= 1 && i === 0 && Math.random() < 0.4;
+			var type = hot ? 'chili' : types[Math.floor(Math.random() * types.length)];
 			obstacles.push({
 				x: ox,
 				y: oy,
-				rot: Math.round(Math.random() * 44 - 22),
-				s: burnt ? 78 + Math.round(Math.random() * 10) : 50 + Math.round(Math.random() * 14),
-				pen: burnt ? 2 : 1,
+				rot: Math.round(Math.random() * 40 - 20),
+				s: 54 + Math.round(Math.random() * 16),
+				pen: hot ? 2 : 1,
 				type: type
 			});
 		}
 
-		// בונוס (18%): שעון או פלפל.
+		// בונוס גדול (14%): נקודת פיצה האט (+5 עם פיצוץ אור).
 		var bonus = null;
-		if (Math.random() < 0.18) {
+		if (Math.random() < 0.14) {
 			var bx;
 			var by;
 			var btries = 0;
@@ -649,10 +665,10 @@
 				by = 8 + Math.random() * 68;
 				btries++;
 			} while (btries < 25 && (Math.hypot(bx - x, by - y) < 20 || obstacles.some(function (o) { return Math.hypot(bx - o.x, by - o.y) < 13; })));
-			bonus = { x: bx, y: by, type: Math.random() < 0.5 ? 'clock' : 'chili' };
+			bonus = { x: bx, y: by };
 		}
 
-		// נתח גבינה (22%): פריט מהיר +2 שנעלם תוך ~1.8 שניות.
+		// קופסת פיצה (22%): בונוס מהיר +3 שנעלם תוך ~2.4 שניות.
 		var cheese = null;
 		if (Math.random() < 0.22) {
 			var cx;
@@ -677,6 +693,18 @@
 	};
 
 	/* ==================== רינדור ==================== */
+
+	// מפת ספרייטים אמיתיים (מכשולים/בונוסים) מ-data-sprites של המופע.
+	Game.prototype._sprites = function () {
+		if (!this._spriteCache) {
+			var obj = {};
+			var raw = this.root.getAttribute('data-sprites');
+			if (raw) { try { obj = JSON.parse(raw); } catch (e) { obj = {}; } }
+			if ((!obj || !obj.pin) && CFG.sprites) { obj = CFG.sprites; }
+			this._spriteCache = obj || {};
+		}
+		return this._spriteCache;
+	};
 
 	// רשימת תמונות הפיצה: קודם data-pizzas של המופע, אחרת ברירת המחדל שב-PHSG_DATA.
 	Game.prototype._pizzas = function () {
@@ -745,6 +773,7 @@
 
 	Game.prototype._renderObstacles = function (list) {
 		var self = this;
+		var sprites = this._sprites();
 		this.obstaclesEl.innerHTML = '';
 		list.forEach(function (ob) {
 			var el = document.createElement('div');
@@ -755,7 +784,14 @@
 			el.style.height = ob.s + 'px';
 			el.style.transform = 'rotate(' + ob.rot + 'deg)';
 			el.setAttribute('data-pen', ob.pen);
-			el.innerHTML = self.protos[ob.type] || '';
+			var url = sprites[ob.type];
+			if (url) {
+				var im = document.createElement('img');
+				im.className = 'phsg-obstacle__img';
+				im.src = url;
+				im.alt = '';
+				el.appendChild(im);
+			}
 			el.addEventListener('pointerdown', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
@@ -776,8 +812,14 @@
 		}
 		this.cheeseEl.style.left = cheese.x + '%';
 		this.cheeseEl.style.top = cheese.y + '%';
+		if (!this.cheeseEl.firstChild) {
+			var bx = document.createElement('img');
+			bx.src = this._sprites().box || '';
+			bx.alt = '';
+			this.cheeseEl.appendChild(bx);
+		}
 		this.cheeseSpawn = Date.now();
-		this.cheeseUntil = Date.now() + 1800; // חלון תפיסה קצר – צריך להספיק!
+		this.cheeseUntil = Date.now() + 2600; // חלון תפיסה – צריך להספיק!
 		this.cheeseEl.hidden = false;
 	};
 
@@ -786,9 +828,9 @@
 			return;
 		}
 		this.playCheese();
-		this._popup(e, '+2', '#D19A2B');
+		this._popup(e, '+3', '#FFC93C');
 		this._vibrate(25);
-		this.score += 2;
+		this.score += 3;
 		this.clicks += 1;
 		// זמן תגובה נמדד רק על תפיסות משולש (מדד הדירוג) – לא על גבינה.
 		this._renderCheese(null);
@@ -797,13 +839,19 @@
 
 	Game.prototype._renderBonus = function (bonus) {
 		this.bonus = bonus;
+		if (!this.bonusEl) { return; }
 		if (!bonus) {
 			this.bonusEl.hidden = true;
 			return;
 		}
 		this.bonusEl.style.left = bonus.x + '%';
 		this.bonusEl.style.top = bonus.y + '%';
-		this.bonusEl.innerHTML = this.protos[bonus.type] || '';
+		if (!this.bonusEl.firstChild) {
+			var im = document.createElement('img');
+			im.src = this._sprites().pin || '';
+			im.alt = '';
+			this.bonusEl.appendChild(im);
+		}
 		this.bonusEl.hidden = false;
 	};
 
@@ -837,6 +885,7 @@
 	};
 
 	Game.prototype._renderFrenzy = function () {
+		if (!this.frenzyEl) { return; }
 		var active = Date.now() < this.frenzyUntil;
 		this.frenzyEl.hidden = !active;
 		this.stage.classList.toggle('is-frenzy', active);
@@ -939,20 +988,56 @@
 		if (!this.bonus || this.timeLeft <= 0) {
 			return;
 		}
-		var b = this.bonus;
-		if (b.type === 'clock') {
-			this.playBonus();
-			this._popup(e, '+5 ' + t('sec', "שנ'"), '#D19A2B');
-			// הזמן נגזר מ-startedAt – הזזה קדימה מוסיפה 5 שנ', עם תקרה במשך המלא.
-			this.startedAt = Math.min(Date.now(), this.startedAt + 5000);
-		} else {
-			this.playFrenzy();
-			this._popup(e, '×2!', '#D01423');
-			this.frenzyUntil = Date.now() + 6000;
-		}
+		// נקודת פיצה האט – בונוס גדול: +5 עם פיצוץ אור ואובייקטים מתפזרים.
+		this.playFrenzy();
+		this.playBonus();
+		this._burst(e);
+		this._popup(e, '+5', '#FF3B30');
+		this._vibrate(70);
+		this.score += 5;
+		this.clicks += 1;
 		this._renderBonus(null);
 		this._renderHud();
-		this._renderFrenzy();
+	};
+
+	// פיצוץ אור + אובייקטים מתפזרים (נקודת פיצה האט).
+	Game.prototype._burst = function (e) {
+		if (!this.burstsEl) { return; }
+		var rect = this.stage.getBoundingClientRect();
+		var x = ((e.clientX - rect.left) / rect.width) * 100;
+		var y = ((e.clientY - rect.top) / rect.height) * 100;
+		var wrap = document.createElement('div');
+		wrap.className = 'phsg-burst';
+		wrap.style.left = x + '%';
+		wrap.style.top = y + '%';
+		var flash = document.createElement('span');
+		flash.className = 'phsg-burst__flash';
+		wrap.appendChild(flash);
+		var rays = document.createElement('span');
+		rays.className = 'phsg-burst__rays';
+		wrap.appendChild(rays);
+		var n = 14;
+		var pizzas = this._pizzas();
+		for (var i = 0; i < n; i++) {
+			var pc = document.createElement('span');
+			pc.className = 'phsg-burst__pc';
+			var ang = (i / n) * Math.PI * 2 + Math.random() * 0.5;
+			var dist = 70 + Math.random() * 80;
+			pc.style.setProperty('--dx', Math.cos(ang) * dist + 'px');
+			pc.style.setProperty('--dy', Math.sin(ang) * dist + 'px');
+			pc.style.animationDelay = (Math.random() * 0.08).toFixed(2) + 's';
+			if (pizzas.length && i % 2 === 0) {
+				var im = document.createElement('img');
+				im.src = pizzas[i % pizzas.length];
+				im.alt = '';
+				pc.appendChild(im);
+			} else {
+				pc.classList.add('phsg-burst__pc--spark');
+			}
+			wrap.appendChild(pc);
+		}
+		this.burstsEl.appendChild(wrap);
+		window.setTimeout(function () { wrap.remove(); }, 1000);
 	};
 
 	/**
@@ -1008,7 +1093,7 @@
 
 		this.slicesEl.innerHTML = '';
 		this.bonusEl.hidden = true;
-		this.frenzyEl.hidden = true;
+		if (this.frenzyEl) { this.frenzyEl.hidden = true; }
 		this.stage.classList.remove('is-frenzy');
 		this._show('end');
 
