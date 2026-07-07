@@ -140,6 +140,8 @@ class PHSG_Shortcode {
 				'fullscreen'  => '1', // 1 = השתלטות על כל העמוד (הסתרת התבנית). 0 = הטמעה רגילה.
 				'coupon_code' => 'HUTGAME', // קוד הפינוק במסך הסיום. ריק = הסתרת הכרטיס.
 				'coupon_url'  => 'https://www.pizzahut.co.il/?utm_source=slice_game&utm_medium=game&utm_campaign=coupon', // יעד כפתור ההזמנה.
+				'bg'          => '', // URL לתמונת רקע אמיתית (צילום המותג ממדיה). ריק = רקע אדום מובנה.
+				'slice'       => '', // URL לתמונת משולש PNG שקופה – מחליפה את איור המשולש במשחק.
 			),
 			$atts,
 			'pizza_hut_slice_game'

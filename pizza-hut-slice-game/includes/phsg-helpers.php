@@ -34,55 +34,54 @@ if ( ! function_exists( 'phsg_slice_svg' ) ) {
 	 * @return string
 	 */
 	function phsg_slice_svg( $sfx, $gold = false, $hero = false ) {
-		$ch_in  = $gold ? '#FFFDE2' : '#FFF9D6';
-		$ch_mid = $gold ? '#FFE178' : '#FFD75E';
-		$ch_out = $gold ? '#F2AC05' : '#E89B23';
+		$ch_in  = $gold ? '#FFF6CC' : '#FBF4DF';
+		$ch_mid = $gold ? '#FFE18E' : '#F2E2BE';
+		$ch_out = $gold ? '#EFB63C' : '#DDBB84';
 		$steam  = $hero ? '<path d="M38 -2 q-4 -7 1 -13 q4 -5 1 -11" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" opacity="0.3"/><path d="M60 0 q4 -7 -1 -13 q-4 -5 -1 -11" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity="0.24"/>' : '';
 		return '<svg viewBox="0 0 100 110" width="100%" height="100%" style="pointer-events:none; overflow:visible;">
 			<defs>
-				<linearGradient id="phCr' . $sfx . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE3A6"/><stop offset="0.45" stop-color="#F0A94E"/><stop offset="1" stop-color="#A5641F"/></linearGradient>
+				<linearGradient id="phCr' . $sfx . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7C979"/><stop offset="0.45" stop-color="#E09A3E"/><stop offset="1" stop-color="#A6621C"/></linearGradient>
 				<radialGradient id="phCh' . $sfx . '" cx="0.5" cy="0.22" r="1"><stop offset="0" stop-color="' . $ch_in . '"/><stop offset="0.55" stop-color="' . $ch_mid . '"/><stop offset="1" stop-color="' . $ch_out . '"/></radialGradient>
-				<radialGradient id="phPp' . $sfx . '" cx="0.38" cy="0.3" r="1"><stop offset="0" stop-color="#FF8A70"/><stop offset="0.5" stop-color="#DE4633"/><stop offset="1" stop-color="#8F1B10"/></radialGradient>
-				<filter id="phChT' . $sfx . '" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.05 0.07" numOctaves="2" seed="8" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="2.6" diffuseConstant="1.05" result="l"><feDistantLight azimuth="235" elevation="62"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
-				<filter id="phCrT' . $sfx . '" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.12 0.16" numOctaves="2" seed="4" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="1.8" diffuseConstant="1.05" result="l"><feDistantLight azimuth="235" elevation="60"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
+				<filter id="phChT' . $sfx . '" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.06 0.08" numOctaves="2" seed="8" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="2.2" diffuseConstant="1.05" result="l"><feDistantLight azimuth="235" elevation="62"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
+				<filter id="phCrT' . $sfx . '" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.14 0.18" numOctaves="2" seed="4" result="n"/><feDiffuseLighting in="n" lighting-color="#ffffff" surfaceScale="1.9" diffuseConstant="1.05" result="l"><feDistantLight azimuth="235" elevation="60"/></feDiffuseLighting><feComposite in="l" in2="SourceGraphic" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>
 			</defs>
 			' . $steam . '
 			<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="url(#phCr' . $sfx . ')" filter="url(#phCrT' . $sfx . ')"/>
 			<path d="M7 24 Q50 2 93 24 L88 35 Q50 17 12 35 Z" fill="none" stroke="#8F5A1C" stroke-width="1.5" opacity="0.5" stroke-linejoin="round"/>
-			<path d="M10 24.5 Q50 5 90 24.5" fill="none" stroke="#FFF2CC" stroke-width="3.2" stroke-linecap="round" opacity="0.8"/>
-			<ellipse cx="26" cy="26" rx="2.6" ry="1.7" fill="#7E4A14" opacity="0.5"/><ellipse cx="25.4" cy="25.3" rx="1" ry="0.7" fill="#FFE9B8" opacity="0.9"/>
-			<ellipse cx="58" cy="20" rx="2.2" ry="1.5" fill="#7E4A14" opacity="0.45"/><ellipse cx="57.5" cy="19.4" rx="0.9" ry="0.6" fill="#FFE9B8" opacity="0.85"/>
-			<ellipse cx="76" cy="27" rx="2.4" ry="1.6" fill="#7E4A14" opacity="0.5"/><ellipse cx="75.4" cy="26.4" rx="0.9" ry="0.6" fill="#FFE9B8" opacity="0.85"/>
-			<path d="M12.5 35.5 Q50 18 87.5 35.5" fill="none" stroke="#C4571E" stroke-width="3.2" opacity="0.5"/>
+			<path d="M10 24.5 Q50 5 90 24.5" fill="none" stroke="#FFE9BE" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+			<ellipse cx="26" cy="26" rx="2.4" ry="1.6" fill="#7E4A14" opacity="0.5"/><ellipse cx="25.5" cy="25.4" rx="0.9" ry="0.6" fill="#FFE9B8" opacity="0.9"/>
+			<ellipse cx="58" cy="20" rx="2" ry="1.4" fill="#7E4A14" opacity="0.45"/>
+			<ellipse cx="76" cy="27" rx="2.2" ry="1.5" fill="#7E4A14" opacity="0.5"/><ellipse cx="75.5" cy="26.4" rx="0.8" ry="0.55" fill="#FFE9B8" opacity="0.85"/>
+			<path d="M12.5 35.5 Q50 18 87.5 35.5" fill="none" stroke="#C4571E" stroke-width="3" opacity="0.45"/>
 			<path d="M12 35 Q50 17 88 35 L55 100 Q50 108 45 100 Z" fill="url(#phCh' . $sfx . ')" filter="url(#phChT' . $sfx . ')"/>
-			<path d="M20.5 50 q7.5 1.5 6 9 q-1.2 6 -7 4 Z" fill="' . $ch_mid . '"/>
-			<path d="M74.5 53 q-7.5 1.5 -6 9 q1.2 6 7 4 Z" fill="' . $ch_mid . '"/>
-			<path d="M45 100 q5 8 10 0 q-2 9 -5 9 q-3 0 -5 -9 Z" fill="' . $ch_out . '"/>
-			<path d="M24 41 q4 12 8 1 M63 43 q3 11 7 0" fill="none" stroke="#FFF6CA" stroke-width="5.5" stroke-linecap="round" opacity="0.85"/>
+			<ellipse cx="30" cy="46" rx="5" ry="3.4" fill="#C98937" opacity="0.5"/>
+			<ellipse cx="66" cy="50" rx="4.4" ry="3" fill="#B7742A" opacity="0.45"/>
+			<ellipse cx="46" cy="63" rx="4" ry="2.8" fill="#C98937" opacity="0.4"/>
+			<ellipse cx="52" cy="86" rx="3.2" ry="2.2" fill="#B7742A" opacity="0.4"/>
+			<ellipse cx="38" cy="76" rx="3" ry="2" fill="#C98937" opacity="0.35"/>
 			<g>
-				<circle cx="37" cy="52" r="9" fill="url(#phPp' . $sfx . ')"/>
-				<circle cx="37" cy="52" r="9" fill="none" stroke="#7E150C" stroke-width="1.2" opacity="0.55"/>
-				<circle cx="34.6" cy="55" r="1.1" fill="#8F1B10" opacity="0.6"/><circle cx="40.2" cy="55.8" r="0.9" fill="#8F1B10" opacity="0.5"/>
-				<path d="M32 48.5 a6.5 6.5 0 0 1 6.5 -2.6" stroke="#FFC9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.95"/>
-				<circle cx="32.6" cy="47.6" r="1.2" fill="#FFE3DB" opacity="0.95"/>
+				<circle cx="33" cy="46" r="5" fill="#1D1710"/><circle cx="33" cy="46" r="2" fill="' . $ch_mid . '"/><path d="M29.6 43.4 a5 5 0 0 1 4 -1.8" stroke="#5E5240" stroke-width="1.1" fill="none" opacity="0.9"/>
+				<circle cx="63" cy="43" r="4.6" fill="#1D1710"/><circle cx="63" cy="43" r="1.8" fill="' . $ch_mid . '"/><path d="M59.9 40.6 a4.6 4.6 0 0 1 3.7 -1.6" stroke="#5E5240" stroke-width="1" fill="none" opacity="0.9"/>
+				<circle cx="42" cy="70" r="4.6" fill="#1D1710"/><circle cx="42" cy="70" r="1.8" fill="' . $ch_mid . '"/>
+				<circle cx="57" cy="78" r="4.2" fill="#1D1710"/><circle cx="57" cy="78" r="1.6" fill="' . $ch_mid . '"/>
+				<circle cx="50" cy="94" r="3.6" fill="#1D1710"/><circle cx="50" cy="94" r="1.4" fill="' . $ch_mid . '"/>
+			</g>
+			<g fill="none" stroke-linecap="round">
+				<path d="M22 52 Q30 58 26 68" stroke="#E8B62E" stroke-width="5"/><path d="M22.5 53 Q29 58 26 66" stroke="#FFDF7E" stroke-width="1.8" opacity="0.9"/>
+				<path d="M70 56 Q64 64 68 72" stroke="#E8B62E" stroke-width="4.6"/><path d="M69.5 57 Q64.5 64 67.5 70.5" stroke="#FFDF7E" stroke-width="1.6" opacity="0.9"/>
+				<path d="M44 38 Q52 40 56 36" stroke="#E8B62E" stroke-width="4.4"/><path d="M45 38.5 Q52 40 55 37" stroke="#FFDF7E" stroke-width="1.5" opacity="0.9"/>
 			</g>
 			<g>
-				<circle cx="62" cy="55" r="9" fill="url(#phPp' . $sfx . ')"/>
-				<circle cx="62" cy="55" r="9" fill="none" stroke="#7E150C" stroke-width="1.2" opacity="0.55"/>
-				<circle cx="59.6" cy="58" r="1.1" fill="#8F1B10" opacity="0.6"/><circle cx="65" cy="58.6" r="0.9" fill="#8F1B10" opacity="0.5"/>
-				<path d="M57 51.5 a6.5 6.5 0 0 1 6.5 -2.6" stroke="#FFC9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.95"/>
-				<circle cx="57.6" cy="50.6" r="1.2" fill="#FFE3DB" opacity="0.95"/>
+				<rect x="47" y="50" width="7" height="7" rx="1.4" fill="#D8321E" transform="rotate(14 50.5 53.5)"/><path d="M47.8 51.2 L53 50.4" stroke="#F27A5A" stroke-width="1.6" stroke-linecap="round" transform="rotate(14 50.5 53.5)"/>
+				<rect x="31" y="82" width="6" height="6" rx="1.2" fill="#C42A18" transform="rotate(-18 34 85)"/><path d="M31.8 83 L36 82.4" stroke="#F27A5A" stroke-width="1.4" stroke-linecap="round" transform="rotate(-18 34 85)"/>
+				<rect x="60" y="62" width="6" height="6" rx="1.2" fill="#D8321E" transform="rotate(28 63 65)"/>
 			</g>
-			<g>
-				<circle cx="49" cy="73" r="8" fill="url(#phPp' . $sfx . ')"/>
-				<circle cx="49" cy="73" r="8" fill="none" stroke="#7E150C" stroke-width="1.1" opacity="0.55"/>
-				<circle cx="47" cy="75.6" r="1" fill="#8F1B10" opacity="0.6"/>
-				<path d="M44.6 69.8 a5.8 5.8 0 0 1 5.8 -2.3" stroke="#FFC9B8" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.95"/>
+			<g fill="none" stroke-linecap="round">
+				<path d="M28 60 Q36 64 42 60" stroke="#A86CA6" stroke-width="3"/><path d="M29 60.5 Q36 63.5 41 60.4" stroke="#E3C4E2" stroke-width="1.2" opacity="0.9"/>
+				<path d="M52 68 Q58 74 54 82" stroke="#A86CA6" stroke-width="2.8"/><path d="M52.8 69 Q57.4 74 54.6 80.5" stroke="#E3C4E2" stroke-width="1.1" opacity="0.9"/>
+				<path d="M56 46 Q62 50 68 48" stroke="#A86CA6" stroke-width="2.6"/>
 			</g>
-			<g><circle cx="50" cy="90" r="5" fill="url(#phPp' . $sfx . ')"/><circle cx="50" cy="90" r="5" fill="none" stroke="#7E150C" stroke-width="1" opacity="0.5"/><circle cx="48.6" cy="88.6" r="0.9" fill="#FFE3DB" opacity="0.95"/></g>
-			<circle cx="30" cy="63" r="2.8" fill="#FFFBE2" opacity="0.85"/>
-			<circle cx="68" cy="66" r="2.3" fill="#FFFBE2" opacity="0.8"/>
-			<path d="M18 42 Q50 30 82 42" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.3"/>
+			<path d="M18 42 Q50 30 82 42" fill="none" stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round" opacity="0.28"/>
 		</svg>';
 	}
 }
@@ -333,24 +332,57 @@ if ( ! function_exists( 'phsg_svg_israel_map' ) ) {
 	 * @return string
 	 */
 	function phsg_svg_israel_map() {
-		return '<svg class="phsg-map-svg" viewBox="6 0 74 262" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-			<g transform="translate(40 0) scale(1.6 1) translate(-40 0)">
+		return '<svg class="phsg-map-svg" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+			<g stroke="rgba(240,69,58,0.09)" stroke-width="0.7">
+				<path d="M50 0 V220 M100 0 V220 M150 0 V220 M200 0 V220 M250 0 V220 M300 0 V220 M350 0 V220"/>
+				<path d="M0 44 H400 M0 88 H400 M0 132 H400 M0 176 H400"/>
+			</g>
+			<g stroke="rgba(240,120,110,0.32)" stroke-width="1.4" fill="none" stroke-linecap="round">
+				<path d="M26 48 q9 -5 18 0 q9 5 18 0"/>
+				<path d="M46 84 q9 -5 18 0 q9 5 18 0"/>
+				<path d="M22 122 q9 -5 18 0 q9 5 18 0"/>
+				<path d="M52 160 q9 -5 18 0 q9 5 18 0"/>
+				<path d="M96 130 q9 -5 18 0"/>
+			</g>
+			<text x="76" y="106" font-family="Almoni, Rubik, sans-serif" font-size="9" font-weight="500" fill="rgba(240,120,110,0.55)" text-anchor="middle">הים התיכון</text>
+			<text x="290" y="158" font-family="Almoni, Rubik, sans-serif" font-size="9" font-weight="500" fill="rgba(240,120,110,0.45)" text-anchor="middle">הנגב</text>
+			<g transform="translate(200 4) scale(2.6 0.8) translate(-40 0)">
 				<path d="M38 6 C34 20 30 40 31 55 C29 70 26 80 25 90 C23 105 24 118 27 128 L22 138 C24 146 28 150 32 152 L47 247 L54 240 C58 200 60 170 55 155 C58 140 58 125 54 115 C57 105 57 95 54 88 C56 70 55 55 52 45 C55 35 56 25 52 18 C50 12 44 8 38 6 Z"
-					fill="rgba(240,69,58,0.05)" stroke="#E8443B" stroke-width="1.1" stroke-linejoin="round" opacity="0.8"/>
+					fill="rgba(240,69,58,0.06)" stroke="#E8443B" stroke-width="1.2" stroke-linejoin="round" opacity="0.85" vector-effect="non-scaling-stroke"/>
+				<ellipse cx="52" cy="23" rx="2.6" ry="5" fill="rgba(140,200,240,0.28)"/>
+				<ellipse cx="54" cy="100" rx="2.6" ry="10" fill="rgba(140,200,240,0.22)"/>
 			</g>
-			<g fill="#F0453A">
-				<circle cx="25.6" cy="55" r="3.4" opacity="0.22"/><circle cx="25.6" cy="55" r="1.9"/>
-				<circle cx="17.6" cy="86" r="3.4" opacity="0.22"/><circle cx="17.6" cy="86" r="1.9"/>
-				<circle cx="46.4" cy="102" r="3.4" opacity="0.22"/><circle cx="46.4" cy="102" r="1.9"/>
-				<circle cx="32" cy="130" r="3.4" opacity="0.22"/><circle cx="32" cy="130" r="1.9"/>
-				<circle cx="51.2" cy="245" r="3.4" opacity="0.22"/><circle cx="51.2" cy="245" r="1.9"/>
+			<g stroke="#F03A2E" stroke-width="1.4" fill="none" stroke-dasharray="5 6" opacity="0.32" stroke-linecap="round">
+				<path d="M8 54 Q90 40 176 44 Q210 42 226 41 Q310 32 392 28"/>
+				<path d="M10 92 Q90 76 164 69 Q190 74 210 82 Q300 94 392 100"/>
+				<path d="M12 150 Q100 122 187 104 Q198 122 200 136 Q212 170 218 196 Q300 190 390 178"/>
 			</g>
-			<g font-family="Almoni, Rubik, sans-serif" font-size="6" font-weight="500" fill="#E4574C" opacity="0.9" text-anchor="middle">
-				<text x="36" y="57">חיפה</text>
-				<text x="28" y="88">ת״א</text>
-				<text x="57" y="104">י-ם</text>
-				<text x="42" y="132">ב״ש</text>
-				<text x="51.2" y="256">אילת</text>
+			<g>
+				<circle cx="176.6" cy="44" r="4.6" fill="#F0453A" opacity="0.2"/><circle cx="176.6" cy="44" r="2.4" fill="#F0453A"/>
+				<circle cx="226" cy="41.6" r="4" fill="#F0453A" opacity="0.2"/><circle cx="226" cy="41.6" r="2" fill="#F0453A"/>
+				<circle cx="168.8" cy="59.2" r="4" fill="#F0453A" opacity="0.2"/><circle cx="168.8" cy="59.2" r="2" fill="#F0453A"/>
+				<circle cx="163.6" cy="68.8" r="4.6" fill="#F0453A" opacity="0.2"/><circle cx="163.6" cy="68.8" r="2.4" fill="#F0453A"/>
+				<circle cx="210.4" cy="81.6" r="4.6" fill="#F0453A" opacity="0.2"/><circle cx="210.4" cy="81.6" r="2.4" fill="#F0453A"/>
+				<circle cx="166.2" cy="76" r="4" fill="#F0453A" opacity="0.2"/><circle cx="166.2" cy="76" r="2" fill="#F0453A"/>
+				<circle cx="187" cy="104" r="4.6" fill="#F0453A" opacity="0.2"/><circle cx="187" cy="104" r="2.4" fill="#F0453A"/>
+				<circle cx="200" cy="136" r="4" fill="#F0453A" opacity="0.2"/><circle cx="200" cy="136" r="2" fill="#F0453A"/>
+				<circle cx="218.2" cy="196" r="4.6" fill="#F0453A" opacity="0.2"/><circle cx="218.2" cy="196" r="2.4" fill="#F0453A"/>
+			</g>
+			<g font-family="Almoni, Rubik, sans-serif" font-size="7.5" font-weight="500" fill="#E4574C" opacity="0.95" text-anchor="start">
+				<text x="184" y="46.5">חיפה</text>
+				<text x="232" y="44">טבריה</text>
+				<text x="150" y="56" text-anchor="end">נתניה</text>
+				<text x="146" y="70" text-anchor="end">ת״א</text>
+				<text x="218" y="84">ירושלים</text>
+				<text x="148" y="83" text-anchor="end">אשדוד</text>
+				<text x="194" y="107">ב״ש</text>
+				<text x="207" y="139">מצפה רמון</text>
+				<text x="226" y="199">אילת</text>
+			</g>
+			<g transform="translate(34 30)" opacity="0.55">
+				<circle r="11" fill="none" stroke="#E4574C" stroke-width="1.2"/>
+				<path d="M0 -8 L2.6 3 L0 1 L-2.6 3 Z" fill="#E4574C"/>
+				<text y="-14" font-family="Almoni, Rubik, sans-serif" font-size="7" font-weight="700" fill="#E4574C" text-anchor="middle">צ</text>
 			</g>
 		</svg>';
 	}
