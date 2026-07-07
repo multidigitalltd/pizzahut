@@ -149,6 +149,8 @@ class PHSG_Shortcode {
 				'coupon_url'  => 'https://www.pizzahut.co.il/?utm_source=slice_game&utm_medium=game&utm_campaign=coupon', // יעד כפתור ההזמנה.
 				'bg'          => PHSG_PLUGIN_URL . 'assets/img/game-bg.png', // תמונת רקע. ברירת מחדל = צילום המותג המצורף. אפשר URL אחר; '' = רקע אדום צבוע.
 				'pizzas'      => '', // רשימת URLים (מופרדים בפסיק) לתמונות פיצה שקופצות. ריק = 4 התמונות המצורפות (משולשים ומגשים).
+				'order_url'   => 'https://www.pizzahut.co.il/?utm_source=slice_game&utm_medium=game&utm_campaign=order', // כפתור "הזמנת פיצה".
+				'branches_url' => 'https://www.pizzahut.co.il/branches/', // קישור לרשימת הסניפים המלאה.
 			),
 			$atts,
 			'pizza_hut_slice_game'
