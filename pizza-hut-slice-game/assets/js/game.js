@@ -71,6 +71,7 @@
 		this.obstaclesEl = root.querySelector('[data-obstacles]');
 		this.bonusesEl = root.querySelector('[data-bonuses]');
 		this.mapEl = root.querySelector('[data-map]');
+		this.dotsEl = root.querySelector('[data-mapdots]');
 		this.popupsEl = root.querySelector('[data-popups]');
 		this.burstsEl = root.querySelector('[data-bursts]');
 		this.comboEl = root.querySelector('[data-combo]');
@@ -528,9 +529,10 @@
 		this._syncStrikes();
 		this._resetSpawnTimers();
 		this._panMap();
+		this._jumpDots();
 		clearInterval(this.mapTimer);
 		var mapSelf = this;
-		this.mapTimer = setInterval(function () { mapSelf._panMap(); }, 3600);
+		this.mapTimer = setInterval(function () { mapSelf._jumpDots(); }, 1100);
 		this._renderHud();
 		this.startMusic();
 
@@ -603,9 +605,20 @@
 	// הזזת המפה לאזור אקראי – יוצר תחושת מעבר בין מיקומים על המפה.
 	Game.prototype._panMap = function () {
 		if (!this.mapEl) { return; }
-		var x = 8 + Math.random() * 84;
+		// אופקית נשארים סביב מרכז גוש הארץ, אנכית נעים לאורך הארץ (צפון↔דרום)
+		var x = 34 + Math.random() * 30;
 		var y = 6 + Math.random() * 88;
 		this.mapEl.style.backgroundPosition = x.toFixed(1) + '% ' + y.toFixed(1) + '%';
+	};
+
+	// נקודות זוהרות אדומות שקופצות למיקומים אקראיים על המפה.
+	Game.prototype._jumpDots = function () {
+		if (!this.dotsEl) { return; }
+		var kids = this.dotsEl.children;
+		for (var i = 0; i < kids.length; i++) {
+			kids[i].style.left = (6 + Math.random() * 88).toFixed(1) + '%';
+			kids[i].style.top = (8 + Math.random() * 84).toFixed(1) + '%';
+		}
 	};
 
 	Game.prototype._resetSpawnTimers = function () {
@@ -714,6 +727,7 @@
 		el._spawnAt = Date.now();
 		el._expire = Date.now() + sliceLife(lv);
 		el._gold = gold;
+		this._panMap();
 		el.addEventListener('pointerdown', function (e) {
 			e.preventDefault(); e.stopPropagation();
 			self._hitSlice(e, el);
@@ -1229,13 +1243,13 @@
 			var rankBg = i < 3 ? medals[i] : '#FBFAEE';
 			var rowBg = isMe ? '' : (i % 2 ? '#231C22' : '#1D171C');
 			var name = esc(row.display_name) + (isMe ? ' ' + t('youSuffix', '(את/ה!)') : '');
-			var avg = ((parseFloat(row.avg_reaction) || 0) / 1000).toFixed(1) + ' ' + t('sec', "שנ'");
+			var ago = row.ago ? esc(row.ago) : '';
 
 			html += '<div class="phsg-board__row' + (isMe ? ' is-me' : '') + '"' + (rowBg ? ' style="background:' + rowBg + ';"' : '') + '>' +
 				'<span class="phsg-board__rank" style="background:' + rankBg + ';">' + (i + 1) + '</span>' +
 				'<span class="phsg-board__name">' + name + '</span>' +
 				'<span class="phsg-board__score">' + esc(row.score) + '</span>' +
-				'<span class="phsg-board__avg">' + esc(avg) + '</span>' +
+				'<span class="phsg-board__avg">' + ago + '</span>' +
 				'</div>';
 		});
 

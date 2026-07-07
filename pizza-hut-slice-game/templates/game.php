@@ -230,6 +230,7 @@ $phsg_sprites = array(
 			<div class="phsg-stage" data-stage>
 				<?php // רקע הבמה – מפת ישראל אמיתית (זזה כדי להראות כל פעם אזור אחר) ?>
 				<div class="phsg-stage__map" data-map aria-hidden="true"<?php echo $phsg_map_url ? ' style="background-image:url(' . esc_url( $phsg_map_url ) . ');"' : ''; ?>></div>
+				<div class="phsg-stage__dots" data-mapdots aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
 				<?php // אבק קסם ?>
 				<div class="phsg-stage__dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -306,7 +307,7 @@ $phsg_sprites = array(
 			<div class="phsg-board">
 				<div class="phsg-board__head">
 					<span><?php esc_html_e( 'טבלת השיאים', 'pizza-hut-slice-game' ); ?></span>
-					<span class="phsg-board__head-sub"><?php esc_html_e( 'מתעדכן בזמן אמת', 'pizza-hut-slice-game' ); ?></span>
+					<span class="phsg-board__head-sub"><?php esc_html_e( 'משחק אחרון', 'pizza-hut-slice-game' ); ?></span>
 				</div>
 				<div data-leaderboard>
 					<?php echo phsg_render_leaderboard_rows( $leaderboard ); // phpcs:ignore WordPress.Security.EscapeOutput ?>

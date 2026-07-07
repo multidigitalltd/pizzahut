@@ -210,10 +210,11 @@ class PHSG_DB {
 		if ( $daily ) {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT email, display_name, score, duration, avg_reaction
-					 FROM {$table}
-					 WHERE DATE(created_at) = %s
-					 ORDER BY score DESC, avg_reaction ASC, created_at ASC, id ASC
+					"SELECT t1.email, t1.display_name, t1.score, t1.duration, t1.avg_reaction, t1.created_at,
+					        ( SELECT MAX(t2.created_at) FROM {$table} t2 WHERE t2.email = t1.email ) AS last_played
+					 FROM {$table} t1
+					 WHERE DATE(t1.created_at) = %s
+					 ORDER BY t1.score DESC, t1.avg_reaction ASC, t1.created_at ASC, t1.id ASC
 					 LIMIT %d", // phpcs:ignore WordPress.DB
 					current_time( 'Y-m-d' ),
 					$fetch
@@ -222,9 +223,10 @@ class PHSG_DB {
 		} else {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT email, display_name, score, duration, avg_reaction
-					 FROM {$table}
-					 ORDER BY score DESC, avg_reaction ASC, created_at ASC, id ASC
+					"SELECT t1.email, t1.display_name, t1.score, t1.duration, t1.avg_reaction, t1.created_at,
+					        ( SELECT MAX(t2.created_at) FROM {$table} t2 WHERE t2.email = t1.email ) AS last_played
+					 FROM {$table} t1
+					 ORDER BY t1.score DESC, t1.avg_reaction ASC, t1.created_at ASC, t1.id ASC
 					 LIMIT %d", // phpcs:ignore WordPress.DB
 					$fetch
 				)

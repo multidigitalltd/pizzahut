@@ -384,6 +384,47 @@ if ( ! function_exists( 'phsg_svg_sound' ) ) {
 	}
 }
 
+if ( ! function_exists( 'phsg_time_ago' ) ) {
+	/**
+	 * זמן יחסי בעברית: "עכשיו", "לפני 5 דק׳", "לפני 2 שע׳", "לפני 3 ימים".
+	 *
+	 * @param string $mysql_datetime זמן ב-mysql (current_time('mysql')).
+	 * @return string
+	 */
+	function phsg_time_ago( $mysql_datetime ) {
+		if ( empty( $mysql_datetime ) ) {
+			return '';
+		}
+		$then = strtotime( $mysql_datetime );
+		$now  = (int) current_time( 'timestamp' );
+		$diff = $now - $then;
+		if ( $diff < 0 ) {
+			$diff = 0;
+		}
+		if ( $diff < 60 ) {
+			return __( 'עכשיו', 'pizza-hut-slice-game' );
+		}
+		if ( $diff < 3600 ) {
+			$m = (int) floor( $diff / 60 );
+			/* translators: %d = minutes */
+			return sprintf( _n( 'לפני דקה', 'לפני %d דק׳', $m, 'pizza-hut-slice-game' ), $m );
+		}
+		if ( $diff < 86400 ) {
+			$h = (int) floor( $diff / 3600 );
+			/* translators: %d = hours */
+			return sprintf( _n( 'לפני שעה', 'לפני %d שע׳', $h, 'pizza-hut-slice-game' ), $h );
+		}
+		if ( $diff < 604800 ) {
+			$d = (int) floor( $diff / 86400 );
+			/* translators: %d = days */
+			return sprintf( _n( 'אתמול', 'לפני %d ימים', $d, 'pizza-hut-slice-game' ), $d );
+		}
+		$w = (int) floor( $diff / 604800 );
+		/* translators: %d = weeks */
+		return sprintf( _n( 'לפני שבוע', 'לפני %d שב׳', $w, 'pizza-hut-slice-game' ), $w );
+	}
+}
+
 if ( ! function_exists( 'phsg_render_leaderboard_rows' ) ) {
 	/**
 	 * רינדור שורות טבלת השיאים בצד השרת (לשורטקוד הלוח העצמאי).
@@ -404,7 +445,7 @@ if ( ! function_exists( 'phsg_render_leaderboard_rows' ) ) {
 			$rank    = isset( $row['rank'] ) ? (int) $row['rank'] : $i + 1;
 			$name    = isset( $row['display_name'] ) ? $row['display_name'] : '';
 			$score   = isset( $row['score'] ) ? (int) $row['score'] : 0;
-			$avg     = isset( $row['avg_reaction'] ) ? (float) $row['avg_reaction'] : 0;
+			$ago     = isset( $row['ago'] ) ? $row['ago'] : '';
 			$rank_bg = $rank <= 3 ? $medals[ $rank - 1 ] : '#FBFAEE';
 			$row_bg  = ( $i % 2 ) ? '#231C22' : '#1D171C';
 
@@ -412,7 +453,7 @@ if ( ! function_exists( 'phsg_render_leaderboard_rows' ) ) {
 			$html .= '<span class="phsg-board__rank" style="background:' . esc_attr( $rank_bg ) . ';">' . esc_html( $rank ) . '</span>';
 			$html .= '<span class="phsg-board__name">' . esc_html( $name ) . '</span>';
 			$html .= '<span class="phsg-board__score">' . esc_html( $score ) . '</span>';
-			$html .= '<span class="phsg-board__avg">' . esc_html( number_format_i18n( $avg / 1000, 1 ) ) . ' ' . esc_html__( "שנ'", 'pizza-hut-slice-game' ) . '</span>';
+			$html .= '<span class="phsg-board__avg">' . esc_html( $ago ) . '</span>';
 			$html .= '</div>';
 			$i++;
 		}

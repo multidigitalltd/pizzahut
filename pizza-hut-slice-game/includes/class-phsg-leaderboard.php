@@ -28,12 +28,14 @@ class PHSG_Leaderboard {
 
 		foreach ( $rows as $row ) {
 			$rank++;
+			$last     = isset( $row->last_played ) && $row->last_played ? $row->last_played : ( isset( $row->created_at ) ? $row->created_at : '' );
 			$output[] = array(
 				'rank'         => $rank,
 				'display_name' => $row->display_name,
 				'score'        => (int) $row->score,
 				'duration'     => (float) $row->duration,
 				'avg_reaction' => (float) $row->avg_reaction,
+				'ago'          => phsg_time_ago( $last ),
 			);
 		}
 
