@@ -24,6 +24,7 @@ $phsg_pizza_list = isset( $phsg_pizzas ) && ! empty( $phsg_pizzas ) ? $phsg_pizz
 	PHSG_PLUGIN_URL . 'assets/img/pizza-tray-b.png',
 );
 $phsg_hero_img   = $phsg_pizza_list[0];
+$phsg_map_url    = isset( $atts['map'] ) && '' !== $atts['map'] ? $atts['map'] : '';
 
 // ספרייטים אמיתיים – מכשולים ובונוסים (תמונות מוטמעות בתוסף).
 $phsg_sprites = array(
@@ -227,8 +228,8 @@ $phsg_sprites = array(
 			<div class="phsg-progress"><div class="phsg-progress__fill" data-progress></div></div>
 
 			<div class="phsg-stage" data-stage>
-				<?php // רקע הבמה – מפת ארץ ישראל מסוגננת ?>
-				<div class="phsg-stage__map" aria-hidden="true"><?php echo phsg_svg_israel_map(); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+				<?php // רקע הבמה – מפת ישראל אמיתית (זזה כדי להראות כל פעם אזור אחר) ?>
+				<div class="phsg-stage__map" data-map aria-hidden="true"<?php echo $phsg_map_url ? ' style="background-image:url(' . esc_url( $phsg_map_url ) . ');"' : ''; ?>></div>
 
 				<?php // אבק קסם ?>
 				<div class="phsg-stage__dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>

@@ -70,6 +70,7 @@
 		this.slicesEl = root.querySelector('[data-slices]');
 		this.obstaclesEl = root.querySelector('[data-obstacles]');
 		this.bonusesEl = root.querySelector('[data-bonuses]');
+		this.mapEl = root.querySelector('[data-map]');
 		this.popupsEl = root.querySelector('[data-popups]');
 		this.burstsEl = root.querySelector('[data-bursts]');
 		this.comboEl = root.querySelector('[data-combo]');
@@ -172,6 +173,7 @@
 		clearInterval(this.loop);
 		clearInterval(this.cd);
 		clearInterval(this.countUpTimer);
+		clearInterval(this.mapTimer);
 	};
 
 	/* ==================== צלילים (WebAudio – מהאב-טיפוס) ==================== */
@@ -525,6 +527,10 @@
 		this.timeLeft = levelTime(0);
 		this._syncStrikes();
 		this._resetSpawnTimers();
+		this._panMap();
+		clearInterval(this.mapTimer);
+		var mapSelf = this;
+		this.mapTimer = setInterval(function () { mapSelf._panMap(); }, 3600);
 		this._renderHud();
 		this.startMusic();
 
@@ -563,6 +569,7 @@
 		this.timeLeft = levelTime(this.levelIdx);
 		this._clearStage();
 		this._resetSpawnTimers();
+		this._panMap();
 		this._levelUp(this.levelIdx + 1, bonus);
 		this._renderHud();
 	};
@@ -592,6 +599,14 @@
 	function maxObst(lv) { return Math.min(6, 2 + lv); }
 	function obstLife(lv) { return Math.max(1700, 4200 - lv * 360); }
 	function obstGap(lv) { return Math.max(420, 1250 - lv * 105); }
+
+	// הזזת המפה לאזור אקראי – יוצר תחושת מעבר בין מיקומים על המפה.
+	Game.prototype._panMap = function () {
+		if (!this.mapEl) { return; }
+		var x = 8 + Math.random() * 84;
+		var y = 6 + Math.random() * 88;
+		this.mapEl.style.backgroundPosition = x.toFixed(1) + '% ' + y.toFixed(1) + '%';
+	};
 
 	Game.prototype._resetSpawnTimers = function () {
 		var now = Date.now();
