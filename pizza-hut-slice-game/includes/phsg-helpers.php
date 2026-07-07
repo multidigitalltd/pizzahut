@@ -332,57 +332,38 @@ if ( ! function_exists( 'phsg_svg_israel_map' ) ) {
 	 * @return string
 	 */
 	function phsg_svg_israel_map() {
-		return '<svg class="phsg-map-svg" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-			<g stroke="rgba(240,69,58,0.09)" stroke-width="0.7">
-				<path d="M50 0 V220 M100 0 V220 M150 0 V220 M200 0 V220 M250 0 V220 M300 0 V220 M350 0 V220"/>
-				<path d="M0 44 H400 M0 88 H400 M0 132 H400 M0 176 H400"/>
+		return '<svg class="phsg-map-svg" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+			<g stroke="#E8443B" stroke-width="1.3" opacity="0.5" stroke-linecap="round" fill="none">
+				<path d="M100 10 V24 M97 20 L100 12 L103 20"/>
+				<path d="M100 226 V240"/>
+				<path d="M182 125 H196"/>
+				<path d="M4 125 H18"/>
 			</g>
-			<g stroke="rgba(240,120,110,0.32)" stroke-width="1.4" fill="none" stroke-linecap="round">
-				<path d="M26 48 q9 -5 18 0 q9 5 18 0"/>
-				<path d="M46 84 q9 -5 18 0 q9 5 18 0"/>
-				<path d="M22 122 q9 -5 18 0 q9 5 18 0"/>
-				<path d="M52 160 q9 -5 18 0 q9 5 18 0"/>
-				<path d="M96 130 q9 -5 18 0"/>
+			<g font-family="Almoni, Rubik, sans-serif" font-weight="700" fill="#E4574C" opacity="0.9" text-anchor="middle">
+				<text x="100" y="8" font-size="12">צפון</text>
+				<text x="100" y="250" font-size="12">דרום</text>
+				<text x="191" y="129" font-size="11">מזרח</text>
+				<text x="9" y="129" font-size="11">מערב</text>
 			</g>
-			<text x="76" y="106" font-family="Almoni, Rubik, sans-serif" font-size="9" font-weight="500" fill="rgba(240,120,110,0.55)" text-anchor="middle">הים התיכון</text>
-			<text x="290" y="158" font-family="Almoni, Rubik, sans-serif" font-size="9" font-weight="500" fill="rgba(240,120,110,0.45)" text-anchor="middle">הנגב</text>
-			<g transform="translate(200 4) scale(2.6 0.8) translate(-40 0)">
+			<g transform="translate(60 6) scale(1.05 0.96)">
 				<path d="M38 6 C34 20 30 40 31 55 C29 70 26 80 25 90 C23 105 24 118 27 128 L22 138 C24 146 28 150 32 152 L47 247 L54 240 C58 200 60 170 55 155 C58 140 58 125 54 115 C57 105 57 95 54 88 C56 70 55 55 52 45 C55 35 56 25 52 18 C50 12 44 8 38 6 Z"
-					fill="rgba(240,69,58,0.06)" stroke="#E8443B" stroke-width="1.2" stroke-linejoin="round" opacity="0.85" vector-effect="non-scaling-stroke"/>
-				<ellipse cx="52" cy="23" rx="2.6" ry="5" fill="rgba(140,200,240,0.28)"/>
-				<ellipse cx="54" cy="100" rx="2.6" ry="10" fill="rgba(140,200,240,0.22)"/>
-			</g>
-			<g stroke="#F03A2E" stroke-width="1.4" fill="none" stroke-dasharray="5 6" opacity="0.32" stroke-linecap="round">
-				<path d="M8 54 Q90 40 176 44 Q210 42 226 41 Q310 32 392 28"/>
-				<path d="M10 92 Q90 76 164 69 Q190 74 210 82 Q300 94 392 100"/>
-				<path d="M12 150 Q100 122 187 104 Q198 122 200 136 Q212 170 218 196 Q300 190 390 178"/>
-			</g>
-			<g>
-				<circle cx="176.6" cy="44" r="4.6" fill="#F0453A" opacity="0.2"/><circle cx="176.6" cy="44" r="2.4" fill="#F0453A"/>
-				<circle cx="226" cy="41.6" r="4" fill="#F0453A" opacity="0.2"/><circle cx="226" cy="41.6" r="2" fill="#F0453A"/>
-				<circle cx="168.8" cy="59.2" r="4" fill="#F0453A" opacity="0.2"/><circle cx="168.8" cy="59.2" r="2" fill="#F0453A"/>
-				<circle cx="163.6" cy="68.8" r="4.6" fill="#F0453A" opacity="0.2"/><circle cx="163.6" cy="68.8" r="2.4" fill="#F0453A"/>
-				<circle cx="210.4" cy="81.6" r="4.6" fill="#F0453A" opacity="0.2"/><circle cx="210.4" cy="81.6" r="2.4" fill="#F0453A"/>
-				<circle cx="166.2" cy="76" r="4" fill="#F0453A" opacity="0.2"/><circle cx="166.2" cy="76" r="2" fill="#F0453A"/>
-				<circle cx="187" cy="104" r="4.6" fill="#F0453A" opacity="0.2"/><circle cx="187" cy="104" r="2.4" fill="#F0453A"/>
-				<circle cx="200" cy="136" r="4" fill="#F0453A" opacity="0.2"/><circle cx="200" cy="136" r="2" fill="#F0453A"/>
-				<circle cx="218.2" cy="196" r="4.6" fill="#F0453A" opacity="0.2"/><circle cx="218.2" cy="196" r="2.4" fill="#F0453A"/>
-			</g>
-			<g font-family="Almoni, Rubik, sans-serif" font-size="7.5" font-weight="500" fill="#E4574C" opacity="0.95" text-anchor="start">
-				<text x="184" y="46.5">חיפה</text>
-				<text x="232" y="44">טבריה</text>
-				<text x="150" y="56" text-anchor="end">נתניה</text>
-				<text x="146" y="70" text-anchor="end">ת״א</text>
-				<text x="218" y="84">ירושלים</text>
-				<text x="148" y="83" text-anchor="end">אשדוד</text>
-				<text x="194" y="107">ב״ש</text>
-				<text x="207" y="139">מצפה רמון</text>
-				<text x="226" y="199">אילת</text>
-			</g>
-			<g transform="translate(34 30)" opacity="0.55">
-				<circle r="11" fill="none" stroke="#E4574C" stroke-width="1.2"/>
-				<path d="M0 -8 L2.6 3 L0 1 L-2.6 3 Z" fill="#E4574C"/>
-				<text y="-14" font-family="Almoni, Rubik, sans-serif" font-size="7" font-weight="700" fill="#E4574C" text-anchor="middle">צ</text>
+					fill="rgba(240,69,58,0.06)" stroke="#E8443B" stroke-width="1.5" stroke-linejoin="round" opacity="0.9" vector-effect="non-scaling-stroke"/>
+				<ellipse cx="52" cy="23" rx="2.6" ry="5" fill="rgba(140,200,240,0.3)"/>
+				<ellipse cx="54" cy="100" rx="2.6" ry="10" fill="rgba(140,200,240,0.24)"/>
+				<g fill="#F0453A">
+					<circle cx="31" cy="55" r="3.4" opacity="0.22"/><circle cx="31" cy="55" r="1.9"/>
+					<circle cx="26" cy="86" r="3.4" opacity="0.22"/><circle cx="26" cy="86" r="1.9"/>
+					<circle cx="32" cy="130" r="3.4" opacity="0.22"/><circle cx="32" cy="130" r="1.9"/>
+					<circle cx="47" cy="245" r="3.4" opacity="0.22"/><circle cx="47" cy="245" r="1.9"/>
+				</g>
+				<g transform="translate(46 102)"><path d="M0 -7 L2 -2 L7 -2 L3 1.4 L4.5 6.5 L0 3.4 L-4.5 6.5 L-3 1.4 L-7 -2 L-2 -2 Z" fill="#F0453A"/></g>
+				<g font-family="Almoni, Rubik, sans-serif" font-size="7.5" font-weight="500" fill="#E4574C" opacity="0.92" text-anchor="start">
+					<text x="36" y="57">חיפה</text>
+					<text x="12" y="88" text-anchor="end">ת״א</text>
+					<text x="52" y="104">י-ם</text>
+					<text x="37" y="132">ב״ש</text>
+					<text x="52" y="247">אילת</text>
+				</g>
 			</g>
 		</svg>';
 	}

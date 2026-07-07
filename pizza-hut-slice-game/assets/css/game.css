@@ -111,8 +111,7 @@
 .phsg-app--photo .phsg-bgpizza { display: none; }
 
 /* תמונת משולש אמיתית – מסופקת דרך slice="..." */
-.phsg-slice-img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.phsg-slice-img--gold { filter: sepia(0.45) saturate(1.7) hue-rotate(-14deg) brightness(1.1); }
+.phsg-slice-img { display: block; width: 100%; height: 100%; object-fit: contain; -webkit-user-drag: none; user-select: none; }
 
 /* ===== השתלטות על העמוד (fullscreen takeover) =====
    ה-JS מעביר את המשחק ישירות ל-body ומסתיר את כל שאר תוכן העמוד. */
@@ -767,10 +766,11 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	align-items: center;
 	justify-content: center;
 	pointer-events: none;
-	opacity: 0.9;
+	opacity: 0.95;
+	padding: 14px 8px;
 }
 
-.phsg-map-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 22px rgba(240, 69, 58, 0.25)); }
+.phsg-map-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 20px rgba(240, 69, 58, 0.22)); }
 
 /* חתימת מותג בפינת הבמה */
 .phsg-stage__brand {

@@ -82,6 +82,13 @@ class PHSG_Shortcode {
 				'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
 				'nonce'        => wp_create_nonce( PHSG_Ajax::NONCE_ACTION ),
 				'gameDuration' => PHSG_Anti_Cheat::GAME_DURATION,
+				// תמונות הפיצה שקופצות במשחק – משולשים ומגשים אמיתיים (אפשר לעקוף עם pizzas="url1,url2").
+				'pizzas'       => array(
+					PHSG_PLUGIN_URL . 'assets/img/pizza-slice-a.png',
+					PHSG_PLUGIN_URL . 'assets/img/pizza-slice-b.png',
+					PHSG_PLUGIN_URL . 'assets/img/pizza-tray-a.png',
+					PHSG_PLUGIN_URL . 'assets/img/pizza-tray-b.png',
+				),
 				'i18n'         => array(
 					'errName'    => __( 'נא להזין שם מלא', 'pizza-hut-slice-game' ),
 					'errPhone'   => __( 'מספר טלפון לא תקין', 'pizza-hut-slice-game' ),
@@ -140,12 +147,23 @@ class PHSG_Shortcode {
 				'fullscreen'  => '1', // 1 = השתלטות על כל העמוד (הסתרת התבנית). 0 = הטמעה רגילה.
 				'coupon_code' => 'HUTGAME', // קוד הפינוק במסך הסיום. ריק = הסתרת הכרטיס.
 				'coupon_url'  => 'https://www.pizzahut.co.il/?utm_source=slice_game&utm_medium=game&utm_campaign=coupon', // יעד כפתור ההזמנה.
-				'bg'          => '', // URL לתמונת רקע אמיתית (צילום המותג ממדיה). ריק = רקע אדום מובנה.
-				'slice'       => '', // URL לתמונת משולש PNG שקופה – מחליפה את איור המשולש במשחק.
+				'bg'          => PHSG_PLUGIN_URL . 'assets/img/game-bg.png', // תמונת רקע. ברירת מחדל = צילום המותג המצורף. אפשר URL אחר; '' = רקע אדום צבוע.
+				'pizzas'      => '', // רשימת URLים (מופרדים בפסיק) לתמונות פיצה שקופצות. ריק = 4 התמונות המצורפות (משולשים ומגשים).
 			),
 			$atts,
 			'pizza_hut_slice_game'
 		);
+
+		// רשימת תמונות הפיצה הקופצות – עוקף את ברירת המחדל אם סופק pizzas="".
+		$phsg_pizzas = array();
+		if ( '' !== trim( (string) $atts['pizzas'] ) ) {
+			foreach ( explode( ',', $atts['pizzas'] ) as $phsg_p ) {
+				$phsg_p = trim( $phsg_p );
+				if ( '' !== $phsg_p ) {
+					$phsg_pizzas[] = esc_url_raw( $phsg_p );
+				}
+			}
+		}
 
 		ob_start();
 		$leaderboard = PHSG_Leaderboard::get_public( 8 );

@@ -678,9 +678,26 @@
 
 	/* ==================== רינדור ==================== */
 
+	// רשימת תמונות הפיצה: קודם data-pizzas של המופע, אחרת ברירת המחדל שב-PHSG_DATA.
+	Game.prototype._pizzas = function () {
+		if (!this._pizzaCache) {
+			var arr = [];
+			var raw = this.root.getAttribute('data-pizzas');
+			if (raw) {
+				try { arr = JSON.parse(raw); } catch (e) { arr = []; }
+			}
+			if (!arr.length && CFG.pizzas && CFG.pizzas.length) {
+				arr = CFG.pizzas;
+			}
+			this._pizzaCache = arr;
+		}
+		return this._pizzaCache;
+	};
+
 	Game.prototype._renderSlices = function (list, lv) {
 		var self = this;
-		var base = Math.max(56, 116 - lv * 10);
+		var base = Math.max(74, 132 - lv * 9);
+		var pizzas = this._pizzas();
 		this.slicesEl.innerHTML = '';
 
 		list.forEach(function (sl) {
@@ -690,7 +707,12 @@
 			el.style.left = sl.x + '%';
 			el.style.top = sl.y + '%';
 			el.style.width = base + 'px';
-			el.style.height = Math.round(base * 1.1) + 'px';
+			el.style.height = base + 'px';
+			// תמונת פיצה אמיתית אקראית (משולש או מגש) לכל פריט.
+			var img = el.querySelector('[data-pizza-img]');
+			if (img && pizzas.length) {
+				img.src = pizzas[Math.floor(Math.random() * pizzas.length)];
+			}
 			el.setAttribute('data-type', sl.gold ? 'gold' : 'normal');
 			el.classList.toggle('is-gold', sl.gold);
 			el.querySelectorAll('[data-gold-only]').forEach(function (g) {
