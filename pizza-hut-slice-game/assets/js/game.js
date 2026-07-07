@@ -626,7 +626,7 @@
 		this.nextSliceAt = now;
 		this.nextObstAt = now + 550;
 		this.nextBoxAt = now + 4200 + Math.random() * 3500;
-		this.nextPinAt = now + 8000 + Math.random() * 6000;
+		this.nextPinAt = now + 3000 + Math.random() * 2500;
 	};
 
 	Game.prototype._clearStage = function () {
@@ -689,9 +689,9 @@
 			this._spawnBox();
 			this.nextBoxAt = now + 4500 + Math.random() * 4500;
 		}
-		if (now >= this.nextPinAt && this._countBonus('pin') < 1) {
+		if (now >= this.nextPinAt && this._countBonus('pin') < 2) {
 			this._spawnPin();
-			this.nextPinAt = now + 8000 + Math.random() * 7000;
+			this.nextPinAt = now + 3500 + Math.random() * 3000;
 		}
 	};
 

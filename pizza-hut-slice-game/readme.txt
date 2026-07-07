@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.0.0
+Stable tag: 12.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.1.0 =
+* נקודות פיצה האט (בונוס +5) מופיעות הרבה יותר בתדירות, ולפעמים שתיים במקביל.
+* מפת הרקע ברזולוציה גבוהה יותר (רינדור פי-2) — כבר לא נראית מפוקסלת, הקווים חלקים.
 
 = 12.0.0 =
 * טבלת השיאים מציגה עכשיו "משחק אחרון" — לפני כמה זמן שיחק כל שחקן (עכשיו / לפני 5 דק׳ / לפני 2 שע׳ / אתמול …), במקום הכיתוב "מתעדכן בזמן אמת".

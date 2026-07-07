@@ -768,9 +768,11 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	background-color: #000000;
 	background-repeat: no-repeat;
 	/* מוגדל כך שגוש הארץ ממלא את הבמה, ותמיד מכסה את כל המסך (האובייקטים תמיד על המפה) */
-	background-size: 185% auto;
+	background-size: 170% auto;
 	background-position: 48% 50%;
 	opacity: 1;
+	image-rendering: auto;
+	filter: blur(0.3px);
 	transition: background-position 0.9s cubic-bezier(0.35, 0.1, 0.2, 1);
 }
 
