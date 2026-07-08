@@ -809,9 +809,10 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	bottom: 12px;
 	inset-inline-end: 18px;
 	z-index: 2;
-	font-size: 12.5px;
+	font-size: 16px;
 	font-weight: 700;
-	color: rgba(255, 255, 255, 0.35);
+	color: #FFFFFF;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7), 0 0 12px rgba(255, 60, 40, 0.4);
 	pointer-events: none;
 }
 
@@ -1850,8 +1851,9 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-modal__order { display: block; text-align: center; text-decoration: none; }
 
 @media (max-width: 600px) {
-	.phsg-topbtn { padding: 9px 13px; font-size: 12.5px; }
-	.phsg-topbtn__txt { display: none; }
+	.phsg-header__actions { gap: 7px; }
+	.phsg-topbtn { padding: 8px 12px; font-size: 12px; gap: 5px; }
+	.phsg-sound { padding: 8px 11px; }
 	.phsg-sound__txt { display: none; }
 	.phsg-branches__list { grid-template-columns: 1fr; }
 }

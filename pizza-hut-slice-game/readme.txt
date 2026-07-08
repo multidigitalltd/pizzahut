@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.1.0
+Stable tag: 12.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,11 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.2.0 =
+* מסך הטעינה: הוסר הלוגו הכפול במרכז (הלוגו כבר מופיע בכותרת העליונה).
+* במובייל כפתורי הכותרת מציגים גם טקסט ולא רק אייקון: "לסניפים שלנו" ו"להזמנת פיצה".
+* הכיתוב בתחתית הבמה ("פיצה האט · בכל מקום בארץ") בלבן, גדול וברור יותר.
 
 = 12.1.0 =
 * נקודות פיצה האט (בונוס +5) מופיעות הרבה יותר בתדירות, ולפעמים שתיים במקביל.

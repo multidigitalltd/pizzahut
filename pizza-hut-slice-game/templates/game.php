@@ -56,10 +56,10 @@ $phsg_sprites = array(
 			</div>
 			<div class="phsg-header__actions">
 				<button type="button" class="phsg-topbtn phsg-topbtn--branches" data-action="open-branches">
-					<span class="phsg-topbtn__ico">📍</span><span class="phsg-topbtn__txt"><?php esc_html_e( 'רשימת החנויות שלנו', 'pizza-hut-slice-game' ); ?></span>
+					<span class="phsg-topbtn__ico">📍</span><span class="phsg-topbtn__txt"><?php esc_html_e( 'לסניפים שלנו', 'pizza-hut-slice-game' ); ?></span>
 				</button>
 				<a class="phsg-topbtn phsg-topbtn--order" href="<?php echo esc_url( $atts['order_url'] ); ?>" target="_blank" rel="noopener">
-					<span class="phsg-topbtn__ico">🍕</span><span class="phsg-topbtn__txt"><?php esc_html_e( 'הזמנת פיצה', 'pizza-hut-slice-game' ); ?></span>
+					<span class="phsg-topbtn__ico">🍕</span><span class="phsg-topbtn__txt"><?php esc_html_e( 'להזמנת פיצה', 'pizza-hut-slice-game' ); ?></span>
 				</a>
 				<button type="button" class="phsg-sound" data-action="toggle-sound" aria-pressed="false">
 					<span class="phsg-sound__icon phsg-sound__icon--on"><?php echo phsg_svg_sound( true ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
@@ -71,9 +71,6 @@ $phsg_sprites = array(
 
 		<?php // ===== מסך טעינה – כמו משחק אמיתי ===== ?>
 		<section class="phsg-screen phsg-boot is-active" data-screen="boot">
-			<div class="phsg-boot__logo">
-				<img src="<?php echo esc_url( $phsg_logo_url ); ?>" alt="Pizza Hut">
-			</div>
 			<div class="phsg-boot__title phsg-title3d"><?php esc_html_e( "תפוס ת'משולש!", 'pizza-hut-slice-game' ); ?></div>
 			<span class="phsg-boot__sub">SLICE HUNT · 2026</span>
 			<div class="phsg-boot__bar"><div class="phsg-boot__fill" data-boot-fill></div></div>
