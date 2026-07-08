@@ -378,9 +378,20 @@ if ( ! function_exists( 'phsg_svg_sound' ) ) {
 	 */
 	function phsg_svg_sound( $on = true ) {
 		if ( $on ) {
-			return '<svg viewBox="0 0 24 24" width="20" height="20" style="flex-shrink:0;"><path d="M4 9 L8 9 L13 4.5 L13 19.5 L8 15 L4 15 Z" fill="#F32735"/><path d="M16 9 Q18 12 16 15 M18.5 6.5 Q22 12 18.5 17.5" fill="none" stroke="#2D2A26" stroke-width="2" stroke-linecap="round"/></svg>';
+			return '<svg viewBox="0 0 24 24" width="20" height="20" style="flex-shrink:0;"><path d="M4 9 L8 9 L13 4.5 L13 19.5 L8 15 L4 15 Z" fill="currentColor"/><path d="M16 8.6 A5 5 0 0 1 16 15.4 M18.6 6 A8 8 0 0 1 18.6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 		}
-		return '<svg viewBox="0 0 24 24" width="20" height="20" style="flex-shrink:0;"><path d="M4 9 L8 9 L13 4.5 L13 19.5 L8 15 L4 15 Z" fill="#B5B2A4"/><path d="M16.5 9.5 L21.5 14.5 M21.5 9.5 L16.5 14.5" fill="none" stroke="#F32735" stroke-width="2.4" stroke-linecap="round"/></svg>';
+		return '<svg viewBox="0 0 24 24" width="20" height="20" style="flex-shrink:0;"><path d="M4 9 L8 9 L13 4.5 L13 19.5 L8 15 L4 15 Z" fill="currentColor"/><path d="M16.5 9.5 L21.5 14.5 M21.5 9.5 L16.5 14.5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg>';
+	}
+}
+
+if ( ! function_exists( 'phsg_svg_pin' ) ) {
+	/**
+	 * אייקון "סניפים" – סיכת מיקום נקייה בקו-מתאר עם נקודה מלאה (currentColor).
+	 *
+	 * @return string
+	 */
+	function phsg_svg_pin() {
+		return '<svg viewBox="0 0 24 24" width="20" height="20" style="flex-shrink:0;"><path d="M12 2.4c-3.9 0-7 3-7 6.9 0 4.6 5.4 10.6 6.4 11.7a.8.8 0 0 0 1.2 0C13.6 19.9 19 13.9 19 9.3 19 5.4 15.9 2.4 12 2.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9.1" r="2.5" fill="currentColor"/></svg>';
 	}
 }
 

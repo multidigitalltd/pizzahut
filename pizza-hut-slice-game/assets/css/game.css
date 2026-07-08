@@ -200,76 +200,95 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	gap: 12px;
 }
 
-.phsg-header__brand { display: flex; align-items: center; gap: 14px; }
+.phsg-header__brand { display: flex; align-items: center; gap: 14px; flex: none; }
 
-.phsg-logo-card {
-	background: #fff;
-	border: none;
-	border-radius: 22px;
-	padding: 10px 18px;
-	box-shadow: 0 18px 40px rgba(90, 0, 8, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-	transform: rotate(-2deg);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: transform 0.15s ease;
+/* לוגו לבן גדול – ללא רקע/בוקסה */
+.phsg-logo {
+	height: 78px;
+	width: auto;
+	display: block;
+	filter: drop-shadow(0 3px 9px rgba(0, 0, 0, 0.55));
 }
 
-.phsg-logo-card:hover { transform: rotate(2deg) scale(1.04); }
+.phsg-gametitle {
+	font-family: "Almoni", "Rubik", sans-serif;
+	font-weight: 700;
+	font-size: 22px;
+	color: #FFFFFF;
+	white-space: nowrap;
+	text-shadow: 0 2px 6px rgba(60, 0, 6, 0.55), 0 0 14px rgba(255, 60, 40, 0.25);
+}
 
 .phsg-board__row { transition: filter 0.12s ease; }
 .phsg-board__row:hover { filter: brightness(0.96); }
 .phsg-board__row.is-me:hover { filter: brightness(1.08); }
 
-.phsg-logo-card img { height: 60px; width: auto; display: block; }
-
-.phsg-header__pills { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
-
-.phsg-pill--title {
-	background: linear-gradient(135deg, #FF5A63, #D01423);
-	color: #fff;
-	border: none;
-	border-radius: 999px;
-	padding: 6px 18px;
+/* באנר שיווקי לרוחב הכותרת */
+.phsg-promobanner {
+	position: relative;
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 54px;
+	margin: 0 4px;
+	padding: 0 22px;
+	border-radius: 16px;
+	text-decoration: none;
+	overflow: hidden;
+	background: linear-gradient(135deg, #FF5A63 0%, #E01526 55%, #B00E1C 100%);
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	box-shadow: 0 12px 30px rgba(200, 15, 26, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+	transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.15s ease;
+}
+.phsg-promobanner:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 16px 38px rgba(200, 15, 26, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.32); }
+.phsg-promobanner__text {
+	position: relative;
 	font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700;
-	font-size: 16px;
-	box-shadow: 0 10px 26px rgba(243, 39, 53, 0.45);
-	transform: rotate(-1deg);
-}
-
-.phsg-pill--sub {
-	font-size: 11px;
-	font-weight: 700;
-	letter-spacing: 2px;
-	color: #C9C1BA;
-	background: rgba(255, 255, 255, 0.06);
-	border: 1px solid rgba(255, 255, 255, 0.14);
-	border-radius: 999px;
-	padding: 3px 14px;
+	font-size: 18px;
+	color: #fff;
+	text-align: center;
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-shadow: 0 2px 5px rgba(0, 0, 0, 0.28);
+}
+.phsg-promobanner__shine {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 40%;
+	background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+	transform: skewX(-18deg);
+	animation: phsg-bannerShine 3.6s ease-in-out infinite;
+	pointer-events: none;
+}
+@keyframes phsg-bannerShine {
+	0% { right: -50%; }
+	55%, 100% { right: 120%; }
 }
 
-.phsg-sound {
+/* כפתורי אייקון עגולים ונקיים */
+.phsg-iconbtn {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
-	font-family: "Almoni", "Rubik", sans-serif;
-	font-weight: 700;
-	font-size: 13px;
-	white-space: nowrap;
-	background: rgba(32, 25, 30, 0.85);
-	color: #EDE8E2;
-	border: 1px solid rgba(255, 255, 255, 0.12);
-	border-radius: 999px;
-	padding: 10px 18px;
+	justify-content: center;
+	width: 46px;
+	height: 46px;
+	flex: none;
+	border-radius: 50%;
+	background: rgba(20, 14, 18, 0.55);
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	color: #FFFFFF;
+	line-height: 0;
 	cursor: pointer;
-	box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
-	transition: all 0.15s ease;
+	box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+	transition: background 0.15s ease, transform 0.14s ease, box-shadow 0.18s ease;
 }
-
-.phsg-sound:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5); }
-.phsg-sound:active { transform: translateY(1px); }
+.phsg-iconbtn:hover { background: rgba(243, 39, 53, 0.9); border-color: rgba(255, 255, 255, 0.35); transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0, 0, 0, 0.5), 0 0 18px rgba(243, 39, 53, 0.45); }
+.phsg-iconbtn:active { transform: translateY(1px); }
 
 .phsg-sound__icon { display: none; line-height: 0; }
 .phsg-sound[aria-pressed="false"] .phsg-sound__icon--on { display: block; }
@@ -1356,9 +1375,11 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 }
 
 @media (max-width: 600px) {
-	.phsg-logo-card img { height: 44px; }
-	.phsg-pill--title { font-size: 14px; }
-	.phsg-sound { padding: 8px 12px; }
+	.phsg-logo { height: 54px; }
+	.phsg-gametitle { font-size: 16px; }
+	.phsg-promobanner { height: 46px; padding: 0 12px; }
+	.phsg-promobanner__text { font-size: 14px; }
+	.phsg-iconbtn { width: 42px; height: 42px; }
 	.phsg-hud__value { font-size: 26px; }
 	.phsg-hud__card--timer .phsg-hud__value { font-size: 30px; }
 	.phsg-stats__value { font-size: 32px; }
@@ -1701,50 +1722,14 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 
 @media (prefers-reduced-motion: reduce) { .phsg-title3d { animation: none; } }
 
-/* ===== כפתורי הכותרת העליונה (סניפים / הזמנה) ===== */
+/* ===== אייקוני הכותרת העליונה (סניפים / צליל) ===== */
 .phsg-header__actions {
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	flex-wrap: wrap;
 	justify-content: flex-end;
+	flex: none;
 }
-
-.phsg-topbtn {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	font-family: "Almoni", "Rubik", sans-serif;
-	font-weight: 700;
-	font-size: 14px;
-	border: none;
-	border-radius: 999px;
-	padding: 10px 18px;
-	cursor: pointer;
-	text-decoration: none;
-	white-space: nowrap;
-	transition: transform 0.14s ease, box-shadow 0.16s ease, filter 0.14s ease;
-	-webkit-tap-highlight-color: transparent;
-}
-
-.phsg-topbtn__ico { font-size: 1.05em; line-height: 0; }
-
-.phsg-topbtn--order {
-	color: #fff;
-	background: linear-gradient(135deg, #FF7A52 0%, #F0202E 55%, #B00C18 100%);
-	box-shadow: 0 0 0 2px rgba(20, 8, 10, 0.8), 0 10px 26px rgba(200, 10, 20, 0.5), 0 0 20px rgba(255, 70, 60, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-	animation: phsg-btnGlow 2.2s ease-in-out infinite;
-}
-
-.phsg-topbtn--branches {
-	color: #FFE7E3;
-	background: linear-gradient(160deg, #2A2026 0%, #140D11 100%);
-	box-shadow: 0 0 0 2px rgba(255, 60, 60, 0.45), 0 10px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(243, 39, 53, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.phsg-topbtn:hover { transform: translateY(-2px); filter: brightness(1.07); }
-.phsg-topbtn--branches:hover { color: #fff; box-shadow: 0 0 0 2px rgba(255, 80, 70, 0.7), 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 24px rgba(243, 39, 53, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
-.phsg-topbtn:active { transform: translateY(1px); }
 
 /* ===== חלון רשימת הסניפים ===== */
 .phsg-modal {
@@ -1852,10 +1837,12 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 
 @media (max-width: 600px) {
 	.phsg-header__actions { gap: 7px; }
-	.phsg-topbtn { padding: 8px 12px; font-size: 12px; gap: 5px; }
-	.phsg-sound { padding: 8px 11px; }
-	.phsg-sound__txt { display: none; }
 	.phsg-branches__list { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+	.phsg-gametitle { display: none; }
+	.phsg-promobanner__text { font-size: 12.5px; }
 }
 
 /* ===== מסך התחלפות שלב ===== */

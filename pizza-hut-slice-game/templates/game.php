@@ -46,25 +46,23 @@ $phsg_sprites = array(
 		<?php // ===== כותרת עליונה ===== ?>
 		<header class="phsg-header">
 			<div class="phsg-header__brand">
-				<div class="phsg-logo-card">
-					<img src="<?php echo esc_url( $phsg_logo_url ); ?>" alt="Pizza Hut">
-				</div>
-				<div class="phsg-header__pills">
-					<span class="phsg-pill phsg-pill--title"><?php echo esc_html( $atts['title'] ); ?></span>
-					<span class="phsg-pill phsg-pill--sub">SLICE HUNT · 2026</span>
-				</div>
+				<img class="phsg-logo" src="<?php echo esc_url( $phsg_logo_url ); ?>" alt="Pizza Hut">
+				<span class="phsg-gametitle"><?php echo esc_html( $atts['title'] ); ?></span>
 			</div>
+
+			<?php // באנר שיווקי לרוחב הכותרת – בין הלוגו לאייקונים ?>
+			<a class="phsg-promobanner" href="<?php echo esc_url( $atts['order_url'] ); ?>" target="_blank" rel="noopener">
+				<span class="phsg-promobanner__shine" aria-hidden="true"></span>
+				<span class="phsg-promobanner__text"><?php esc_html_e( 'פה יהיה באנר שיווקי להזמנת פיצה', 'pizza-hut-slice-game' ); ?></span>
+			</a>
+
 			<div class="phsg-header__actions">
-				<button type="button" class="phsg-topbtn phsg-topbtn--branches" data-action="open-branches">
-					<span class="phsg-topbtn__ico">📍</span><span class="phsg-topbtn__txt"><?php esc_html_e( 'לסניפים שלנו', 'pizza-hut-slice-game' ); ?></span>
+				<button type="button" class="phsg-iconbtn" data-action="open-branches" aria-label="<?php echo esc_attr__( 'לסניפים שלנו', 'pizza-hut-slice-game' ); ?>" title="<?php echo esc_attr__( 'לסניפים שלנו', 'pizza-hut-slice-game' ); ?>">
+					<?php echo phsg_svg_pin(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</button>
-				<a class="phsg-topbtn phsg-topbtn--order" href="<?php echo esc_url( $atts['order_url'] ); ?>" target="_blank" rel="noopener">
-					<span class="phsg-topbtn__ico">🍕</span><span class="phsg-topbtn__txt"><?php esc_html_e( 'להזמנת פיצה', 'pizza-hut-slice-game' ); ?></span>
-				</a>
-				<button type="button" class="phsg-sound" data-action="toggle-sound" aria-pressed="false">
+				<button type="button" class="phsg-iconbtn phsg-sound" data-action="toggle-sound" aria-pressed="false" aria-label="<?php echo esc_attr__( 'הפעלה או השתקה של הצליל', 'pizza-hut-slice-game' ); ?>" title="<?php echo esc_attr__( 'צליל', 'pizza-hut-slice-game' ); ?>">
 					<span class="phsg-sound__icon phsg-sound__icon--on"><?php echo phsg_svg_sound( true ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 					<span class="phsg-sound__icon phsg-sound__icon--off"><?php echo phsg_svg_sound( false ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
-					<span data-sound-label class="phsg-sound__txt"><?php esc_html_e( 'צליל: פועל', 'pizza-hut-slice-game' ); ?></span>
 				</button>
 			</div>
 		</header>
@@ -72,7 +70,6 @@ $phsg_sprites = array(
 		<?php // ===== מסך טעינה – כמו משחק אמיתי ===== ?>
 		<section class="phsg-screen phsg-boot is-active" data-screen="boot">
 			<div class="phsg-boot__title phsg-title3d"><?php esc_html_e( "תפוס ת'משולש!", 'pizza-hut-slice-game' ); ?></div>
-			<span class="phsg-boot__sub">SLICE HUNT · 2026</span>
 			<div class="phsg-boot__bar"><div class="phsg-boot__fill" data-boot-fill></div></div>
 			<div class="phsg-boot__pct" data-boot-pct>0%</div>
 			<div class="phsg-boot__tip"><?php esc_html_e( 'טיפ: משולש זהב שווה +3 נקודות ✨', 'pizza-hut-slice-game' ); ?></div>
