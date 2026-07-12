@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.7.0
+Stable tag: 12.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.7.1 =
+* האייקון של כפתור "הוראות המשחק" הוחלף לאייקון מינימליסטי (עיגול-מידע בקו דק) במקום האימוג'י.
 
 = 12.7.0 =
 * תוקן באג: שכבת ההשהיה ("המשחק מושהה") הופיעה כל הזמן במשחק. עכשיו היא מוסתרת, ונפתחת רק בלחיצה על כפתור "עצור" שבצד הבמה.

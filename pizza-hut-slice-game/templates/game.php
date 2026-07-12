@@ -97,7 +97,7 @@ $phsg_sprites = array(
 			<?php // שני כפתורים – הוראות והתחלה ?>
 			<div class="phsg-intro__buttons">
 				<button type="button" class="phsg-btn phsg-btn--ghost" data-action="toggle-instructions" aria-expanded="false" aria-controls="phsg-instructions">
-					<span class="phsg-btn__ico">📖</span><?php esc_html_e( 'הוראות המשחק', 'pizza-hut-slice-game' ); ?>
+					<span class="phsg-btn__ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="7.7" r="1.05" fill="currentColor"/><path d="M12 11v6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><?php esc_html_e( 'הוראות המשחק', 'pizza-hut-slice-game' ); ?>
 				</button>
 				<button type="button" class="phsg-btn phsg-btn--play" data-action="go-form">
 					<?php esc_html_e( 'התחל משחק', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span>
