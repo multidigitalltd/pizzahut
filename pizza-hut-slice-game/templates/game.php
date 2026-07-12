@@ -330,7 +330,7 @@ $phsg_sprites = array(
 			<?php // כרטיס קופון – פינוק לכל משתתף ?>
 			<?php if ( ! empty( $atts['coupon_code'] ) ) : ?>
 				<div class="phsg-coupon-card">
-					<h3 class="phsg-coupon-card__title"><?php esc_html_e( 'עוד לא יודעים אם תזכו…', 'pizza-hut-slice-game' ); ?><span class="phsg-coupon-card__ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="19" height="19"><path d="M4 11h16v8.2a.8.8 0 0 1-.8.8H4.8a.8.8 0 0 1-.8-.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3.2 8h17.6a.8.8 0 0 1 .8.8V11H2.4V8.8A.8.8 0 0 1 3.2 8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 8v12" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 8C11 5.4 9.6 4.6 8.4 5.1c-1.5.6-1 2.9 3.6 2.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 8c1-2.6 2.4-3.4 3.6-2.9 1.5.6 1 2.9-3.6 2.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span></h3>
+					<h3 class="phsg-coupon-card__title"><?php esc_html_e( 'עוד לא יודעים אם תזכו…', 'pizza-hut-slice-game' ); ?></h3>
 					<p class="phsg-coupon-card__text"><?php esc_html_e( 'אבל בינתיים החלטנו לפנק אתכם בקוד קופון להזמנת פיצה עכשיו:', 'pizza-hut-slice-game' ); ?></p>
 					<button type="button" class="phsg-coupon-code" data-action="copy-coupon" data-coupon-code="<?php echo esc_attr( $atts['coupon_code'] ); ?>" title="<?php echo esc_attr__( 'לחצו להעתקה', 'pizza-hut-slice-game' ); ?>">
 						<?php echo esc_html( $atts['coupon_code'] ); ?> 📋

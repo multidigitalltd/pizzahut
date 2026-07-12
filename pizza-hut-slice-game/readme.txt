@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.10.0
+Stable tag: 12.10.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.10.1 =
+* הוסר אייקון המתנה שאחרי כותרת הקופון ("עוד לא יודעים אם תזכו...").
 
 = 12.10.0 =
 * בכרטיס הקופון: הוסר אייקון השוקולד מתיאור ההטבה, והאימוג'י 🤞 בכותרת הוחלף באייקון מתנה מינימליסטי בקו דק (בשפה העיצובית).
