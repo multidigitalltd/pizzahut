@@ -236,6 +236,12 @@
 		});
 	};
 	Game.prototype.playBad = function () { this._tone(190, 0.28, 'sawtooth', 0.14, 70); };
+	// צליל ייעודי לפגיעה במכשול – "בּוּפּ" קצר ויורד, שונה מצליל סוף המשחק.
+	Game.prototype.playObstacle = function () {
+		var self = this;
+		this._tone(300, 0.08, 'square', 0.16, 210);
+		window.setTimeout(function () { self._tone(170, 0.12, 'square', 0.13, 110); }, 55);
+	};
 	Game.prototype.playTick = function () { this._tone(950, 0.05, 'square', 0.06); };
 	Game.prototype.playGo = function () { this._tone(520, 0.2, 'triangle', 0.2, 1040); };
 	Game.prototype.playBonus = function () {
@@ -1002,7 +1008,7 @@
 		el._done = true;
 		var self = this;
 		var pen = el._pen || 1;
-		this.playBad();
+		this.playObstacle();
 		this._popup(e, '−' + pen, '#2D2A26');
 		this._vibrate(60);
 		this.score = Math.max(0, this.score - pen);

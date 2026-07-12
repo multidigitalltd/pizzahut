@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.8.0
+Stable tag: 12.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,12 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.9.0 =
+* פס הטעינה מתמלא עכשיו באדום המותג (#F32735) במקום כתום-ורוד.
+* הודעת השגיאה בטופס ("יש לאשר את התקנון...") קיבלה רקע אדום מותג #F32735.
+* המספר של מכסת השלב ("0/7") ב-HUD עודכן לאדום המותג.
+* צליל הפגיעה במכשול הוחלף לצליל ייעודי חדש, שונה מצליל סוף המשחק.
 
 = 12.8.0 =
 * כותרת מסך הסיום (למשל "יותר מדי מכשולים...") עודכנה לצבע בז' #F0EFDD.
