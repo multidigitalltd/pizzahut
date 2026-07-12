@@ -207,7 +207,7 @@ $phsg_sprites = array(
 		<section class="phsg-screen phsg-game" data-screen="game" hidden>
 
 			<div class="phsg-hud">
-				<div class="phsg-hud__card">
+				<div class="phsg-hud__card phsg-hud__card--score">
 					<span class="phsg-hud__label"><?php esc_html_e( 'ניקוד', 'pizza-hut-slice-game' ); ?></span>
 					<span class="phsg-hud__value phsg-hud__value--score" data-hud="score">0</span>
 				</div>
@@ -361,7 +361,7 @@ $phsg_sprites = array(
 		<div class="phsg-modal__backdrop" data-action="close-branches"></div>
 		<div class="phsg-modal__box" role="dialog" aria-modal="true" aria-label="<?php echo esc_attr__( 'רשימת החנויות שלנו', 'pizza-hut-slice-game' ); ?>">
 			<div class="phsg-modal__head">
-				<span class="phsg-modal__title">📍 <?php esc_html_e( 'רשימת החנויות שלנו', 'pizza-hut-slice-game' ); ?></span>
+				<span class="phsg-modal__title"><span class="phsg-modal__title-ico" aria-hidden="true"><?php echo phsg_svg_pin(); // phpcs:ignore WordPress.Security.EscapeOutput ?></span><?php esc_html_e( 'רשימת החנויות שלנו', 'pizza-hut-slice-game' ); ?></span>
 				<button type="button" class="phsg-modal__close" data-action="close-branches" aria-label="<?php echo esc_attr__( 'סגירה', 'pizza-hut-slice-game' ); ?>">✕</button>
 			</div>
 			<div class="phsg-modal__body">

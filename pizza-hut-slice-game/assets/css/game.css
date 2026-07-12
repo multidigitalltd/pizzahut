@@ -810,7 +810,15 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-hud__label { font-size: 12px; font-weight: 700; color: #B7AFA9; }
 .phsg-hud__value { font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700; font-size: 32px; line-height: 1; }
-.phsg-hud__value--score { color: #FF5A63; }
+.phsg-hud__value--score { color: #F0EFDD; }
+
+/* קוביית הניקוד – רקע אדום מותג */
+.phsg-hud__card--score {
+	background: #F32735;
+	border-color: rgba(255, 255, 255, 0.18);
+	box-shadow: 0 14px 30px rgba(200, 15, 26, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+.phsg-hud__card--score .phsg-hud__label { color: #F0EFDD; opacity: 0.9; }
 
 .phsg-hud__card--timer {
 	flex: 1.4;
@@ -1246,7 +1254,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-medal__rank { font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700; font-size: 52px; line-height: 1; color: var(--black); direction: ltr; unicode-bidi: isolate; }
 
-.phsg-end__title { font-size: clamp(36px, 7vw, 56px); text-align: center; margin: 0; }
+.phsg-end__title { font-size: clamp(36px, 7vw, 56px); text-align: center; margin: 0; background: none; -webkit-text-fill-color: #F0EFDD; color: #F0EFDD; }
 
 .phsg-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
 
@@ -1315,7 +1323,7 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 }
 
 .phsg-board__row.is-me {
-	background: linear-gradient(135deg, #FF6B4A, var(--red-lo));
+	background: #F32735;
 	color: #F0EFDD;
 	font-weight: 700;
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -1762,18 +1770,18 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 /* הוראות – מלבן שחור שטוח ונקי, באותו סגנון של "התחל". */
 .phsg-btn--ghost {
 	color: #F0EFDD;
-	background: #17131A;
+	background: #0B0B0D;
 	border-radius: 10px;
-	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 .phsg-btn--ghost:hover {
 	transform: translateY(-2px);
-	background: #241E29;
-	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.42);
+	background: #18181B;
+	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5);
 }
 .phsg-btn--ghost:active { transform: translateY(1px); }
-.phsg-btn--ghost.is-open { background: #2E2633; }
+.phsg-btn--ghost.is-open { background: #1E1E22; }
 
 .phsg-btn:focus-visible { outline: 3px dashed rgba(255, 255, 255, 0.7); outline-offset: 3px; }
 
@@ -1889,7 +1897,8 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	flex-shrink: 0;
 }
 
-.phsg-modal__title { font-family: "Almoni", "Rubik", sans-serif; font-weight: 700; font-size: 20px; }
+.phsg-modal__title { font-family: "Almoni", "Rubik", sans-serif; font-weight: 700; font-size: 20px; display: inline-flex; align-items: center; gap: 8px; }
+.phsg-modal__title-ico { display: inline-flex; line-height: 0; color: #F0EFDD; }
 
 .phsg-modal__close {
 	background: rgba(255, 255, 255, 0.18);
