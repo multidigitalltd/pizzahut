@@ -1374,7 +1374,12 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-weight: 700;
 	font-size: 26px;
 	color: #F0EFDD;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 9px;
 }
+.phsg-coupon-card__ico { display: inline-flex; line-height: 0; color: #F32735; }
 
 .phsg-coupon-card__text {
 	margin: 0;

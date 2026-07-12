@@ -1235,7 +1235,10 @@
 	};
 
 	Game.prototype._setMedal = function (rank) {
-		if (!this.medalEl) {
+		// אם השחקן לא נכנס לטבלת המובילים (אין דירוג) – מסתירים את עיגול "מקום" והקרניים.
+		var wrap = this.root.querySelector('.phsg-medal-wrap');
+		if (wrap) { wrap.style.display = rank ? '' : 'none'; }
+		if (!this.medalEl || !rank) {
 			return;
 		}
 		var hi = '#FBFAEE';
