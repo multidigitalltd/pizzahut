@@ -161,6 +161,8 @@
 		this.reactions = [];
 		this.clicks = 0;
 		this.frenzyUntil = 0;
+		this.paused = false;
+		this.running = false;
 		this.sliceSpawn = 0;
 		this.sliceDeadline = 0;
 		this.cheese = null;
@@ -307,6 +309,16 @@
 			});
 		});
 
+		// מקלדת: Esc / P להשהיה וחידוש בזמן משחק.
+		document.addEventListener('keydown', function (e) {
+			if (!self.running) { return; }
+			var k = e.key;
+			if (k === 'Escape' || k === 'p' || k === 'P') {
+				e.preventDefault();
+				if (self.paused) { self._resumeGame(); } else { self._pauseGame(); }
+			}
+		});
+
 		if (this.form) {
 			this.form.addEventListener('submit', function (e) {
 				e.preventDefault();
@@ -335,6 +347,12 @@
 				break;
 			case 'copy-coupon':
 				this._copyCoupon();
+				break;
+			case 'pause-game':
+				this._pauseGame();
+				break;
+			case 'resume-game':
+				this._resumeGame();
 				break;
 			case 'open-branches': {
 				var bm = this.root.querySelector('[data-branches-modal]');
@@ -536,6 +554,14 @@
 		this._renderHud();
 		this.startMusic();
 
+		this.paused = false;
+		this.running = true;
+		this._startLoop();
+	};
+
+	/* לולאת המשחק הראשית – מופרדת כדי שנוכל לחדש אותה אחרי השהיה. */
+	Game.prototype._startLoop = function () {
+		var self = this;
 		clearInterval(this.loop);
 		this.loop = setInterval(function () {
 			var limit = levelTime(self.levelIdx);
@@ -552,6 +578,58 @@
 			self._tick();
 			self._renderHud();
 		}, 100);
+	};
+
+	/* השהיית המשחק – עוצרת את הלולאה, הטיימרים והמוזיקה. */
+	Game.prototype._pauseGame = function () {
+		if (!this.running || this.paused) { return; }
+		// לא עוצרים באמצע ספירה לאחור.
+		if (this.countdownEl && !this.countdownEl.hidden) { return; }
+		this.paused = true;
+		this.pausedAt = Date.now();
+		clearInterval(this.loop);
+		clearInterval(this.mapTimer);
+		this.stopMusic();
+		if (this.stage) { this.stage.classList.add('is-paused'); }
+		var ov = this.root.querySelector('[data-pause]');
+		if (ov) { ov.removeAttribute('hidden'); }
+		var btn = this.root.querySelector('[data-action="pause-game"]');
+		if (btn) { btn.setAttribute('aria-pressed', 'true'); }
+	};
+
+	/* חידוש המשחק – מזיז את כל נקודות-הזמן קדימה בזמן שחלף, כדי שדבר לא "יקפוץ". */
+	Game.prototype._resumeGame = function () {
+		if (!this.paused) { return; }
+		var delta = Date.now() - (this.pausedAt || Date.now());
+		this.startedAt += delta;
+		this.realStart += delta;
+		this.nextSliceAt += delta;
+		this.nextObstAt += delta;
+		this.nextBoxAt += delta;
+		this.nextPinAt += delta;
+		if (this.frenzyUntil) { this.frenzyUntil += delta; }
+		var shift = function (c) {
+			if (!c) { return; }
+			for (var i = 0; i < c.children.length; i++) {
+				var el = c.children[i];
+				if (el._spawnAt) { el._spawnAt += delta; }
+				if (el._expire) { el._expire += delta; }
+			}
+		};
+		shift(this.slicesEl); shift(this.obstaclesEl); shift(this.bonusesEl);
+
+		this.paused = false;
+		if (this.stage) { this.stage.classList.remove('is-paused'); }
+		var ov = this.root.querySelector('[data-pause]');
+		if (ov) { ov.setAttribute('hidden', ''); }
+		var btn = this.root.querySelector('[data-action="pause-game"]');
+		if (btn) { btn.setAttribute('aria-pressed', 'false'); }
+
+		var mapSelf = this;
+		clearInterval(this.mapTimer);
+		this.mapTimer = setInterval(function () { mapSelf._jumpDots(); }, 1100);
+		this.startMusic();
+		this._startLoop();
 	};
 
 	/**
@@ -1050,8 +1128,16 @@
 
 	Game.prototype._endGame = function (reason) {
 		this.endReason = reason || 'time';
+		this.running = false;
+		this.paused = false;
 		clearInterval(this.loop);
+		clearInterval(this.mapTimer);
 		this.stopMusic();
+		if (this.stage) { this.stage.classList.remove('is-paused'); }
+		var pov = this.root.querySelector('[data-pause]');
+		if (pov) { pov.setAttribute('hidden', ''); }
+		var pbtn = this.root.querySelector('[data-action="pause-game"]');
+		if (pbtn) { pbtn.setAttribute('aria-pressed', 'false'); }
 		if (this.endReason === 'strikes') {
 			this.playBad();
 		} else {

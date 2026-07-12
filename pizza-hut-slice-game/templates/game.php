@@ -238,6 +238,22 @@ $phsg_sprites = array(
 
 				<div class="phsg-combo" data-combo hidden></div>
 
+				<?php // כפתור עצירה/השהיה – זמין בכל שלב ?>
+				<button type="button" class="phsg-pausebtn" data-action="pause-game" aria-pressed="false" aria-label="<?php echo esc_attr__( 'עצור את המשחק', 'pizza-hut-slice-game' ); ?>" title="<?php echo esc_attr__( 'עצור', 'pizza-hut-slice-game' ); ?>">
+					<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.4" fill="currentColor"/><rect x="13.5" y="5" width="4" height="14" rx="1.4" fill="currentColor"/></svg>
+					<span class="phsg-pausebtn__txt"><?php esc_html_e( 'עצור', 'pizza-hut-slice-game' ); ?></span>
+				</button>
+
+				<?php // שכבת השהיה ?>
+				<div class="phsg-pause" data-pause hidden>
+					<div class="phsg-pause__card">
+						<span class="phsg-pause__icon" aria-hidden="true">⏸</span>
+						<h2 class="phsg-pause__title"><?php esc_html_e( 'המשחק מושהה', 'pizza-hut-slice-game' ); ?></h2>
+						<p class="phsg-pause__text"><?php esc_html_e( 'קחו נשימה — הזמן והמשולשים מחכים לכם.', 'pizza-hut-slice-game' ); ?></p>
+						<button type="button" class="phsg-cta phsg-pause__resume" data-action="resume-game"><?php esc_html_e( 'המשך משחק ◀', 'pizza-hut-slice-game' ); ?></button>
+					</div>
+				</div>
+
 				<div data-slices></div>
 				<div class="phsg-sprite phsg-sprite--slice" data-slice hidden>
 					<div class="phsg-sprite__pop">

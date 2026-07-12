@@ -294,6 +294,69 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-sound[aria-pressed="false"] .phsg-sound__icon--on { display: block; }
 .phsg-sound[aria-pressed="true"] .phsg-sound__icon--off { display: block; }
 
+/* ===== כפתור עצירה + שכבת השהיה ===== */
+.phsg-pausebtn {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	z-index: 14;
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	font-family: "Almoni", "Rubik", sans-serif;
+	font-weight: 700;
+	font-size: 14px;
+	color: #fff;
+	background: rgba(20, 14, 18, 0.6);
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	border-radius: 999px;
+	padding: 8px 15px 8px 13px;
+	line-height: 0;
+	cursor: pointer;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+	transition: background 0.15s ease, transform 0.14s ease, box-shadow 0.18s ease;
+	-webkit-tap-highlight-color: transparent;
+}
+.phsg-pausebtn:hover { background: rgba(243, 39, 53, 0.9); border-color: rgba(255, 255, 255, 0.4); transform: translateY(-1px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), 0 0 18px rgba(243, 39, 53, 0.4); }
+.phsg-pausebtn:active { transform: translateY(1px); }
+.phsg-pausebtn svg { flex-shrink: 0; }
+.phsg-pausebtn__txt { line-height: 1; }
+
+.phsg-pause {
+	position: absolute;
+	inset: 0;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	background: rgba(10, 6, 8, 0.62);
+	-webkit-backdrop-filter: blur(7px);
+	backdrop-filter: blur(7px);
+	animation: phsg-pauseFade 0.2s ease;
+}
+@keyframes phsg-pauseFade { from { opacity: 0; } to { opacity: 1; } }
+.phsg-pause__card {
+	width: min(340px, 92%);
+	text-align: center;
+	background: linear-gradient(160deg, rgba(45, 34, 40, 0.96), rgba(20, 13, 17, 0.96));
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 24px;
+	padding: 26px 24px 24px;
+	box-shadow: 0 26px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.phsg-pause__icon { font-size: 40px; line-height: 1; display: block; margin-bottom: 6px; }
+.phsg-pause__title { font-family: "Almoni", "Rubik", sans-serif; font-weight: 700; font-size: 24px; color: #fff; margin: 4px 0 8px; }
+.phsg-pause__text { font-family: "Almoni", "Rubik", sans-serif; font-size: 15px; color: #D9D2CC; margin: 0 0 18px; line-height: 1.5; }
+.phsg-pause__resume { width: 100%; }
+
+/* הקפאת אנימציות הבמה בזמן השהיה */
+.phsg-stage.is-paused .phsg-sprite,
+.phsg-stage.is-paused [data-obstacles] > *,
+.phsg-stage.is-paused [data-bonuses] > *,
+.phsg-stage.is-paused .phsg-stage__dots i,
+.phsg-stage.is-paused .phsg-stage__dust i { animation-play-state: paused !important; }
+
 /* ===== מסכים ===== */
 .phsg-screen { display: none; }
 .phsg-screen.is-active { display: flex; }
