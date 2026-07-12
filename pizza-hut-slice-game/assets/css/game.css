@@ -270,20 +270,19 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	flex: none;
 	display: inline-flex;
 	align-items: center;
-	gap: 7px;
+	justify-content: center;
 	font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700;
-	font-size: 15px;
-	color: #D01423;
-	background: #FBFAEE;
-	padding: 9px 16px;
-	border-radius: 999px;
+	font-size: 16px;
+	color: #FFFFFF;
+	background: #D51F2E;
+	padding: 11px 26px;
+	border-radius: 8px;
 	white-space: nowrap;
-	box-shadow: 0 5px 14px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 	transition: transform 0.14s ease, box-shadow 0.16s ease, background 0.15s ease;
 }
-.phsg-promobanner:hover .phsg-promobanner__cta { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.9); }
-.phsg-promobanner__arrow { font-size: 0.85em; line-height: 0; }
+.phsg-promobanner:hover .phsg-promobanner__cta { transform: translateY(-1px); background: #E42433; box-shadow: 0 7px 16px rgba(0, 0, 0, 0.36); }
 .phsg-promobanner__shine {
 	position: absolute;
 	top: 0;

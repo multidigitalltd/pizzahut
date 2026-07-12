@@ -54,7 +54,7 @@ $phsg_sprites = array(
 			<a class="phsg-promobanner" href="<?php echo esc_url( $atts['order_url'] ); ?>" target="_blank" rel="noopener">
 				<span class="phsg-promobanner__shine" aria-hidden="true"></span>
 				<span class="phsg-promobanner__text"><?php esc_html_e( 'פיצה חמה מחכה לכם כעת בסניפים', 'pizza-hut-slice-game' ); ?></span>
-				<span class="phsg-promobanner__cta"><?php esc_html_e( 'להזמנה עכשיו', 'pizza-hut-slice-game' ); ?><span class="phsg-promobanner__arrow" aria-hidden="true">◀</span></span>
+				<span class="phsg-promobanner__cta"><?php esc_html_e( 'להזמנה', 'pizza-hut-slice-game' ); ?></span>
 			</a>
 
 			<div class="phsg-header__actions">
