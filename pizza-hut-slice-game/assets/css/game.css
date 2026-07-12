@@ -243,12 +243,14 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	border-radius: 16px;
 	text-decoration: none;
 	overflow: hidden;
-	background: linear-gradient(135deg, #FF5A63 0%, #E01526 55%, #B00E1C 100%);
-	border: 1px solid rgba(255, 255, 255, 0.22);
-	box-shadow: 0 12px 30px rgba(200, 15, 26, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+	background: linear-gradient(135deg, rgba(16, 13, 16, 0.74), rgba(4, 3, 5, 0.66));
+	-webkit-backdrop-filter: blur(14px) saturate(0.7) brightness(0.72);
+	backdrop-filter: blur(14px) saturate(0.7) brightness(0.72);
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 	transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.15s ease;
 }
-.phsg-promobanner:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 16px 38px rgba(200, 15, 26, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.32); }
+.phsg-promobanner:hover { transform: translateY(-1px); box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22); border-color: rgba(255, 255, 255, 0.28); }
 .phsg-promobanner__text {
 	position: relative;
 	flex: 1 1 auto;
@@ -1481,9 +1483,13 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 @media (max-width: 600px) {
 	.phsg-logo { height: 54px; }
 	.phsg-gametitle { font-size: 16px; }
-	.phsg-promobanner { height: 46px; padding: 0 8px; gap: 8px; }
-	.phsg-promobanner__text { font-size: 13px; padding-right: 4px; }
-	.phsg-promobanner__cta { font-size: 13px; padding: 7px 12px; }
+	/* במובייל: הבאנר עובר לשורה נפרדת מתחת ללוגו/אייקונים, לרוחב מלא */
+	.phsg-header { flex-wrap: wrap; }
+	.phsg-header__brand { order: 0; }
+	.phsg-header__actions { order: 1; }
+	.phsg-promobanner { order: 2; flex: 0 0 100%; width: 100%; height: 48px; margin: 10px 0 0; padding: 0 14px; gap: 10px; }
+	.phsg-promobanner__text { font-size: 15px; }
+	.phsg-promobanner__cta { font-size: 14px; padding: 8px 14px; }
 	.phsg-iconbtn { width: 42px; height: 42px; }
 	.phsg-hud__value { font-size: 26px; }
 	.phsg-hud__card--timer .phsg-hud__value { font-size: 30px; }
@@ -1945,12 +1951,10 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	.phsg-branches__list { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 430px) {
+	/* מסך צר מאוד: מסתירים רק את שם המשחק כדי לפנות מקום ללוגו ולאייקונים */
 	.phsg-gametitle { display: none; }
-	/* אין מקום לטקסט מלא – משאירים רק את כפתור ההזמנה, ממורכז */
-	.phsg-promobanner { justify-content: center; padding: 0 6px; }
-	.phsg-promobanner__text { display: none; }
-	.phsg-promobanner__cta { font-size: 13px; padding: 8px 16px; }
+	.phsg-promobanner__text { font-size: 13.5px; }
 }
 
 /* ===== מסך התחלפות שלב ===== */
