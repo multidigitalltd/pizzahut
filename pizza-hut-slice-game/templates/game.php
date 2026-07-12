@@ -101,7 +101,7 @@ $phsg_sprites = array(
 					<span class="phsg-btn__ico">📖</span><?php esc_html_e( 'הוראות המשחק', 'pizza-hut-slice-game' ); ?>
 				</button>
 				<button type="button" class="phsg-btn phsg-btn--play" data-action="go-form">
-					<span class="phsg-btn__ico">▶</span><?php esc_html_e( 'התחל משחק', 'pizza-hut-slice-game' ); ?>
+					<span class="phsg-btn__ico">◀</span><?php esc_html_e( 'התחל משחק', 'pizza-hut-slice-game' ); ?>
 				</button>
 			</div>
 
@@ -201,7 +201,7 @@ $phsg_sprites = array(
 					<span><?php esc_html_e( 'קראתי ואני מאשר/ת את התקנון ואת קבלת עדכונים שיווקיים. השם שלי יוצג בטבלת השיאים (ללא טלפון או אימייל).', 'pizza-hut-slice-game' ); ?></span>
 				</label>
 				<div class="phsg-form-error" data-form-error hidden></div>
-				<button type="submit" class="phsg-cta"><?php esc_html_e( 'יאללה, למשחק ‹', 'pizza-hut-slice-game' ); ?></button>
+				<button type="submit" class="phsg-cta"><?php esc_html_e( 'יאללה, למשחק ◀', 'pizza-hut-slice-game' ); ?></button>
 			</form>
 		</section>
 
@@ -338,13 +338,13 @@ $phsg_sprites = array(
 						<?php echo esc_html( $atts['coupon_code'] ); ?> 📋
 					</button>
 					<a class="phsg-cta phsg-coupon-card__cta" href="<?php echo esc_url( $atts['coupon_url'] ); ?>" target="_blank" rel="noopener">
-						<?php esc_html_e( 'מזמינים פיצה עכשיו ‹', 'pizza-hut-slice-game' ); ?>
+						<?php esc_html_e( 'מזמינים פיצה עכשיו ◀', 'pizza-hut-slice-game' ); ?>
 					</a>
 				</div>
 			<?php endif; ?>
 
 			<div class="phsg-end__actions">
-				<button type="button" class="phsg-cta" data-action="play-again"><?php esc_html_e( 'עוד סיבוב ‹', 'pizza-hut-slice-game' ); ?></button>
+				<button type="button" class="phsg-cta" data-action="play-again"><?php esc_html_e( 'עוד סיבוב ◀', 'pizza-hut-slice-game' ); ?></button>
 				<button type="button" class="phsg-cta phsg-cta--cream" data-action="go-home"><?php esc_html_e( 'למסך הבית', 'pizza-hut-slice-game' ); ?></button>
 			</div>
 		</section>
@@ -369,7 +369,7 @@ $phsg_sprites = array(
 				<?php echo phsg_render_branches( $atts['branches_url'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			</div>
 			<div class="phsg-modal__foot">
-				<a class="phsg-cta phsg-modal__order" href="<?php echo esc_url( $atts['order_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'מזמינים פיצה עכשיו ‹', 'pizza-hut-slice-game' ); ?></a>
+				<a class="phsg-cta phsg-modal__order" href="<?php echo esc_url( $atts['order_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'מזמינים פיצה עכשיו ◀', 'pizza-hut-slice-game' ); ?></a>
 			</div>
 		</div>
 	</div>

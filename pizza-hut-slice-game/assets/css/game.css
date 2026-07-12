@@ -99,6 +99,11 @@
 .phsg-app *::before,
 .phsg-app *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+/* אכיפת פונט המותג (אלמוני) על כל טקסט בתוסף – כדי שפונט של תבנית האתר
+   לא ידרוס אלמנטים שיורשים בלבד (כמו פסקת ההוראות). */
+.phsg-app,
+.phsg-app *:not(svg):not(svg *) { font-family: "Almoni", "Rubik", sans-serif !important; }
+
 /* רקע תמונה אמיתית – מסופק דרך [pizza_hut_slice_game bg="..."] */
 .phsg-app--photo {
 	background-color: #1A0508;

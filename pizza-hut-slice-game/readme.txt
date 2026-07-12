@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.4.0
+Stable tag: 12.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.4.1 =
+* תוקן החץ בכפתור "התחל משחק" (וכל שאר החצים בכפתורים) שיצביע לכיוון הנכון ב-RTL (◀) — לא הפוך.
+* אכיפת פונט המותג "אלמוני" על כל הטקסטים בתוסף, כולל הוראות המשחק — כדי שפונט ברירת המחדל של תבנית האתר לא ידרוס אותו.
 
 = 12.4.0 =
 * נוסף כפתור "עצור" בכל שלב של המשחק: לחיצה מקפיאה את הזמן, המשולשים והמכשולים, ומציגה שכבת השהיה עם כפתור "המשך משחק". אפשר גם עם מקש Esc / P. הזמן שהמשחק היה מושהה אינו נספר.
