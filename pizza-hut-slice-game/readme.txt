@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.4.2
+Stable tag: 12.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,11 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.5.0 =
+* הבאנר בכותרת עודכן: הטקסט "פיצה חמה מחכה לכם כעת בסניפים" + כפתור "להזמנה עכשיו" נקי (עיצוב קרם, מותאם לגריד). במובייל מוצג כפתור ההזמנה בלבד.
+* קוד הקופון במסך הסיום הוחלף ל-227514.
+* נוסף ליד הקופון תיאור ההטבה: "בקניית 2 פיצות משפחתיות מקבלים מקלות שוקולד או בייגל שוקולד ב-10 ש"ח" — בתיבת הדגשה מעוצבת.
 
 = 12.4.2 =
 * הוחלף הלוגו הראשי ללוגו פיצה האט המלא (כולל הקשת "I'm hut and I know it") בגוון קרם המותג.

@@ -53,7 +53,8 @@ $phsg_sprites = array(
 			<?php // באנר שיווקי לרוחב הכותרת – בין הלוגו לאייקונים ?>
 			<a class="phsg-promobanner" href="<?php echo esc_url( $atts['order_url'] ); ?>" target="_blank" rel="noopener">
 				<span class="phsg-promobanner__shine" aria-hidden="true"></span>
-				<span class="phsg-promobanner__text"><?php esc_html_e( 'פה יהיה באנר שיווקי להזמנת פיצה', 'pizza-hut-slice-game' ); ?></span>
+				<span class="phsg-promobanner__text"><?php esc_html_e( 'פיצה חמה מחכה לכם כעת בסניפים', 'pizza-hut-slice-game' ); ?></span>
+				<span class="phsg-promobanner__cta"><?php esc_html_e( 'להזמנה עכשיו', 'pizza-hut-slice-game' ); ?><span class="phsg-promobanner__arrow" aria-hidden="true">◀</span></span>
 			</a>
 
 			<div class="phsg-header__actions">
@@ -337,6 +338,7 @@ $phsg_sprites = array(
 					<button type="button" class="phsg-coupon-code" data-action="copy-coupon" data-coupon-code="<?php echo esc_attr( $atts['coupon_code'] ); ?>" title="<?php echo esc_attr__( 'לחצו להעתקה', 'pizza-hut-slice-game' ); ?>">
 						<?php echo esc_html( $atts['coupon_code'] ); ?> 📋
 					</button>
+					<p class="phsg-coupon-card__deal"><?php esc_html_e( 'בקניית 2 פיצות משפחתיות מקבלים מקלות שוקולד או בייגל שוקולד ב-10 ש"ח 🍫', 'pizza-hut-slice-game' ); ?></p>
 					<a class="phsg-cta phsg-coupon-card__cta" href="<?php echo esc_url( $atts['coupon_url'] ); ?>" target="_blank" rel="noopener">
 						<?php esc_html_e( 'מזמינים פיצה עכשיו ◀', 'pizza-hut-slice-game' ); ?>
 					</a>

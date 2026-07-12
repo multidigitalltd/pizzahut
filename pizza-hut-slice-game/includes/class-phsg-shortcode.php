@@ -145,7 +145,7 @@ class PHSG_Shortcode {
 				'title'       => __( "תפוס ת'משולש", 'pizza-hut-slice-game' ),
 				'logo'        => '', // URL ללוגו. ריק = הלוגו הרשמי המצורף לתוסף.
 				'fullscreen'  => '1', // 1 = השתלטות על כל העמוד (הסתרת התבנית). 0 = הטמעה רגילה.
-				'coupon_code' => 'HUTGAME', // קוד הפינוק במסך הסיום. ריק = הסתרת הכרטיס.
+				'coupon_code' => '227514', // קוד הפינוק במסך הסיום. ריק = הסתרת הכרטיס.
 				'coupon_url'  => 'https://www.pizzahut.co.il/?utm_source=slice_game&utm_medium=game&utm_campaign=coupon', // יעד כפתור ההזמנה.
 				'bg'          => PHSG_PLUGIN_URL . 'assets/img/game-bg.png', // תמונת רקע. ברירת מחדל = צילום המותג המצורף. אפשר URL אחר; '' = רקע אדום צבוע.
 				'pizzas'      => '', // רשימת URLים (מופרדים בפסיק) לתמונות פיצה שקופצות. ריק = 4 התמונות המצורפות (משולשים ומגשים).
