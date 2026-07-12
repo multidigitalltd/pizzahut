@@ -88,10 +88,10 @@ $phsg_sprites = array(
 			<?php // מסר המותג ?>
 			<div class="phsg-promo">
 				<p class="phsg-promo__text">
-					<?php esc_html_e( 'את פיצה האט לא צריך לחפש —', 'pizza-hut-slice-game' ); ?><br>
-					<?php esc_html_e( 'לכל מקום בו תצאו לטייל ולבלות תמצאו', 'pizza-hut-slice-game' ); ?>
-					<strong class="phsg-promo__hot"><?php esc_html_e( 'פיצה חמה, טרייה וטעימה.', 'pizza-hut-slice-game' ); ?></strong>
-					<?php esc_html_e( 'גם ממש כאן — על המסך 🍕', 'pizza-hut-slice-game' ); ?>
+					<?php esc_html_e( 'פיצה האט מחכה לכם עם', 'pizza-hut-slice-game' ); ?>
+					<strong class="phsg-promo__hot"><?php esc_html_e( 'למעלה מ-100 סניפים', 'pizza-hut-slice-game' ); ?></strong>
+					<?php esc_html_e( 'בכל רחבי הארץ', 'pizza-hut-slice-game' ); ?><br>
+					<?php esc_html_e( 'אפילו ממש כאן — על המסך 🍕', 'pizza-hut-slice-game' ); ?>
 				</p>
 			</div>
 
@@ -109,7 +109,12 @@ $phsg_sprites = array(
 			<div class="phsg-instructions" id="phsg-instructions" data-instructions hidden>
 				<div class="phsg-howto">
 					<h2 class="phsg-howto__title"><?php esc_html_e( 'איך משחקים?', 'pizza-hut-slice-game' ); ?></h2>
-					<p class="phsg-howto__text"><?php esc_html_e( 'תפסו את מכסת הפיצות של כל שלב לפני שהזמן נגמר — מתחילים מ-7 תפיסות ב-60 שניות, וכל שלב קצר וקשה יותר, בלי סוף! תפיסות מהירות ושלבים גבוהים שווים יותר נקודות. זהירות: 5 פגיעות במכשולים בשלב אחד — והמשחק נגמר!', 'pizza-hut-slice-game' ); ?></p>
+					<p class="phsg-howto__text">
+						<?php esc_html_e( 'בכל שלב מופיעים על המסך משולשי פיצות. תפסו אותם לפני שהם יעלמו.', 'pizza-hut-slice-game' ); ?><br>
+						<?php esc_html_e( 'ככל שתתפסו אותם מהר יותר — תקבלו יותר נקודות.', 'pizza-hut-slice-game' ); ?><br>
+						<?php esc_html_e( 'שימו לב למכשולים בדרך ואל תלחצו עליהם!', 'pizza-hut-slice-game' ); ?><br>
+						<strong class="phsg-promo__hot"><?php esc_html_e( 'ניצחתם במשחק? קבלו מאיתנו ארוחה משפחתית ב-300 ₪ במתנה בכל סניף שתבחרו!', 'pizza-hut-slice-game' ); ?></strong>
+					</p>
 				</div>
 
 				<div class="phsg-legend-row">
