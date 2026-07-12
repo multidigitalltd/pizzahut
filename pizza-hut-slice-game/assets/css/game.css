@@ -657,13 +657,13 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-family: "Almoni", "Rubik", sans-serif;
 	font-weight: 700;
 	font-size: 24px;
-	background: linear-gradient(135deg, #FF7A52 0%, var(--red) 50%, #C4101E 100%);
+	background: #D51F2E;
 	color: #F0EFDD;
 	border: none;
-	border-radius: 999px;
-	padding: 16px 48px;
+	border-radius: 12px;
+	padding: 15px 46px;
 	cursor: pointer;
-	box-shadow: 0 16px 38px rgba(160, 5, 15, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -3px 8px rgba(120, 0, 8, 0.35);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 	transition: all 0.15s ease;
 }
 
@@ -694,12 +694,12 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 }
 
 .phsg-cta:hover {
-	transform: translateY(-3px) scale(1.03);
-	box-shadow: 0 22px 48px rgba(160, 5, 15, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.45);
-	filter: brightness(1.07);
+	transform: translateY(-2px);
+	background: #E42433;
+	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.36);
 }
 
-.phsg-cta:active { transform: translateY(1px) scale(0.99); box-shadow: 0 8px 20px rgba(160, 5, 15, 0.5); filter: none; }
+.phsg-cta:active { transform: translateY(1px); box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3); }
 
 .phsg-cta--xl { font-size: 31px; padding: 17px 60px; margin-top: 6px; }
 
