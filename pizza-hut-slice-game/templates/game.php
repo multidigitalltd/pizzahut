@@ -72,7 +72,6 @@ $phsg_sprites = array(
 			<div class="phsg-boot__title phsg-title3d"><?php esc_html_e( "תפוס ת'משולש!", 'pizza-hut-slice-game' ); ?></div>
 			<div class="phsg-boot__bar"><div class="phsg-boot__fill" data-boot-fill></div></div>
 			<div class="phsg-boot__pct" data-boot-pct>0%</div>
-			<div class="phsg-boot__tip"><?php esc_html_e( 'טיפ: משולש זהב שווה +3 נקודות ✨', 'pizza-hut-slice-game' ); ?></div>
 		</section>
 
 		<?php // ===== אינטרו ===== ?>

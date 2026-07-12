@@ -243,11 +243,11 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	border-radius: 16px;
 	text-decoration: none;
 	overflow: hidden;
-	background: linear-gradient(135deg, rgba(16, 13, 16, 0.74), rgba(4, 3, 5, 0.66));
-	-webkit-backdrop-filter: blur(14px) saturate(0.7) brightness(0.72);
-	backdrop-filter: blur(14px) saturate(0.7) brightness(0.72);
+	background: rgba(8, 6, 9, 0.4);
+	-webkit-backdrop-filter: blur(16px) saturate(0.85) brightness(0.85);
+	backdrop-filter: blur(16px) saturate(0.85) brightness(0.85);
 	border: 1px solid rgba(255, 255, 255, 0.16);
-	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 	transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.15s ease;
 }
 .phsg-promobanner:hover { transform: translateY(-1px); box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22); border-color: rgba(255, 255, 255, 0.28); }
@@ -363,6 +363,8 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	backdrop-filter: blur(7px);
 	animation: phsg-pauseFade 0.2s ease;
 }
+/* חובה: display:flex דורס את תכונת ה-hidden, לכן מסתירים במפורש */
+.phsg-pause[hidden] { display: none; }
 @keyframes phsg-pauseFade { from { opacity: 0; } to { opacity: 1; } }
 .phsg-pause__card {
 	width: min(340px, 92%);
@@ -1741,19 +1743,12 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 
 .phsg-btn:hover::after { animation: phsg-shine 0.6s ease; }
 
-/* התחל משחק – אדום זוהר על מסגרת שחורה, פועם. */
+/* התחל משחק – מלבן אדום שטוח ונקי עם פינות מעוגלות. */
 .phsg-btn--play {
 	color: #F0EFDD;
-	background:
-		linear-gradient(135deg, #FF7A52 0%, #F0202E 48%, #B00C18 100%);
-	box-shadow:
-		0 0 0 3px rgba(20, 8, 10, 0.85),
-		0 0 0 5px rgba(255, 60, 60, 0.45),
-		0 16px 40px rgba(200, 10, 20, 0.6),
-		0 0 34px rgba(255, 70, 60, 0.55),
-		inset 0 1px 0 rgba(255, 255, 255, 0.4),
-		inset 0 -4px 10px rgba(120, 0, 8, 0.5);
-	animation: phsg-btnGlow 1.9s ease-in-out infinite;
+	background: #D51F2E;
+	border-radius: 10px;
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes phsg-btnGlow {
@@ -1761,27 +1756,24 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	50% { box-shadow: 0 0 0 3px rgba(20,8,10,0.85), 0 0 0 6px rgba(255,80,70,0.6), 0 18px 46px rgba(200,10,20,0.7), 0 0 46px rgba(255,90,70,0.75), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -4px 10px rgba(120,0,8,0.5); }
 }
 
-.phsg-btn--play:hover { transform: translateY(-3px) scale(1.04); filter: brightness(1.08); }
-.phsg-btn--play:active { transform: translateY(1px) scale(0.99); }
+.phsg-btn--play:hover { transform: translateY(-2px); background: #E42433; box-shadow: 0 10px 22px rgba(0, 0, 0, 0.36); }
+.phsg-btn--play:active { transform: translateY(1px); }
 
-/* הוראות – שחור מבריק עם טבעת וזוהר אדומים. */
+/* הוראות – מלבן שחור שטוח ונקי, באותו סגנון של "התחל". */
 .phsg-btn--ghost {
-	color: #FFE7E3;
-	background: linear-gradient(160deg, #2A2026 0%, #140D11 100%);
-	box-shadow:
-		0 0 0 2px rgba(255, 60, 60, 0.5),
-		0 12px 30px rgba(0, 0, 0, 0.55),
-		0 0 20px rgba(243, 39, 53, 0.35),
-		inset 0 1px 0 rgba(255, 255, 255, 0.12);
+	color: #F0EFDD;
+	background: #17131A;
+	border-radius: 10px;
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 
 .phsg-btn--ghost:hover {
 	transform: translateY(-2px);
-	color: #F0EFDD;
-	box-shadow: 0 0 0 2px rgba(255, 80, 70, 0.75), 0 14px 34px rgba(0, 0, 0, 0.6), 0 0 30px rgba(243, 39, 53, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+	background: #241E29;
+	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.42);
 }
 .phsg-btn--ghost:active { transform: translateY(1px); }
-.phsg-btn--ghost.is-open { background: linear-gradient(160deg, #3A0E13, #1A0709); box-shadow: 0 0 0 2px rgba(255, 90, 80, 0.8), 0 0 26px rgba(243, 39, 53, 0.5), inset 0 1px 0 rgba(255,255,255,0.12); }
+.phsg-btn--ghost.is-open { background: #2E2633; }
 
 .phsg-btn:focus-visible { outline: 3px dashed rgba(255, 255, 255, 0.7); outline-offset: 3px; }
 
