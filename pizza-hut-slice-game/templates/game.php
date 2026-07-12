@@ -102,7 +102,7 @@ $phsg_sprites = array(
 					<span class="phsg-btn__ico">📖</span><?php esc_html_e( 'הוראות המשחק', 'pizza-hut-slice-game' ); ?>
 				</button>
 				<button type="button" class="phsg-btn phsg-btn--play" data-action="go-form">
-					<span class="phsg-btn__ico">◀</span><?php esc_html_e( 'התחל משחק', 'pizza-hut-slice-game' ); ?>
+					<?php esc_html_e( 'התחל משחק', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span>
 				</button>
 			</div>
 
@@ -177,7 +177,6 @@ $phsg_sprites = array(
 				</div>
 				</div><?php // סוף phsg-legend-row ?>
 
-				<span class="phsg-note-pill"><?php esc_html_e( '⏱ שלבים בלי סוף · עוברים שלב לפי תפיסות · כמה רחוק תגיעו?', 'pizza-hut-slice-game' ); ?></span>
 			</div><?php // סוף phsg-instructions ?>
 
 			<span class="phsg-legal"><?php esc_html_e( 'ההשתתפות כרוכה במילוי פרטים · בכפוף לתקנון', 'pizza-hut-slice-game' ); ?></span>
@@ -202,7 +201,7 @@ $phsg_sprites = array(
 					<span><?php esc_html_e( 'קראתי ואני מאשר/ת את התקנון ואת קבלת עדכונים שיווקיים. השם שלי יוצג בטבלת השיאים (ללא טלפון או אימייל).', 'pizza-hut-slice-game' ); ?></span>
 				</label>
 				<div class="phsg-form-error" data-form-error hidden></div>
-				<button type="submit" class="phsg-cta"><?php esc_html_e( 'יאללה, למשחק ◀', 'pizza-hut-slice-game' ); ?></button>
+				<button type="submit" class="phsg-cta"><?php esc_html_e( 'יאללה, למשחק', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span></button>
 			</form>
 		</section>
 
@@ -251,7 +250,7 @@ $phsg_sprites = array(
 						<span class="phsg-pause__icon" aria-hidden="true">⏸</span>
 						<h2 class="phsg-pause__title"><?php esc_html_e( 'המשחק מושהה', 'pizza-hut-slice-game' ); ?></h2>
 						<p class="phsg-pause__text"><?php esc_html_e( 'קחו נשימה — הזמן והמשולשים מחכים לכם.', 'pizza-hut-slice-game' ); ?></p>
-						<button type="button" class="phsg-cta phsg-pause__resume" data-action="resume-game"><?php esc_html_e( 'המשך משחק ◀', 'pizza-hut-slice-game' ); ?></button>
+						<button type="button" class="phsg-cta phsg-pause__resume" data-action="resume-game"><?php esc_html_e( 'המשך משחק', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span></button>
 					</div>
 				</div>
 
@@ -340,13 +339,13 @@ $phsg_sprites = array(
 					</button>
 					<p class="phsg-coupon-card__deal"><?php esc_html_e( 'בקניית 2 פיצות משפחתיות מקבלים מקלות שוקולד או בייגל שוקולד ב-10 ש"ח 🍫', 'pizza-hut-slice-game' ); ?></p>
 					<a class="phsg-cta phsg-coupon-card__cta" href="<?php echo esc_url( $atts['coupon_url'] ); ?>" target="_blank" rel="noopener">
-						<?php esc_html_e( 'מזמינים פיצה עכשיו ◀', 'pizza-hut-slice-game' ); ?>
+						<?php esc_html_e( 'מזמינים פיצה עכשיו', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span>
 					</a>
 				</div>
 			<?php endif; ?>
 
 			<div class="phsg-end__actions">
-				<button type="button" class="phsg-cta" data-action="play-again"><?php esc_html_e( 'עוד סיבוב ◀', 'pizza-hut-slice-game' ); ?></button>
+				<button type="button" class="phsg-cta" data-action="play-again"><?php esc_html_e( 'עוד סיבוב', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span></button>
 				<button type="button" class="phsg-cta phsg-cta--cream" data-action="go-home"><?php esc_html_e( 'למסך הבית', 'pizza-hut-slice-game' ); ?></button>
 			</div>
 		</section>
@@ -371,7 +370,7 @@ $phsg_sprites = array(
 				<?php echo phsg_render_branches( $atts['branches_url'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			</div>
 			<div class="phsg-modal__foot">
-				<a class="phsg-cta phsg-modal__order" href="<?php echo esc_url( $atts['order_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'מזמינים פיצה עכשיו ◀', 'pizza-hut-slice-game' ); ?></a>
+				<a class="phsg-cta phsg-modal__order" href="<?php echo esc_url( $atts['order_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'מזמינים פיצה עכשיו', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span></a>
 			</div>
 		</div>
 	</div>

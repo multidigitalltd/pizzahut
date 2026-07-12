@@ -510,7 +510,7 @@ if ( ! function_exists( 'phsg_render_branches' ) ) {
 			$html .= '</ul></div>';
 		}
 		if ( $branches_url ) {
-			$html .= '<a class="phsg-branches__link" href="' . esc_url( $branches_url ) . '" target="_blank" rel="noopener">' . esc_html__( 'לרשימת הסניפים המלאה והכתובות ◀', 'pizza-hut-slice-game' ) . '</a>';
+			$html .= '<a class="phsg-branches__link" href="' . esc_url( $branches_url ) . '" target="_blank" rel="noopener">' . esc_html__( 'לרשימת הסניפים המלאה והכתובות', 'pizza-hut-slice-game' ) . '<span class="phsg-arrow" aria-hidden="true">←</span></a>';
 		}
 		return $html;
 	}
