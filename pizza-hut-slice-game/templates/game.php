@@ -47,7 +47,6 @@ $phsg_sprites = array(
 		<header class="phsg-header">
 			<div class="phsg-header__brand">
 				<img class="phsg-logo" src="<?php echo esc_url( $phsg_logo_url ); ?>" alt="Pizza Hut">
-				<span class="phsg-gametitle"><?php echo esc_html( $atts['title'] ); ?></span>
 			</div>
 
 			<?php // באנר שיווקי לרוחב הכותרת – בין הלוגו לאייקונים ?>

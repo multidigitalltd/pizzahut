@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.6.0
+Stable tag: 12.6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.6.1 =
+* הוסר שם המשחק "תפוס ת'משולש" מהכותרת העליונה (נשאר הלוגו בלבד).
 
 = 12.6.0 =
 * כל החצים בכפתורים הוחלפו לחץ קו דק "←" הממוקם אחרי הטקסט (מבודד LTR כדי שתמיד יצביע שמאלה נכון ב-RTL).
