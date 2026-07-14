@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.10.1
+Stable tag: 12.10.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.10.2 =
+* עודכנה שורת הפרס בהוראות המשחק: "ניצחתם במשחק? קבלו מאיתנו שובר ל-5 פיצות משפחתיות במתנה בכל סניף שתבחרו!".
 
 = 12.10.1 =
 * הוסר אייקון המתנה שאחרי כותרת הקופון ("עוד לא יודעים אם תזכו...").

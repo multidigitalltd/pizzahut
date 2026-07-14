@@ -112,7 +112,7 @@ $phsg_sprites = array(
 						<?php esc_html_e( 'בכל שלב מופיעים על המסך משולשי פיצות. תפסו אותם לפני שהם יעלמו.', 'pizza-hut-slice-game' ); ?><br>
 						<?php esc_html_e( 'ככל שתתפסו אותם מהר יותר — תקבלו יותר נקודות.', 'pizza-hut-slice-game' ); ?><br>
 						<?php esc_html_e( 'שימו לב למכשולים בדרך ואל תלחצו עליהם!', 'pizza-hut-slice-game' ); ?><br>
-						<strong class="phsg-promo__hot"><?php esc_html_e( 'ניצחתם במשחק? קבלו מאיתנו ארוחה משפחתית ב-300 ₪ במתנה בכל סניף שתבחרו!', 'pizza-hut-slice-game' ); ?></strong>
+						<strong class="phsg-promo__hot"><?php esc_html_e( 'ניצחתם במשחק? קבלו מאיתנו שובר ל-5 פיצות משפחתיות במתנה בכל סניף שתבחרו!', 'pizza-hut-slice-game' ); ?></strong>
 					</p>
 				</div>
 
