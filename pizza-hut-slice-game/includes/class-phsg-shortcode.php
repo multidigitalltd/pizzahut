@@ -142,7 +142,7 @@ class PHSG_Shortcode {
 
 		$atts = shortcode_atts(
 			array(
-				'title'       => __( "תפוס ת'משולש", 'pizza-hut-slice-game' ),
+				'title'       => __( "תפוס את הפיצה", 'pizza-hut-slice-game' ),
 				'logo'        => '', // URL ללוגו. ריק = הלוגו הרשמי המצורף לתוסף.
 				'fullscreen'  => '1', // 1 = השתלטות על כל העמוד (הסתרת התבנית). 0 = הטמעה רגילה.
 				'coupon_code' => '227514', // קוד הפינוק במסך הסיום. ריק = הסתרת הכרטיס.

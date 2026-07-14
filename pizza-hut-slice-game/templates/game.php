@@ -36,7 +36,7 @@ $phsg_sprites = array(
 	'box'      => PHSG_PLUGIN_URL . 'assets/img/bonus-box.png',
 );
 ?>
-<div class="phsg-app<?php echo $phsg_bg_url ? ' phsg-app--photo' : ''; ?>"<?php echo $phsg_bg_url ? ' style="background-image:url(' . esc_url( $phsg_bg_url ) . ');"' : ''; ?> dir="rtl" lang="he" role="application" data-fullscreen="<?php echo esc_attr( ! empty( $atts['fullscreen'] ) && '0' !== $atts['fullscreen'] ? '1' : '0' ); ?>" data-pizzas="<?php echo esc_attr( wp_json_encode( array_map( 'esc_url_raw', $phsg_pizza_list ) ) ); ?>" data-sprites="<?php echo esc_attr( wp_json_encode( array_map( 'esc_url_raw', $phsg_sprites ) ) ); ?>" aria-label="<?php echo esc_attr__( 'משחק פיצה האט – תפוס ת\'משולש', 'pizza-hut-slice-game' ); ?>">
+<div class="phsg-app<?php echo $phsg_bg_url ? ' phsg-app--photo' : ''; ?>"<?php echo $phsg_bg_url ? ' style="background-image:url(' . esc_url( $phsg_bg_url ) . ');"' : ''; ?> dir="rtl" lang="he" role="application" data-fullscreen="<?php echo esc_attr( ! empty( $atts['fullscreen'] ) && '0' !== $atts['fullscreen'] ? '1' : '0' ); ?>" data-pizzas="<?php echo esc_attr( wp_json_encode( array_map( 'esc_url_raw', $phsg_pizza_list ) ) ); ?>" data-sprites="<?php echo esc_attr( wp_json_encode( array_map( 'esc_url_raw', $phsg_sprites ) ) ); ?>" aria-label="<?php echo esc_attr__( 'משחק פיצה האט – תפוס את הפיצה', 'pizza-hut-slice-game' ); ?>">
 
 	<?php // עומק – ויניטה ?>
 	<div class="phsg-vignette" aria-hidden="true"></div>
@@ -69,7 +69,7 @@ $phsg_sprites = array(
 
 		<?php // ===== מסך טעינה – כמו משחק אמיתי ===== ?>
 		<section class="phsg-screen phsg-boot is-active" data-screen="boot">
-			<div class="phsg-boot__title phsg-title3d"><?php esc_html_e( "תפוס ת'משולש!", 'pizza-hut-slice-game' ); ?></div>
+			<div class="phsg-boot__title phsg-title3d"><?php esc_html_e( "תפוס את הפיצה!", 'pizza-hut-slice-game' ); ?></div>
 			<div class="phsg-boot__bar"><div class="phsg-boot__fill" data-boot-fill></div></div>
 			<div class="phsg-boot__pct" data-boot-pct>0%</div>
 		</section>
@@ -82,7 +82,7 @@ $phsg_sprites = array(
 					<img class="phsg-slice-img phsg-hero-img" src="<?php echo esc_url( $phsg_hero_img ); ?>" alt="">
 				</div>
 			</div>
-			<h1 class="phsg-h1 phsg-title3d"><?php esc_html_e( "תפוס ת'משולש!", 'pizza-hut-slice-game' ); ?></h1>
+			<h1 class="phsg-h1 phsg-title3d"><?php esc_html_e( "תפוס את הפיצה!", 'pizza-hut-slice-game' ); ?></h1>
 
 			<?php // מסר המותג ?>
 			<div class="phsg-promo">
@@ -112,7 +112,7 @@ $phsg_sprites = array(
 						<?php esc_html_e( 'בכל שלב מופיעים על המסך משולשי פיצות. תפסו אותם לפני שהם יעלמו.', 'pizza-hut-slice-game' ); ?><br>
 						<?php esc_html_e( 'ככל שתתפסו אותם מהר יותר — תקבלו יותר נקודות.', 'pizza-hut-slice-game' ); ?><br>
 						<?php esc_html_e( 'שימו לב למכשולים בדרך ואל תלחצו עליהם!', 'pizza-hut-slice-game' ); ?><br>
-						<strong class="phsg-promo__hot"><?php esc_html_e( 'ניצחתם במשחק? קבלו מאיתנו שובר ל-5 פיצות משפחתיות במתנה בכל סניף שתבחרו!', 'pizza-hut-slice-game' ); ?></strong>
+						<strong class="phsg-promo__hot"><?php esc_html_e( 'ניצחתם במשחק? אולי תוכלו לקבל מאיתנו שובר של 5 פיצות משפחתיות!', 'pizza-hut-slice-game' ); ?></strong>
 					</p>
 				</div>
 
@@ -335,7 +335,7 @@ $phsg_sprites = array(
 					<button type="button" class="phsg-coupon-code" data-action="copy-coupon" data-coupon-code="<?php echo esc_attr( $atts['coupon_code'] ); ?>" title="<?php echo esc_attr__( 'לחצו להעתקה', 'pizza-hut-slice-game' ); ?>">
 						<?php echo esc_html( $atts['coupon_code'] ); ?> 📋
 					</button>
-					<p class="phsg-coupon-card__deal"><?php esc_html_e( 'בקניית 2 פיצות משפחתיות מקבלים מקלות שוקולד או בייגל שוקולד ב-10 ש"ח', 'pizza-hut-slice-game' ); ?></p>
+					<p class="phsg-coupon-card__deal"><?php esc_html_e( 'מקלות שוקולד מתנה בקניית 2 פיצות משפחתיות', 'pizza-hut-slice-game' ); ?></p>
 					<a class="phsg-cta phsg-coupon-card__cta" href="<?php echo esc_url( $atts['coupon_url'] ); ?>" target="_blank" rel="noopener">
 						<?php esc_html_e( 'מזמינים פיצה עכשיו', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span>
 					</a>
@@ -346,6 +346,8 @@ $phsg_sprites = array(
 				<button type="button" class="phsg-cta" data-action="play-again"><?php esc_html_e( 'עוד סיבוב', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span></button>
 				<button type="button" class="phsg-cta phsg-cta--cream" data-action="go-home"><?php esc_html_e( 'למסך הבית', 'pizza-hut-slice-game' ); ?></button>
 			</div>
+
+				<p class="phsg-fineprint"><?php esc_html_e( 'לא כולל תוספות, לא כולל משלוח, לא כולל כפל מבצעים, תוקף 31.08.27, ט.ל.ח', 'pizza-hut-slice-game' ); ?></p>
 		</section>
 
 		<?php // חיווי שמירת התוצאה ?>
