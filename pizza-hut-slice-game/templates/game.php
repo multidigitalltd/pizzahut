@@ -36,7 +36,7 @@ $phsg_sprites = array(
 	'box'      => PHSG_PLUGIN_URL . 'assets/img/bonus-box.png',
 );
 ?>
-<div class="phsg-app<?php echo $phsg_bg_url ? ' phsg-app--photo' : ''; ?>"<?php echo $phsg_bg_url ? ' style="background-image:url(' . esc_url( $phsg_bg_url ) . ');"' : ''; ?> dir="rtl" lang="he" role="application" data-fullscreen="<?php echo esc_attr( ! empty( $atts['fullscreen'] ) && '0' !== $atts['fullscreen'] ? '1' : '0' ); ?>" data-pizzas="<?php echo esc_attr( wp_json_encode( array_map( 'esc_url_raw', $phsg_pizza_list ) ) ); ?>" data-sprites="<?php echo esc_attr( wp_json_encode( array_map( 'esc_url_raw', $phsg_sprites ) ) ); ?>" aria-label="<?php echo esc_attr__( 'משחק פיצה האט – תפוס את הפיצה', 'pizza-hut-slice-game' ); ?>">
+<div class="phsg-app<?php echo $phsg_bg_url ? ' phsg-app--photo' : ''; ?>"<?php echo $phsg_bg_url ? ' style="background-image:url(' . esc_url( $phsg_bg_url ) . ');"' : ''; ?> dir="rtl" lang="he" role="application" data-fullscreen="<?php echo esc_attr( ! empty( $atts['fullscreen'] ) && '0' !== $atts['fullscreen'] ? '1' : '0' ); ?>" data-pizzas="<?php echo esc_attr( wp_json_encode( array_map( 'esc_url_raw', $phsg_pizza_list ) ) ); ?>" data-sprites="<?php echo esc_attr( wp_json_encode( array_map( 'esc_url_raw', $phsg_sprites ) ) ); ?>" aria-label="<?php echo esc_attr__( 'משחק פיצה האט – תפוס ת\'פיצה', 'pizza-hut-slice-game' ); ?>">
 
 	<?php // עומק – ויניטה ?>
 	<div class="phsg-vignette" aria-hidden="true"></div>
@@ -69,7 +69,7 @@ $phsg_sprites = array(
 
 		<?php // ===== מסך טעינה – כמו משחק אמיתי ===== ?>
 		<section class="phsg-screen phsg-boot is-active" data-screen="boot">
-			<div class="phsg-boot__title phsg-title3d"><?php esc_html_e( "תפוס את הפיצה!", 'pizza-hut-slice-game' ); ?></div>
+			<div class="phsg-boot__title phsg-title3d"><?php esc_html_e( "תפוס ת'פיצה!", 'pizza-hut-slice-game' ); ?></div>
 			<div class="phsg-boot__bar"><div class="phsg-boot__fill" data-boot-fill></div></div>
 			<div class="phsg-boot__pct" data-boot-pct>0%</div>
 		</section>
@@ -82,7 +82,7 @@ $phsg_sprites = array(
 					<img class="phsg-slice-img phsg-hero-img" src="<?php echo esc_url( $phsg_hero_img ); ?>" alt="">
 				</div>
 			</div>
-			<h1 class="phsg-h1 phsg-title3d"><?php esc_html_e( "תפוס את הפיצה!", 'pizza-hut-slice-game' ); ?></h1>
+			<h1 class="phsg-h1 phsg-title3d"><?php esc_html_e( "תפוס ת'פיצה!", 'pizza-hut-slice-game' ); ?></h1>
 
 			<?php // מסר המותג ?>
 			<div class="phsg-promo">
