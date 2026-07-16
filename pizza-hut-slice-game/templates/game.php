@@ -137,7 +137,7 @@ $phsg_sprites = array(
 						</div>
 						<div class="phsg-legend__card phsg-legend__card--gold">
 							<img class="phsg-legend__img" src="<?php echo esc_url( $phsg_sprites['box'] ); ?>" alt="">
-							<span class="phsg-legend__name"><?php esc_html_e( 'קופסת פיצה', 'pizza-hut-slice-game' ); ?></span>
+							<span class="phsg-legend__name"><?php esc_html_e( 'קרטון פיצה', 'pizza-hut-slice-game' ); ?></span>
 							<span class="phsg-vpill phsg-vpill--gold">+3</span>
 						</div>
 						<div class="phsg-legend__card phsg-legend__card--pin">
