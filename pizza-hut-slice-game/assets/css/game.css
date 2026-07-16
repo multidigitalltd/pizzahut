@@ -1300,28 +1300,18 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-weight: 700; font-size: 42px; line-height: 1.1; }
 
 /* טבלת שיאים */
-/* שורת הטבלה + לוגו כשרות מצד ימין */
-.phsg-board-row {
-	width: 100%;
-	display: flex;
-	align-items: stretch;
-	gap: 12px;
-}
-.phsg-board-row .phsg-board { flex: 1 1 auto; min-width: 0; }
-
+/* לוגו כשרות – לבן, ללא רקע, בצד שמאל בתחתית מסך הסיום */
 .phsg-kosher {
-	flex: none;
-	align-self: center;
-	width: 116px;
+	align-self: flex-end; /* ב-RTL זהו צד שמאל */
+	width: 96px;
 	height: auto;
 	display: block;
-	background: #FFFFFF;
-	border-radius: 16px;
-	padding: 9px;
-	box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+	margin: 4px 0 2px;
+	opacity: 0.92;
+	filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.45));
 }
 @media (max-width: 600px) {
-	.phsg-kosher { width: 84px; padding: 7px; border-radius: 13px; }
+	.phsg-kosher { width: 78px; }
 }
 
 .phsg-board {

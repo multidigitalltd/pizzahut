@@ -317,16 +317,13 @@ $phsg_sprites = array(
 				</div>
 			</div>
 
-			<div class="phsg-board-row">
-				<img class="phsg-kosher" src="<?php echo esc_url( PHSG_PLUGIN_URL . 'assets/img/kosher-beit-yosef.png' ); ?>" alt="<?php echo esc_attr__( 'בהשגחת בד״ץ בית יוסף', 'pizza-hut-slice-game' ); ?>" title="<?php echo esc_attr__( 'בהשגחת בד״ץ בית יוסף', 'pizza-hut-slice-game' ); ?>" loading="lazy">
-				<div class="phsg-board">
-					<div class="phsg-board__head">
-						<span><?php esc_html_e( 'טבלת השיאים', 'pizza-hut-slice-game' ); ?></span>
-						<span class="phsg-board__head-sub"><?php esc_html_e( 'משחק אחרון', 'pizza-hut-slice-game' ); ?></span>
-					</div>
-					<div data-leaderboard>
-						<?php echo phsg_render_leaderboard_rows( $leaderboard ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-					</div>
+			<div class="phsg-board">
+				<div class="phsg-board__head">
+					<span><?php esc_html_e( 'טבלת השיאים', 'pizza-hut-slice-game' ); ?></span>
+					<span class="phsg-board__head-sub"><?php esc_html_e( 'משחק אחרון', 'pizza-hut-slice-game' ); ?></span>
+				</div>
+				<div data-leaderboard>
+					<?php echo phsg_render_leaderboard_rows( $leaderboard ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</div>
 			</div>
 
@@ -351,6 +348,8 @@ $phsg_sprites = array(
 			</div>
 
 				<p class="phsg-fineprint"><?php esc_html_e( 'לא כולל תוספות, לא כולל משלוח, לא כולל כפל מבצעים, תוקף 31.08.27, ט.ל.ח', 'pizza-hut-slice-game' ); ?></p>
+
+			<img class="phsg-kosher" src="<?php echo esc_url( PHSG_PLUGIN_URL . 'assets/img/kosher-beit-yosef.png' ); ?>" alt="<?php echo esc_attr__( 'בהשגחת בד״ץ בית יוסף', 'pizza-hut-slice-game' ); ?>" title="<?php echo esc_attr__( 'בהשגחת בד״ץ בית יוסף', 'pizza-hut-slice-game' ); ?>" loading="lazy">
 		</section>
 
 		<?php // חיווי שמירת התוצאה ?>

@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.12.0
+Stable tag: 12.12.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.12.1 =
+* לוגו הכשרות עבר לצד שמאל בתחתית מסך הסיום (במקום ליד הטבלה), והומר ללוגו לבן ללא רקע.
 
 = 12.12.0 =
 * נוסף לוגו כשרות בד״ץ בית יוסף בצד ימין של טבלת הזוכים במסך הסיום (badge לבן, רספונסיבי).
