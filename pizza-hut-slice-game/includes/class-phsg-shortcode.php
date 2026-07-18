@@ -146,11 +146,11 @@ class PHSG_Shortcode {
 				'logo'        => '', // URL ללוגו. ריק = הלוגו הרשמי המצורף לתוסף.
 				'fullscreen'  => '1', // 1 = השתלטות על כל העמוד (הסתרת התבנית). 0 = הטמעה רגילה.
 				'coupon_code' => '227514', // קוד הפינוק במסך הסיום. ריק = הסתרת הכרטיס.
-				'coupon_url'  => 'https://www.pizzahut.co.il/?utm_source=slice_game&utm_medium=game&utm_campaign=coupon', // יעד כפתור ההזמנה.
+				'coupon_url'  => 'https://order.pizzahut.co.il/order/order-type?utm_source=game&utm_medium=banner&utm_campaign=beinhazmanim2026', // יעד כפתור ההזמנה.
 				'bg'          => PHSG_PLUGIN_URL . 'assets/img/game-bg.png', // תמונת רקע. ברירת מחדל = צילום המותג המצורף. אפשר URL אחר; '' = רקע אדום צבוע.
 				'pizzas'      => '', // רשימת URLים (מופרדים בפסיק) לתמונות פיצה שקופצות. ריק = 4 התמונות המצורפות (משולשים ומגשים).
 				'map'         => PHSG_PLUGIN_URL . 'assets/img/stage-map.png', // תמונת מפת הרקע של הבמה. ריק = ללא.
-				'order_url'   => 'https://www.pizzahut.co.il/?utm_source=slice_game&utm_medium=game&utm_campaign=order', // כפתור "הזמנת פיצה".
+				'order_url'   => 'https://order.pizzahut.co.il/order/order-type?utm_source=game&utm_medium=banner&utm_campaign=beinhazmanim2026', // כפתור "הזמנת פיצה".
 				'branches_url' => 'https://www.pizzahut.co.il/branches/', // קישור לרשימת הסניפים המלאה.
 			),
 			$atts,
