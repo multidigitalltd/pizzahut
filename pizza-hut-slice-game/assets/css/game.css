@@ -1300,18 +1300,20 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 	font-weight: 700; font-size: 42px; line-height: 1.1; }
 
 /* טבלת שיאים */
-/* לוגו כשרות – לבן, ללא רקע, בצד שמאל בתחתית מסך הסיום */
+/* לוגו כשרות – לבן, ללא רקע, בפינה השמאלית העליונה של מסך הסיום */
 .phsg-kosher {
-	align-self: flex-end; /* ב-RTL זהו צד שמאל */
-	width: 96px;
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	z-index: 6;
+	width: 90px;
 	height: auto;
 	display: block;
-	margin: 4px 0 2px;
 	opacity: 0.92;
 	filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.45));
 }
 @media (max-width: 600px) {
-	.phsg-kosher { width: 78px; }
+	.phsg-kosher { width: 72px; }
 }
 
 .phsg-board {

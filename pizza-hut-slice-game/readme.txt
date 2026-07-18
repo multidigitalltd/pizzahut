@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.12.1
+Stable tag: 12.13.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,11 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.13.0 =
+* המקרא בתחתית המשחק כולל עכשיו את כל האלמנטים: משולש +1, מגש +1, זהב +3, קרטון +3, נקודת פיצה האט +5, בצל / עגבנייה / פטרייה −1, פלפל חריף −2, ורצף 5 = +2.
+* לוגו הכשרות הועבר לפינה השמאלית העליונה של מסך הסיום.
+* בכרטיס הקופון הוסרו המילים "להזמנת פיצה" מהמשפט.
 
 = 12.12.1 =
 * לוגו הכשרות עבר לצד שמאל בתחתית מסך הסיום (במקום ליד הטבלה), והומר ללוגו לבן ללא רקע.

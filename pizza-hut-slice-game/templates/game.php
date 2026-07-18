@@ -279,10 +279,13 @@ $phsg_sprites = array(
 
 			<div class="phsg-chips">
 					<span class="phsg-chip"><img class="phsg-chip__img" src="<?php echo esc_url( $phsg_pizza_list[0] ); ?>" alt=""> &lrm;+1</span>
+					<span class="phsg-chip"><img class="phsg-chip__img" src="<?php echo esc_url( $phsg_pizza_list[2] ); ?>" alt=""> &lrm;+1</span>
 					<span class="phsg-chip phsg-chip--gold"><img class="phsg-chip__img" src="<?php echo esc_url( $phsg_pizza_list[1] ); ?>" alt=""> &lrm;+3</span>
 					<span class="phsg-chip phsg-chip--gold"><img class="phsg-chip__img" src="<?php echo esc_url( $phsg_sprites['box'] ); ?>" alt=""> &lrm;+3</span>
 					<span class="phsg-chip phsg-chip--pin"><img class="phsg-chip__img" src="<?php echo esc_url( $phsg_sprites['pin'] ); ?>" alt=""> &lrm;+5</span>
 					<span class="phsg-chip"><img class="phsg-chip__img" src="<?php echo esc_url( $phsg_sprites['onion'] ); ?>" alt=""> &lrm;−1</span>
+					<span class="phsg-chip"><img class="phsg-chip__img" src="<?php echo esc_url( $phsg_sprites['tomato'] ); ?>" alt=""> &lrm;−1</span>
+					<span class="phsg-chip"><img class="phsg-chip__img" src="<?php echo esc_url( $phsg_sprites['mushroom'] ); ?>" alt=""> &lrm;−1</span>
 					<span class="phsg-chip"><img class="phsg-chip__img" src="<?php echo esc_url( $phsg_sprites['chili'] ); ?>" alt=""> &lrm;−2</span>
 					<span class="phsg-chip"><?php esc_html_e( 'רצף 5 = +2', 'pizza-hut-slice-game' ); ?></span>
 				</div>
@@ -331,7 +334,7 @@ $phsg_sprites = array(
 			<?php if ( ! empty( $atts['coupon_code'] ) ) : ?>
 				<div class="phsg-coupon-card">
 					<h3 class="phsg-coupon-card__title"><?php esc_html_e( 'עוד לא יודעים אם תזכו…', 'pizza-hut-slice-game' ); ?></h3>
-					<p class="phsg-coupon-card__text"><?php esc_html_e( 'אבל בינתיים החלטנו לפנק אתכם בקוד קופון להזמנת פיצה עכשיו:', 'pizza-hut-slice-game' ); ?></p>
+					<p class="phsg-coupon-card__text"><?php esc_html_e( 'אבל בינתיים החלטנו לפנק אתכם בקוד קופון:', 'pizza-hut-slice-game' ); ?></p>
 					<button type="button" class="phsg-coupon-code" data-action="copy-coupon" data-coupon-code="<?php echo esc_attr( $atts['coupon_code'] ); ?>" title="<?php echo esc_attr__( 'לחצו להעתקה', 'pizza-hut-slice-game' ); ?>">
 						<?php echo esc_html( $atts['coupon_code'] ); ?> 📋
 					</button>
