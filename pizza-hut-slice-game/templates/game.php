@@ -196,7 +196,7 @@ $phsg_sprites = array(
 				</label>
 				<label class="phsg-consent">
 					<input type="checkbox" name="consent" value="1">
-					<span><?php esc_html_e( 'קראתי ואני מאשר/ת את התקנון ואת קבלת עדכונים שיווקיים. השם שלי יוצג בטבלת השיאים (ללא טלפון או אימייל).', 'pizza-hut-slice-game' ); ?></span>
+					<span><?php esc_html_e( 'קראתי ואני מאשר/ת את', 'pizza-hut-slice-game' ); ?> <button type="button" class="phsg-termslink" data-action="open-terms"><?php esc_html_e( 'תקנון הפעילות', 'pizza-hut-slice-game' ); ?></button> <?php esc_html_e( 'ואת קבלת עדכונים שיווקיים. השם שלי יוצג בטבלת השיאים (ללא טלפון או אימייל).', 'pizza-hut-slice-game' ); ?></span>
 				</label>
 				<div class="phsg-form-error" data-form-error hidden></div>
 				<button type="submit" class="phsg-cta"><?php esc_html_e( 'יאללה, למשחק', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span></button>
@@ -376,6 +376,23 @@ $phsg_sprites = array(
 			</div>
 			<div class="phsg-modal__foot">
 				<a class="phsg-cta phsg-modal__order" href="<?php echo esc_url( $atts['order_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'מזמינים פיצה עכשיו', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span></a>
+			</div>
+		</div>
+	</div>
+
+	<?php // חלון תקנון הפעילות ?>
+	<div class="phsg-modal" data-terms-modal hidden>
+		<div class="phsg-modal__backdrop" data-action="close-terms"></div>
+		<div class="phsg-modal__box" role="dialog" aria-modal="true" aria-label="<?php echo esc_attr__( 'תקנון הפעילות', 'pizza-hut-slice-game' ); ?>">
+			<div class="phsg-modal__head">
+				<span class="phsg-modal__title"><?php esc_html_e( 'תקנון הפעילות', 'pizza-hut-slice-game' ); ?></span>
+				<button type="button" class="phsg-modal__close" data-action="close-terms" aria-label="<?php echo esc_attr__( 'סגירה', 'pizza-hut-slice-game' ); ?>">✕</button>
+			</div>
+			<div class="phsg-modal__body">
+				<?php echo phsg_render_terms(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+			</div>
+			<div class="phsg-modal__foot">
+				<button type="button" class="phsg-cta phsg-modal__order" data-action="close-terms"><?php esc_html_e( 'הבנתי, סגירה', 'pizza-hut-slice-game' ); ?></button>
 			</div>
 		</div>
 	</div>

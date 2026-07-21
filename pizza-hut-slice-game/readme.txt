@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.13.1
+Stable tag: 12.14.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.14.0 =
+* נוסף תקנון הפעילות המלא. בטופס ההצטרפות תיבת האישור מקשרת ל"תקנון הפעילות" שנפתח בחלון קריא (5 סעיפים ראשיים), וחובה לאשר אותו כדי להשתתף.
 
 = 12.13.1 =
 * כל הכפתורים שמפנים להזמנה (באנר "להזמנה", "מזמינים פיצה עכשיו" בקופון ובחלון) עודכנו לכתובת ההזמנה החדשה: order.pizzahut.co.il עם פרמטרי UTM של קמפיין "בין הזמנים 2026".

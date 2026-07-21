@@ -1949,6 +1949,33 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 
 .phsg-modal__body { padding: 14px 18px; overflow-y: auto; }
 
+/* קישור "תקנון הפעילות" בתוך תיבת האישור */
+.phsg-termslink {
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	font-weight: 700;
+	color: #FF9A90;
+	text-decoration: underline;
+	cursor: pointer;
+}
+.phsg-termslink:hover { color: #FFD0CB; }
+
+/* תוכן חלון התקנון */
+.phsg-terms { text-align: right; }
+.phsg-terms__intro { margin: 0 0 12px; font-size: 14.5px; line-height: 1.65; color: #EDE6DF; font-weight: 500; }
+.phsg-terms__title {
+	margin: 18px 0 7px;
+	font-family: "Almoni", "Rubik", sans-serif;
+	font-weight: 700;
+	font-size: 17px;
+	color: #F0EFDD;
+}
+.phsg-terms__list { margin: 0; padding-inline-start: 22px; display: flex; flex-direction: column; gap: 9px; }
+.phsg-terms__list li { font-size: 13.5px; line-height: 1.6; color: #D6CFC8; }
+
 .phsg-branch-group { margin-bottom: 16px; }
 
 .phsg-branch-group__title {

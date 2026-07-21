@@ -370,6 +370,16 @@
 				if (bmc) { bmc.setAttribute('hidden', ''); }
 				break;
 			}
+			case 'open-terms': {
+				var tm = this.root.querySelector('[data-terms-modal]');
+				if (tm) { tm.removeAttribute('hidden'); }
+				break;
+			}
+			case 'close-terms': {
+				var tmc = this.root.querySelector('[data-terms-modal]');
+				if (tmc) { tmc.setAttribute('hidden', ''); }
+				break;
+			}
 			case 'toggle-instructions': {
 				var panel = this.root.querySelector('[data-instructions]');
 				var btn = this.root.querySelector('[data-action="toggle-instructions"]');
