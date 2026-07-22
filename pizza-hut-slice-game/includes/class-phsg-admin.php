@@ -30,6 +30,7 @@ class PHSG_Admin {
 			'jdn'   => __( 'אתר JDN', 'pizza-hut-slice-game' ),
 			'prog'  => __( 'אתר פרוג', 'pizza-hut-slice-game' ),
 			'kikar' => __( 'כיכר השבת', 'pizza-hut-slice-game' ),
+			'wa'    => __( 'ווטסאפ', 'pizza-hut-slice-game' ),
 		);
 
 		if ( isset( $map[ $s ] ) ) {
