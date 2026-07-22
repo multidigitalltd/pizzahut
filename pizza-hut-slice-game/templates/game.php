@@ -361,6 +361,11 @@ $phsg_sprites = array(
 			<span class="phsg-loader__text"><?php esc_html_e( 'שומרים את התוצאה…', 'pizza-hut-slice-game' ); ?></span>
 		</div>
 
+		<?php // קרדיט פיתוח ?>
+		<footer class="phsg-footer">
+			<a class="phsg-footer__credit" href="https://m-d.co.il/" target="_blank" rel="noopener nofollow">dev by multidigital</a>
+		</footer>
+
 	</div>
 
 	<?php // חלון רשימת הסניפים ?>

@@ -387,6 +387,27 @@ html.phsg-takeover body > *:not(.phsg-takeover-host) {
 .phsg-stage.is-paused .phsg-stage__dots i,
 .phsg-stage.is-paused .phsg-stage__dust i { animation-play-state: paused !important; }
 
+/* ===== פוטר קרדיט ===== */
+.phsg-footer {
+	width: 100%;
+	margin-top: 14px;
+	padding: 10px 0 4px;
+	text-align: center;
+	flex-shrink: 0;
+}
+.phsg-footer__credit {
+	font-family: "Almoni", "Rubik", sans-serif;
+	font-size: 12px;
+	font-weight: 500;
+	letter-spacing: 0.3px;
+	color: rgba(240, 239, 221, 0.6);
+	text-decoration: none;
+	direction: ltr;
+	unicode-bidi: isolate;
+	transition: color 0.15s ease;
+}
+.phsg-footer__credit:hover { color: rgba(240, 239, 221, 0.95); text-decoration: underline; }
+
 /* ===== מסכים ===== */
 .phsg-screen { display: none; }
 .phsg-screen.is-active { display: flex; }

@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.14.0
+Stable tag: 12.14.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.14.1 =
+* נוסף קרדיט פיתוח בפוטר: "dev by multidigital" עם קישור ל-https://m-d.co.il/.
 
 = 12.14.0 =
 * נוסף תקנון הפעילות המלא. בטופס ההצטרפות תיבת האישור מקשרת ל"תקנון הפעילות" שנפתח בחלון קריא (5 סעיפים ראשיים), וחובה לאשר אותו כדי להשתתף.
