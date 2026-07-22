@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.15.0
+Stable tag: 12.16.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.16.0 =
+* נוסף דשבורד "דירוג משתתפים (רשימת זוכים)" בגב האתר: דירוג לפי השיא של כל משתתף (dedup לפי אימייל), עם מספר מקום, שובר-שוויון לפי זמן תגובה ואז הגשה מוקדמת, והדגשת 3 המקומות הראשונים. כולל ייצוא CSV של רשימת הזוכים (ממוספר לפי מקום, עם פרטי קשר ומקור).
 
 = 12.15.0 =
 * דשבורד הלידים בגב האתר מציג עכשיו "פילוח לפי מקור" (utm_source) עם תוויות בעברית: אתר JDN, אתר פרוג, כיכר השבת (ומקורות נוספים / ישיר). לכל מקור מוצגת כמות הלידים, קישור סינון, וייצוא CSV נפרד.

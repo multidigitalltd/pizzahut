@@ -49,6 +49,54 @@ class PHSG_Admin {
 	public function register() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 		add_action( 'admin_post_phsg_export_csv', array( $this, 'export_csv' ) );
+		add_action( 'admin_post_phsg_export_winners', array( $this, 'export_winners' ) );
+	}
+
+	/**
+	 * דירוג המשתתפים – השיא הטוב ביותר לכל משתתף (dedup לפי אימייל), בסדר הזכייה.
+	 *
+	 * @param int $limit מספר משתתפים מרבי להחזרה.
+	 * @return array מערך שורות ARRAY_A מדורגות.
+	 */
+	public static function get_ranked_participants( $limit = 100 ) {
+		global $wpdb;
+		$table = PHSG_DB::table_name();
+		$limit = max( 1, min( 1000, (int) $limit ) );
+		$fetch = min( 10000, $limit * 50 );
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, full_name, phone, email, score, clicks, duration, avg_reaction, utm_source, created_at
+				 FROM {$table}
+				 ORDER BY score DESC, avg_reaction ASC, created_at ASC, id ASC
+				 LIMIT %d", // phpcs:ignore WordPress.DB
+				$fetch
+			),
+			ARRAY_A
+		);
+
+		if ( ! is_array( $rows ) ) {
+			return array();
+		}
+
+		$seen = array();
+		$out  = array();
+		foreach ( $rows as $r ) {
+			$key = strtolower( (string) $r['email'] );
+			if ( '' === $key ) {
+				$key = 'id:' . $r['id']; // ללא אימייל – כל רשומה ייחודית.
+			}
+			if ( isset( $seen[ $key ] ) ) {
+				continue;
+			}
+			$seen[ $key ] = true;
+			$out[]        = $r;
+			if ( count( $out ) >= $limit ) {
+				break;
+			}
+		}
+
+		return $out;
 	}
 
 	/**
@@ -129,6 +177,52 @@ class PHSG_Admin {
 			esc_html__( 'סה"כ משתתפים: %d', 'pizza-hut-slice-game' ),
 			(int) $total
 		) . '</p>';
+
+		// ===== דירוג משתתפים / זוכים =====
+		$ranked        = self::get_ranked_participants( 100 );
+		$winners_url   = wp_nonce_url(
+			admin_url( 'admin-post.php?action=phsg_export_winners' ),
+			'phsg_export_winners'
+		);
+
+		echo '<h2>' . esc_html__( 'דירוג משתתפים (רשימת זוכים)', 'pizza-hut-slice-game' ) . '</h2>';
+		echo '<p class="description">' . esc_html__( 'דירוג לפי הניקוד הטוב ביותר של כל משתתף. שובר-שוויון: זמן תגובה ממוצע קצר יותר ואז ההגשה המוקדמת. 3 המקומות הראשונים מודגשים.', 'pizza-hut-slice-game' ) . '</p>';
+		echo '<p><a href="' . esc_url( $winners_url ) . '" class="button button-primary">' .
+			esc_html__( 'ייצוא דירוג/זוכים ל-CSV', 'pizza-hut-slice-game' ) . '</a></p>';
+
+		echo '<table class="widefat striped">';
+		echo '<thead><tr>';
+		echo '<th>' . esc_html__( 'מקום', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'שם', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'טלפון', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'אימייל', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'מקור', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'ניקוד', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'תגובה ממוצעת (מ"ש)', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'תאריך', 'pizza-hut-slice-game' ) . '</th>';
+		echo '</tr></thead><tbody>';
+
+		if ( empty( $ranked ) ) {
+			echo '<tr><td colspan="8">' . esc_html__( 'אין עדיין משתתפים.', 'pizza-hut-slice-game' ) . '</td></tr>';
+		} else {
+			$rank = 0;
+			foreach ( $ranked as $r ) {
+				$rank++;
+				$medal = 1 === $rank ? '🥇 ' : ( 2 === $rank ? '🥈 ' : ( 3 === $rank ? '🥉 ' : '' ) );
+				$style = $rank <= 3 ? ' style="background:#fff6d5;font-weight:bold"' : '';
+				echo '<tr' . $style . '>';
+				echo '<td>' . $medal . (int) $rank . '</td>';
+				echo '<td>' . esc_html( $r['full_name'] ) . '</td>';
+				echo '<td>' . esc_html( $r['phone'] ) . '</td>';
+				echo '<td>' . esc_html( $r['email'] ) . '</td>';
+				echo '<td>' . esc_html( self::source_label( $r['utm_source'] ) ) . '</td>';
+				echo '<td>' . esc_html( $r['score'] ) . '</td>';
+				echo '<td>' . esc_html( $r['avg_reaction'] ) . '</td>';
+				echo '<td>' . esc_html( $r['created_at'] ) . '</td>';
+				echo '</tr>';
+			}
+		}
+		echo '</tbody></table>';
 
 		// ===== פילוח לידים לפי מקור =====
 		echo '<h2>' . esc_html__( 'פילוח לפי מקור', 'pizza-hut-slice-game' ) . '</h2>';
@@ -295,6 +389,49 @@ class PHSG_Admin {
 				);
 				fputcsv( $output, array_map( array( $this, 'neutralize_csv_value' ), $out ) );
 			}
+		}
+
+		fclose( $output );
+		exit;
+	}
+
+	/**
+	 * ייצוא דירוג המשתתפים (זוכים) ל-CSV – שיא לכל משתתף, ממוספר לפי מקום.
+	 *
+	 * @return void
+	 */
+	public function export_winners() {
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_die( esc_html__( 'אין לך הרשאה.', 'pizza-hut-slice-game' ) );
+		}
+		check_admin_referer( 'phsg_export_winners' );
+
+		$ranked = self::get_ranked_participants( 1000 );
+
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename=pizza-hut-winners-' . gmdate( 'Y-m-d' ) . '.csv' );
+
+		$output = fopen( 'php://output', 'w' );
+		fwrite( $output, "\xEF\xBB\xBF" );
+
+		fputcsv(
+			$output,
+			array(
+				'Rank', 'Full Name', 'Phone', 'Email', 'Source', 'Score',
+				'Avg Reaction (ms)', 'Duration', 'UTM Source', 'Created At',
+			)
+		);
+
+		$rank = 0;
+		foreach ( $ranked as $r ) {
+			$rank++;
+			$row = array(
+				$rank, $r['full_name'], $r['phone'], $r['email'],
+				self::source_label( $r['utm_source'] ), $r['score'],
+				$r['avg_reaction'], $r['duration'], $r['utm_source'], $r['created_at'],
+			);
+			fputcsv( $output, array_map( array( $this, 'neutralize_csv_value' ), $row ) );
 		}
 
 		fclose( $output );
