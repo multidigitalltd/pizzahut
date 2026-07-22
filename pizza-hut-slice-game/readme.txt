@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.16.1
+Stable tag: 12.17.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.17.0 =
+* נוספה הפניה (301) מעמוד הבית של האתר לעמוד המשחק /game11/. מוגן מפני לולאת הפניה ומדלג על ניהול/AJAX/REST. ניתן לשנות יעד דרך הפילטר phsg_front_redirect_url.
 
 = 12.16.1 =
 * נוסף תיוג מקור: utm_source=wa יתויג כ"ווטסאפ" בדשבורד ובייצוא.
