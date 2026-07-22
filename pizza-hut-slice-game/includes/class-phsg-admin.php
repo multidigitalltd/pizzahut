@@ -18,6 +18,30 @@ class PHSG_Admin {
 	const MENU_SLUG  = 'phsg-scores';
 
 	/**
+	 * מיפוי מקור (utm_source) לתווית קמפיין קריאה.
+	 *
+	 * @param string $source utm_source.
+	 * @return string תווית מקור בעברית.
+	 */
+	public static function source_label( $source ) {
+		$s = strtolower( trim( (string) $source ) );
+
+		$map = array(
+			'jdn'   => __( 'אתר JDN', 'pizza-hut-slice-game' ),
+			'prog'  => __( 'אתר פרוג', 'pizza-hut-slice-game' ),
+			'kikar' => __( 'כיכר השבת', 'pizza-hut-slice-game' ),
+		);
+
+		if ( isset( $map[ $s ] ) ) {
+			return $map[ $s ];
+		}
+		if ( '' === $s ) {
+			return __( 'ישיר / לא ידוע', 'pizza-hut-slice-game' );
+		}
+		return $source;
+	}
+
+	/**
 	 * רישום ה-hooks.
 	 *
 	 * @return void
@@ -57,17 +81,38 @@ class PHSG_Admin {
 		global $wpdb;
 		$table = PHSG_DB::table_name();
 
+		// סינון לפי מקור (utm_source) – מהקישור בדשבורד.
+		$source_filter = isset( $_GET['source'] ) ? sanitize_text_field( wp_unslash( $_GET['source'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+
+		// פילוח לפי מקור – ספירת לידים לכל utm_source.
+		$breakdown = $wpdb->get_results(
+			"SELECT utm_source AS src, COUNT(*) AS cnt
+			 FROM {$table}
+			 GROUP BY utm_source
+			 ORDER BY cnt DESC", // phpcs:ignore WordPress.DB
+			ARRAY_A
+		);
+
+		$total = PHSG_DB::total_players();
+
 		// עימוד בסיסי.
 		$per_page = 30;
 		$paged    = isset( $_GET['paged'] ) ? max( 1, absint( wp_unslash( $_GET['paged'] ) ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification
 		$offset   = ( $paged - 1 ) * $per_page;
 
-		$total = PHSG_DB::total_players();
-		$rows  = $wpdb->get_results(
+		// WHERE לפי מקור (אם נבחר).
+		$where     = '';
+		$where_cnt = $total;
+		if ( '' !== $source_filter ) {
+			$where     = $wpdb->prepare( ' WHERE utm_source = %s', $source_filter );
+			$where_cnt = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" . $where ); // phpcs:ignore WordPress.DB
+		}
+
+		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id, full_name, phone, email, score, clicks, duration, avg_reaction,
 						utm_source, utm_medium, utm_campaign, created_at
-				 FROM {$table}
+				 FROM {$table}{$where}
 				 ORDER BY score DESC, avg_reaction ASC, created_at ASC
 				 LIMIT %d OFFSET %d", // phpcs:ignore WordPress.DB
 				$per_page,
@@ -75,10 +120,7 @@ class PHSG_Admin {
 			)
 		);
 
-		$export_url = wp_nonce_url(
-			admin_url( 'admin-post.php?action=phsg_export_csv' ),
-			'phsg_export_csv'
-		);
+		$base_url = admin_url( 'admin.php?page=' . self::MENU_SLUG );
 
 		echo '<div class="wrap">';
 		echo '<h1>' . esc_html__( 'Pizza Hut – תוצאות המשחק', 'pizza-hut-slice-game' ) . '</h1>';
@@ -87,14 +129,61 @@ class PHSG_Admin {
 			esc_html__( 'סה"כ משתתפים: %d', 'pizza-hut-slice-game' ),
 			(int) $total
 		) . '</p>';
-		echo '<p><a href="' . esc_url( $export_url ) . '" class="button button-primary">' .
-			esc_html__( 'ייצוא CSV', 'pizza-hut-slice-game' ) . '</a></p>';
+
+		// ===== פילוח לידים לפי מקור =====
+		echo '<h2>' . esc_html__( 'פילוח לפי מקור', 'pizza-hut-slice-game' ) . '</h2>';
+		echo '<table class="widefat striped" style="max-width:640px">';
+		echo '<thead><tr><th>' . esc_html__( 'מקור', 'pizza-hut-slice-game' ) . '</th><th>utm_source</th><th>' .
+			esc_html__( 'כמות לידים', 'pizza-hut-slice-game' ) . '</th><th>' . esc_html__( 'פעולה', 'pizza-hut-slice-game' ) . '</th></tr></thead><tbody>';
+
+		$all_active = '' === $source_filter ? ' style="font-weight:bold"' : '';
+		echo '<tr' . $all_active . '><td>' . esc_html__( 'כל המקורות', 'pizza-hut-slice-game' ) . '</td><td>—</td><td>' .
+			(int) $total . '</td><td><a href="' . esc_url( $base_url ) . '">' . esc_html__( 'הצג הכל', 'pizza-hut-slice-game' ) . '</a></td></tr>';
+
+		if ( ! empty( $breakdown ) ) {
+			foreach ( $breakdown as $b ) {
+				$src        = (string) $b['src'];
+				$is_active  = ( $src === $source_filter ) ? ' style="font-weight:bold"' : '';
+				$filter_url = add_query_arg( 'source', rawurlencode( $src ), $base_url );
+				$export_src = wp_nonce_url(
+					admin_url( 'admin-post.php?action=phsg_export_csv&source=' . rawurlencode( $src ) ),
+					'phsg_export_csv'
+				);
+				echo '<tr' . $is_active . '>';
+				echo '<td>' . esc_html( self::source_label( $src ) ) . '</td>';
+				echo '<td>' . ( '' === $src ? '—' : esc_html( $src ) ) . '</td>';
+				echo '<td>' . (int) $b['cnt'] . '</td>';
+				echo '<td><a href="' . esc_url( $filter_url ) . '">' . esc_html__( 'סנן', 'pizza-hut-slice-game' ) . '</a> · ' .
+					'<a href="' . esc_url( $export_src ) . '">' . esc_html__( 'ייצוא CSV', 'pizza-hut-slice-game' ) . '</a></td>';
+				echo '</tr>';
+			}
+		}
+		echo '</tbody></table>';
+
+		// ===== רשימת הלידים =====
+		$export_all = wp_nonce_url(
+			admin_url( 'admin-post.php?action=phsg_export_csv' ),
+			'phsg_export_csv'
+		);
+		$export_filtered = '' === $source_filter ? $export_all : wp_nonce_url(
+			admin_url( 'admin-post.php?action=phsg_export_csv&source=' . rawurlencode( $source_filter ) ),
+			'phsg_export_csv'
+		);
+
+		echo '<h2 style="margin-top:24px">' . esc_html__( 'לידים', 'pizza-hut-slice-game' );
+		if ( '' !== $source_filter ) {
+			echo ' — ' . esc_html( self::source_label( $source_filter ) ) . ' (' . (int) $where_cnt . ')';
+		}
+		echo '</h2>';
+		echo '<p><a href="' . esc_url( $export_filtered ) . '" class="button button-primary">' .
+			esc_html__( 'ייצוא CSV', 'pizza-hut-slice-game' ) . ( '' !== $source_filter ? ' (' . esc_html( self::source_label( $source_filter ) ) . ')' : '' ) . '</a></p>';
 
 		echo '<table class="widefat striped">';
 		echo '<thead><tr>';
 		echo '<th>#</th><th>' . esc_html__( 'שם', 'pizza-hut-slice-game' ) . '</th>';
 		echo '<th>' . esc_html__( 'טלפון', 'pizza-hut-slice-game' ) . '</th>';
 		echo '<th>' . esc_html__( 'אימייל', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'מקור', 'pizza-hut-slice-game' ) . '</th>';
 		echo '<th>' . esc_html__( 'ניקוד', 'pizza-hut-slice-game' ) . '</th>';
 		echo '<th>' . esc_html__( 'לחיצות', 'pizza-hut-slice-game' ) . '</th>';
 		echo '<th>' . esc_html__( 'משך', 'pizza-hut-slice-game' ) . '</th>';
@@ -104,7 +193,7 @@ class PHSG_Admin {
 		echo '</tr></thead><tbody>';
 
 		if ( empty( $rows ) ) {
-			echo '<tr><td colspan="10">' . esc_html__( 'אין עדיין תוצאות.', 'pizza-hut-slice-game' ) . '</td></tr>';
+			echo '<tr><td colspan="11">' . esc_html__( 'אין עדיין תוצאות.', 'pizza-hut-slice-game' ) . '</td></tr>';
 		} else {
 			foreach ( $rows as $r ) {
 				$utm = array_filter( array( $r->utm_source, $r->utm_medium, $r->utm_campaign ) );
@@ -113,6 +202,7 @@ class PHSG_Admin {
 				echo '<td>' . esc_html( $r->full_name ) . '</td>';
 				echo '<td>' . esc_html( $r->phone ) . '</td>';
 				echo '<td>' . esc_html( $r->email ) . '</td>';
+				echo '<td><strong>' . esc_html( self::source_label( $r->utm_source ) ) . '</strong></td>';
 				echo '<td>' . esc_html( $r->score ) . '</td>';
 				echo '<td>' . esc_html( $r->clicks ) . '</td>';
 				echo '<td>' . esc_html( $r->duration ) . '</td>';
@@ -126,7 +216,7 @@ class PHSG_Admin {
 		echo '</tbody></table>';
 
 		// עימוד.
-		$total_pages = (int) ceil( $total / $per_page );
+		$total_pages = (int) ceil( $where_cnt / $per_page );
 		if ( $total_pages > 1 ) {
 			echo '<div class="tablenav"><div class="tablenav-pages">';
 			echo wp_kses_post(
@@ -159,17 +249,26 @@ class PHSG_Admin {
 		global $wpdb;
 		$table = PHSG_DB::table_name();
 
+		// סינון אופציונלי לפי מקור (utm_source).
+		$source_filter = isset( $_GET['source'] ) ? sanitize_text_field( wp_unslash( $_GET['source'] ) ) : '';
+		$where         = '';
+		if ( '' !== $source_filter ) {
+			$where = $wpdb->prepare( ' WHERE utm_source = %s', $source_filter );
+		}
+
 		$rows = $wpdb->get_results(
 			"SELECT id, full_name, phone, email, consent, score, clicks, duration, avg_reaction,
 					utm_source, utm_medium, utm_campaign, utm_term, utm_content, created_at
-			 FROM {$table}
+			 FROM {$table}{$where}
 			 ORDER BY score DESC, avg_reaction ASC, created_at ASC", // phpcs:ignore WordPress.DB
 			ARRAY_A
 		);
 
+		$suffix = '' !== $source_filter ? '-' . sanitize_file_name( $source_filter ) : '';
+
 		nocache_headers();
 		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename=pizza-hut-scores-' . gmdate( 'Y-m-d' ) . '.csv' );
+		header( 'Content-Disposition: attachment; filename=pizza-hut-leads' . $suffix . '-' . gmdate( 'Y-m-d' ) . '.csv' );
 
 		$output = fopen( 'php://output', 'w' );
 		// BOM לתמיכה בעברית ב-Excel.
@@ -178,7 +277,7 @@ class PHSG_Admin {
 		fputcsv(
 			$output,
 			array(
-				'ID', 'Full Name', 'Phone', 'Email', 'Consent', 'Score', 'Clicks', 'Duration',
+				'ID', 'Full Name', 'Phone', 'Email', 'Consent', 'Source', 'Score', 'Clicks', 'Duration',
 				'Avg Reaction (ms)', 'UTM Source', 'UTM Medium', 'UTM Campaign',
 				'UTM Term', 'UTM Content', 'Created At',
 			)
@@ -186,7 +285,15 @@ class PHSG_Admin {
 
 		if ( $rows ) {
 			foreach ( $rows as $r ) {
-				fputcsv( $output, array_map( array( $this, 'neutralize_csv_value' ), $r ) );
+				// הוספת תווית מקור קריאה מיד לאחר Consent.
+				$out = array(
+					$r['id'], $r['full_name'], $r['phone'], $r['email'], $r['consent'],
+					self::source_label( $r['utm_source'] ),
+					$r['score'], $r['clicks'], $r['duration'], $r['avg_reaction'],
+					$r['utm_source'], $r['utm_medium'], $r['utm_campaign'],
+					$r['utm_term'], $r['utm_content'], $r['created_at'],
+				);
+				fputcsv( $output, array_map( array( $this, 'neutralize_csv_value' ), $out ) );
 			}
 		}
 

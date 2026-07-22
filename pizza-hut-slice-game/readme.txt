@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.14.1
+Stable tag: 12.15.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.15.0 =
+* דשבורד הלידים בגב האתר מציג עכשיו "פילוח לפי מקור" (utm_source) עם תוויות בעברית: אתר JDN, אתר פרוג, כיכר השבת (ומקורות נוספים / ישיר). לכל מקור מוצגת כמות הלידים, קישור סינון, וייצוא CSV נפרד.
+* נוספה עמודת "מקור" בטבלת הלידים, וייצוא ה-CSV כולל עמודת Source (תווית קריאה) לצד כל שדות ה-UTM – מוכן לפתיחה ב-Excel.
 
 = 12.14.1 =
 * נוסף קרדיט פיתוח בפוטר: "dev by multidigital" עם קישור ל-https://m-d.co.il/.
