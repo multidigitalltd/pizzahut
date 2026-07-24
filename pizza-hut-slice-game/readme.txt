@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.17.1
+Stable tag: 12.17.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.17.2 =
+* תוקן: האייקונים בכותרת נעלמו במעבר עכבר — כלל ה-hover דרס את תמונת האייקון (background מקוצר). הוחלף ל-background-color והאייקון נשאר גלוי.
 
 = 12.17.1 =
 * תוקן "המשחק לא אומת" בסוף המשחק: הטוקן כבר לא נקשר ל-IP (שמתחלף במובייל בין WiFi לסלולר) ותוקפו הוארך לשעתיים למשחקים ארוכים. ההגנות נשמרו: nonce, טוקן חד-פעמי, הגבלת קצב ואנטי-רמייה.
