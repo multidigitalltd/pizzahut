@@ -51,8 +51,11 @@ class PHSG_Ajax {
 		}
 
 		$token = wp_generate_password( 32, false, false );
-		// הטוקן תקף ל-15 דקות וקשור ל-IP שהנפיק אותו.
-		set_transient( 'phsg_tok_' . $token, $ip_hash, 15 * MINUTE_IN_SECONDS );
+		// טוקן חד-פעמי, תקף לשעתיים (מכסה גם משחקים ארוכים בשלבים אינסופיים).
+		// לא נקשר ל-IP: במובייל ה-IP מתחלף באמצע המשחק (WiFi/סלולר/NAT) והיה
+		// גורם ל"המשחק לא אומת" לשחקנים כשרים. ההגנה נשמרת: הטוקן מונפק רק מול
+		// nonce תקין, חד-פעמי, מוגבל בזמן, ובנוסף יש הגבלת קצב ובדיקות אנטי-רמייה.
+		set_transient( 'phsg_tok_' . $token, '1', 2 * HOUR_IN_SECONDS );
 
 		wp_send_json_success( array( 'token' => $token ) );
 	}
@@ -144,7 +147,7 @@ class PHSG_Ajax {
 		$ip_hash = $this->hash_value( $this->get_client_ip() );
 		$token   = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
 
-		if ( '' === $token || get_transient( 'phsg_tok_' . $token ) !== $ip_hash ) {
+		if ( '' === $token || false === get_transient( 'phsg_tok_' . $token ) ) {
 			wp_send_json_error( array( 'message' => __( 'המשחק לא אומת. רעננו את העמוד ונסו שוב.', 'pizza-hut-slice-game' ) ), 403 );
 		}
 		delete_transient( 'phsg_tok_' . $token ); // חד-פעמי.

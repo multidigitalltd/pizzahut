@@ -57,13 +57,9 @@ $phsg_sprites = array(
 			</a>
 
 			<div class="phsg-header__actions">
-				<button type="button" class="phsg-iconbtn" data-action="open-branches" aria-label="<?php echo esc_attr__( 'לסניפים שלנו', 'pizza-hut-slice-game' ); ?>" title="<?php echo esc_attr__( 'לסניפים שלנו', 'pizza-hut-slice-game' ); ?>">
-					<?php echo phsg_svg_pin(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				</button>
-				<button type="button" class="phsg-iconbtn phsg-sound" data-action="toggle-sound" aria-pressed="false" aria-label="<?php echo esc_attr__( 'הפעלה או השתקה של הצליל', 'pizza-hut-slice-game' ); ?>" title="<?php echo esc_attr__( 'צליל', 'pizza-hut-slice-game' ); ?>">
-					<span class="phsg-sound__icon phsg-sound__icon--on"><?php echo phsg_svg_sound( true ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
-					<span class="phsg-sound__icon phsg-sound__icon--off"><?php echo phsg_svg_sound( false ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
-				</button>
+				<?php // האייקונים מוטמעים כרקע CSS (data-URI) ולא כ-SVG בתוך ה-HTML – עמיד בפני סינון/סניטציה של תגי svg. ?>
+				<button type="button" class="phsg-iconbtn phsg-iconbtn--branches" data-action="open-branches" aria-label="<?php echo esc_attr__( 'לסניפים שלנו', 'pizza-hut-slice-game' ); ?>" title="<?php echo esc_attr__( 'לסניפים שלנו', 'pizza-hut-slice-game' ); ?>"></button>
+				<button type="button" class="phsg-iconbtn phsg-sound" data-action="toggle-sound" aria-pressed="false" aria-label="<?php echo esc_attr__( 'הפעלה או השתקה של הצליל', 'pizza-hut-slice-game' ); ?>" title="<?php echo esc_attr__( 'צליל', 'pizza-hut-slice-game' ); ?>"></button>
 			</div>
 		</header>
 
@@ -97,7 +93,7 @@ $phsg_sprites = array(
 			<?php // שני כפתורים – הוראות והתחלה ?>
 			<div class="phsg-intro__buttons">
 				<button type="button" class="phsg-btn phsg-btn--ghost" data-action="toggle-instructions" aria-expanded="false" aria-controls="phsg-instructions">
-					<span class="phsg-btn__ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="7.7" r="1.05" fill="currentColor"/><path d="M12 11v6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><?php esc_html_e( 'הוראות המשחק', 'pizza-hut-slice-game' ); ?>
+					<span class="phsg-btn__ico phsg-ico-info" aria-hidden="true"></span><?php esc_html_e( 'הוראות המשחק', 'pizza-hut-slice-game' ); ?>
 				</button>
 				<button type="button" class="phsg-btn phsg-btn--play" data-action="go-form">
 					<?php esc_html_e( 'התחל משחק', 'pizza-hut-slice-game' ); ?><span class="phsg-arrow" aria-hidden="true">←</span>
@@ -373,7 +369,7 @@ $phsg_sprites = array(
 		<div class="phsg-modal__backdrop" data-action="close-branches"></div>
 		<div class="phsg-modal__box" role="dialog" aria-modal="true" aria-label="<?php echo esc_attr__( 'רשימת החנויות שלנו', 'pizza-hut-slice-game' ); ?>">
 			<div class="phsg-modal__head">
-				<span class="phsg-modal__title"><span class="phsg-modal__title-ico" aria-hidden="true"><?php echo phsg_svg_pin(); // phpcs:ignore WordPress.Security.EscapeOutput ?></span><?php esc_html_e( 'רשימת החנויות שלנו', 'pizza-hut-slice-game' ); ?></span>
+				<span class="phsg-modal__title"><span class="phsg-modal__title-ico phsg-ico-pin" aria-hidden="true"></span><?php esc_html_e( 'רשימת החנויות שלנו', 'pizza-hut-slice-game' ); ?></span>
 				<button type="button" class="phsg-modal__close" data-action="close-branches" aria-label="<?php echo esc_attr__( 'סגירה', 'pizza-hut-slice-game' ); ?>">✕</button>
 			</div>
 			<div class="phsg-modal__body">

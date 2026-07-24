@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.17.0
+Stable tag: 12.17.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.17.1 =
+* תוקן "המשחק לא אומת" בסוף המשחק: הטוקן כבר לא נקשר ל-IP (שמתחלף במובייל בין WiFi לסלולר) ותוקפו הוארך לשעתיים למשחקים ארוכים. ההגנות נשמרו: nonce, טוקן חד-פעמי, הגבלת קצב ואנטי-רמייה.
+* תוקנו האייקונים שנעלמו בכותרת (סניפים/צליל), בכפתור ההוראות ובחלון הסניפים: האייקונים עברו לרקע CSS מוטמע (data-URI) שאינו תלוי בתגי svg ב-HTML — עמיד גם אם מערכת אבטחה/סניטציה מוחקת svg מהעמוד.
 
 = 12.17.0 =
 * נוספה הפניה (301) מעמוד הבית של האתר לעמוד המשחק /game11/. מוגן מפני לולאת הפניה ומדלג על ניהול/AJAX/REST. ניתן לשנות יעד דרך הפילטר phsg_front_redirect_url.
