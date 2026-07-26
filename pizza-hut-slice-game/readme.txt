@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.17.2
+Stable tag: 12.18.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.18.0 =
+* תוקן משורש "בקשה לא מאומתת": הבעיה נגרמה מקאש עמודים שמגיש nonce ישן שפג תוקפו. נוסף endpoint לרענון nonce (לא מקושש), המשחק מרענן nonce אוטומטית בטעינה, ובנוסף מנסה שוב אוטומטית עם nonce טרי אם התקבלה שגיאת אימות (גם בהנפקת טוקן וגם בהגשת תוצאה).
 
 = 12.17.2 =
 * תוקן: האייקונים בכותרת נעלמו במעבר עכבר — כלל ה-hover דרס את תמונת האייקון (background מקוצר). הוחלף ל-background-color והאייקון נשאר גלוי.

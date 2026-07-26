@@ -33,6 +33,26 @@ class PHSG_Ajax {
 		// הנפקת טוקן משחק חד-פעמי (אנטי-רמייה).
 		add_action( 'wp_ajax_phsg_start_game', array( $this, 'start_game' ) );
 		add_action( 'wp_ajax_nopriv_phsg_start_game', array( $this, 'start_game' ) );
+
+		// רענון nonce – פותר nonce שפג בגלל קאש עמודים (דף נחיתה מקושש).
+		add_action( 'wp_ajax_phsg_refresh_nonce', array( $this, 'refresh_nonce' ) );
+		add_action( 'wp_ajax_nopriv_phsg_refresh_nonce', array( $this, 'refresh_nonce' ) );
+	}
+
+	/**
+	 * הנפקת nonce טרי.
+	 *
+	 * דפי נחיתה מוגשים לרוב מקאש, ולכן ה-nonce שמוטמע ב-HTML עלול להיות בן
+	 * יותר מ-24 שעות ופג תוקף ("בקשה לא מאומתת"). ה-endpoint הזה עוקף את
+	 * הקאש (admin-ajax אף פעם לא מקושש) ומחזיר nonce עדכני. אין בכך חשיפה:
+	 * ה-nonce ממילא מוטמע בעמוד ציבורי לכל גולש אנונימי, וההגנות האמיתיות הן
+	 * הטוקן החד-פעמי, הגבלת הקצב והאנטי-רמייה.
+	 *
+	 * @return void
+	 */
+	public function refresh_nonce() {
+		nocache_headers();
+		wp_send_json_success( array( 'nonce' => wp_create_nonce( self::NONCE_ACTION ) ) );
 	}
 
 	/**

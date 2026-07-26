@@ -106,6 +106,8 @@
 		this.participant = null;
 		this.utm = this._captureUtm();
 		this.token = '';
+		// רענון nonce מיידי – הדף לרוב מוגש מקאש וה-nonce המוטמע עלול להיות ישן.
+		this._refreshNonce();
 		this._resetGameState();
 		this._syncSound();
 		this._bind();
@@ -1262,9 +1264,36 @@
 	/* ==================== שרת ==================== */
 
 	/**
-	 * בקשת טוקן חד-פעמי להגשה (אנטי-רמייה).
+	 * רענון nonce מהשרת (עוקף קאש עמודים שמגיש nonce ישן שפג תוקפו).
+	 *
+	 * @param {Function} done נקרא תמיד בסיום (גם בכישלון).
 	 */
-	Game.prototype._requestToken = function () {
+	Game.prototype._refreshNonce = function (done) {
+		var body = new URLSearchParams();
+		body.append('action', 'phsg_refresh_nonce');
+		fetch(CFG.ajaxUrl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+			body: body.toString(),
+			credentials: 'same-origin'
+		})
+			.then(function (res) { return res.json(); })
+			.then(function (json) {
+				if (json && json.success && json.data && json.data.nonce) {
+					CFG.nonce = json.data.nonce;
+				}
+				if (done) { done(); }
+			})
+			.catch(function () { if (done) { done(); } });
+	};
+
+	/**
+	 * בקשת טוקן חד-פעמי להגשה (אנטי-רמייה).
+	 * אם ה-nonce נדחה (עמוד מקושש) – מרעננים nonce ומנסים שוב פעם אחת.
+	 *
+	 * @param {boolean} isRetry ניסיון חוזר לאחר רענון nonce.
+	 */
+	Game.prototype._requestToken = function (isRetry) {
 		var self = this;
 		this.token = '';
 		var body = new URLSearchParams();
@@ -1280,12 +1309,14 @@
 			.then(function (json) {
 				if (json && json.success && json.data && json.data.token) {
 					self.token = json.data.token;
+				} else if (!isRetry) {
+					self._refreshNonce(function () { self._requestToken(true); });
 				}
 			})
 			.catch(function () { /* ההגשה תיכשל בעדינות בהמשך */ });
 	};
 
-	Game.prototype._submitScore = function (result) {
+	Game.prototype._submitScore = function (result, isRetry) {
 		var self = this;
 		this._toggleLoader(true);
 
@@ -1313,18 +1344,25 @@
 			body: body.toString(),
 			credentials: 'same-origin'
 		})
-			.then(function (res) { return res.json(); })
-			.then(function (json) {
-				self._toggleLoader(false);
+			.then(function (res) { return res.json().then(function (json) { return { status: res.status, json: json }; }); })
+			.then(function (r) {
+				var json = r.json;
 				if (json && json.success && json.data) {
+					self._toggleLoader(false);
 					var rank = parseInt(json.data.rank, 10) || 0;
 					self._setText('[data-result="rank"]', rank ? '#' + rank : '—');
 					self._setMedal(rank);
 					self._renderBoard(json.data.leaderboard || [], json.data.display_name || '');
-				} else {
-					var msg = (json && json.data && json.data.message) || t('saveError', 'אירעה שגיאה בשמירה. נסו שוב.');
-					self._boardError(msg);
+					return;
 				}
+				// nonce שפג בגלל קאש – מרעננים nonce ומנסים שוב פעם אחת.
+				if (!isRetry && r.status === 403) {
+					self._refreshNonce(function () { self._submitScore(result, true); });
+					return;
+				}
+				self._toggleLoader(false);
+				var msg = (json && json.data && json.data.message) || t('saveError', 'אירעה שגיאה בשמירה. נסו שוב.');
+				self._boardError(msg);
 			})
 			.catch(function () {
 				self._toggleLoader(false);
