@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.18.0
+Stable tag: 12.18.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.18.1 =
+* עודכן תקנון הפעילות לגרסה החדשה: נוסף סעיף החרגת עובדי טאבסקו החזקות ו/או עובדי הזכיינים ובני משפחותיהם מדרגה ראשונה.
 
 = 12.18.0 =
 * תוקן משורש "בקשה לא מאומתת": הבעיה נגרמה מקאש עמודים שמגיש nonce ישן שפג תוקפו. נוסף endpoint לרענון nonce (לא מקושש), המשחק מרענן nonce אוטומטית בטעינה, ובנוסף מנסה שוב אוטומטית עם nonce טרי אם התקבלה שגיאת אימות (גם בהנפקת טוקן וגם בהגשת תוצאה).
