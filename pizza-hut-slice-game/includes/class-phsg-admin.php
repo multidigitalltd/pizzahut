@@ -27,10 +27,11 @@ class PHSG_Admin {
 		$s = strtolower( trim( (string) $source ) );
 
 		$map = array(
-			'jdn'   => __( 'אתר JDN', 'pizza-hut-slice-game' ),
-			'prog'  => __( 'אתר פרוג', 'pizza-hut-slice-game' ),
-			'kikar' => __( 'כיכר השבת', 'pizza-hut-slice-game' ),
-			'wa'    => __( 'ווטסאפ', 'pizza-hut-slice-game' ),
+			'jdn'     => __( 'אתר JDN', 'pizza-hut-slice-game' ),
+			'prog'    => __( 'אתר פרוג', 'pizza-hut-slice-game' ),
+			'kikar'   => __( 'כיכר השבת', 'pizza-hut-slice-game' ),
+			'wa'      => __( 'ווטסאפ', 'pizza-hut-slice-game' ),
+			'hafsaka' => __( 'הפסקת קפה', 'pizza-hut-slice-game' ),
 		);
 
 		if ( isset( $map[ $s ] ) ) {
