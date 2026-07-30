@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.18.2
+Stable tag: 12.19.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,11 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.19.0 =
+* נוספה התממשקות למערכת הדיוור InforU: כל משתתף שנרשם נוסף אוטומטית לרשימת התפוצה (Create or Update Contact), כולל הוספה לקבוצה לפי שם (AddToGroupName) — אם הקבוצה אינה קיימת היא נוצרת אוטומטית.
+* נוסף מסך "הגדרות דיוור" בגב האתר להזנת שם משתמש, טוקן ושם קבוצה (או דרך wp-config: PHSG_INFORU_USER / PHSG_INFORU_TOKEN / PHSG_INFORU_GROUP). כל עוד השדות ריקים — החיבור כבוי והמשחק עובד רגיל לחלוטין.
+* השליחה אינה חוסמת (blocking=false, timeout 5 שנ'): גם אם ה-API איטי או לא זמין, השחקן מקבל את מסך הסיום כרגיל והליד נשמר תמיד ב-DB.
 
 = 12.18.2 =
 * נוסף תיוג מקור: utm_source=hafsaka יתויג כ"הפסקת קפה" בדשבורד ובייצוא. ללא שינוי בשום התנהגות קיימת.

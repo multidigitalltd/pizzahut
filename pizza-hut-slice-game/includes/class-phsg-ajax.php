@@ -224,6 +224,9 @@ class PHSG_Ajax {
 			wp_send_json_error( array( 'message' => __( 'שמירת התוצאה נכשלה. נסו שוב.', 'pizza-hut-slice-game' ) ), 500 );
 		}
 
+		// דחיפת הליד לרשימת התפוצה (InforU) – fire-and-forget, לעולם לא חוסם את המשחק.
+		$this->push_to_inforu( $full_name, $phone, $email );
+
 		$rank  = PHSG_DB::get_rank( $row_id );
 		$total = PHSG_DB::total_players();
 
@@ -286,6 +289,69 @@ class PHSG_Ajax {
 	 * @param string $value ערך לגיבוב.
 	 * @return string
 	 */
+	/**
+	 * הוספת המשתתף לרשימת התפוצה ב-InforU (Create or Update Contact).
+	 *
+	 * שליחה לא חוסמת (blocking=false): גם אם ה-API איטי או נופל, השחקן מקבל
+	 * את מסך הסיום כרגיל. פועל רק אם הוגדרו שם משתמש וטוקן בהגדרות.
+	 *
+	 * הגדרות (wp_options): phsg_inforu_user, phsg_inforu_token, phsg_inforu_group.
+	 * אפשר גם דרך wp-config.php: PHSG_INFORU_USER / PHSG_INFORU_TOKEN / PHSG_INFORU_GROUP.
+	 *
+	 * @param string $full_name שם מלא.
+	 * @param string $phone     טלפון.
+	 * @param string $email     אימייל.
+	 * @return void
+	 */
+	private function push_to_inforu( $full_name, $phone, $email ) {
+		$user  = defined( 'PHSG_INFORU_USER' ) ? PHSG_INFORU_USER : get_option( 'phsg_inforu_user', '' );
+		$token = defined( 'PHSG_INFORU_TOKEN' ) ? PHSG_INFORU_TOKEN : get_option( 'phsg_inforu_token', '' );
+		$group = defined( 'PHSG_INFORU_GROUP' ) ? PHSG_INFORU_GROUP : get_option( 'phsg_inforu_group', '' );
+
+		// ללא פרטי התחברות – מדלגים בשקט (התוסף עובד רגיל).
+		if ( '' === $user || '' === $token ) {
+			return;
+		}
+
+		// חייב אימייל או טלפון (דרישת ה-API).
+		if ( '' === $email && '' === $phone ) {
+			return;
+		}
+
+		// פיצול השם המלא לשם פרטי ושם משפחה.
+		$clean = trim( preg_replace( '/\s+/u', ' ', (string) $full_name ) );
+		$parts = '' === $clean ? array() : explode( ' ', $clean );
+		$first = isset( $parts[0] ) ? $parts[0] : '';
+		$last  = count( $parts ) > 1 ? implode( ' ', array_slice( $parts, 1 ) ) : '';
+
+		$contact = array(
+			'FirstName'   => $first,
+			'LastName'    => $last,
+			'PhoneNumber' => $phone,
+			'Email'       => $email,
+		);
+
+		if ( '' !== $group ) {
+			// אם הקבוצה לא קיימת – InforU יוצר אותה אוטומטית לפי השם.
+			$contact['AddToGroupName'] = $group;
+		}
+
+		$body = wp_json_encode( array( 'Data' => array( 'List' => array( $contact ) ) ) );
+
+		wp_remote_post(
+			'https://capi.inforu.co.il/api/v2/Contact/CreateOrUpdateContacts',
+			array(
+				'timeout'  => 5,
+				'blocking' => false, // לא מחכים לתשובה – לא מעכב את השחקן.
+				'headers'  => array(
+					'Content-Type'  => 'application/json',
+					'Authorization' => 'Basic ' . base64_encode( $user . ':' . $token ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+				),
+				'body'     => $body,
+			)
+		);
+	}
+
 	private function hash_value( $value ) {
 		if ( '' === $value ) {
 			return '';

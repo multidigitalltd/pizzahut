@@ -116,6 +116,74 @@ class PHSG_Admin {
 			'dashicons-star-filled',
 			26
 		);
+
+		// תת-עמוד: הגדרות חיבור למערכת הדיוור (InforU).
+		add_submenu_page(
+			self::MENU_SLUG,
+			__( 'הגדרות דיוור (InforU)', 'pizza-hut-slice-game' ),
+			__( 'הגדרות דיוור', 'pizza-hut-slice-game' ),
+			self::CAPABILITY,
+			'phsg-inforu',
+			array( $this, 'render_inforu_page' )
+		);
+	}
+
+	/**
+	 * מסך הגדרות חיבור ל-InforU (רשימת תפוצה).
+	 *
+	 * @return void
+	 */
+	public function render_inforu_page() {
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_die( esc_html__( 'אין לך הרשאה לצפות בעמוד זה.', 'pizza-hut-slice-game' ) );
+		}
+
+		$saved = false;
+		if ( isset( $_POST['phsg_inforu_save'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			check_admin_referer( 'phsg_inforu_settings' );
+			update_option( 'phsg_inforu_user', isset( $_POST['phsg_inforu_user'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_inforu_user'] ) ) : '' );
+			update_option( 'phsg_inforu_token', isset( $_POST['phsg_inforu_token'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_inforu_token'] ) ) : '' );
+			update_option( 'phsg_inforu_group', isset( $_POST['phsg_inforu_group'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_inforu_group'] ) ) : '' );
+			$saved = true;
+		}
+
+		$user  = get_option( 'phsg_inforu_user', '' );
+		$token = get_option( 'phsg_inforu_token', '' );
+		$group = get_option( 'phsg_inforu_group', '' );
+
+		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'הגדרות דיוור – InforU', 'pizza-hut-slice-game' ) . '</h1>';
+
+		if ( $saved ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'ההגדרות נשמרו.', 'pizza-hut-slice-game' ) . '</p></div>';
+		}
+
+		echo '<p class="description">' . esc_html__( 'כל משתתף שנרשם למשחק יתווסף אוטומטית לרשימת התפוצה ב-InforU (Create or Update Contact). אם השדות ריקים – החיבור כבוי והמשחק עובד רגיל.', 'pizza-hut-slice-game' ) . '</p>';
+
+		echo '<form method="post">';
+		wp_nonce_field( 'phsg_inforu_settings' );
+		echo '<table class="form-table"><tbody>';
+
+		echo '<tr><th scope="row"><label for="phsg_inforu_user">' . esc_html__( 'שם משתמש (API User)', 'pizza-hut-slice-game' ) . '</label></th>';
+		echo '<td><input name="phsg_inforu_user" id="phsg_inforu_user" type="text" class="regular-text" value="' . esc_attr( $user ) . '"></td></tr>';
+
+		echo '<tr><th scope="row"><label for="phsg_inforu_token">' . esc_html__( 'טוקן (API Token)', 'pizza-hut-slice-game' ) . '</label></th>';
+		echo '<td><input name="phsg_inforu_token" id="phsg_inforu_token" type="password" class="regular-text" value="' . esc_attr( $token ) . '" autocomplete="new-password"></td></tr>';
+
+		echo '<tr><th scope="row"><label for="phsg_inforu_group">' . esc_html__( 'שם הקבוצה בדיוור', 'pizza-hut-slice-game' ) . '</label></th>';
+		echo '<td><input name="phsg_inforu_group" id="phsg_inforu_group" type="text" class="regular-text" value="' . esc_attr( $group ) . '">';
+		echo '<p class="description">' . esc_html__( 'אם הקבוצה אינה קיימת ב-InforU – היא תיווצר אוטומטית עם השם הזה. אפשר להשאיר ריק (אנשי הקשר יתווספו בלי קבוצה).', 'pizza-hut-slice-game' ) . '</p></td></tr>';
+
+		echo '</tbody></table>';
+		echo '<p><button type="submit" name="phsg_inforu_save" value="1" class="button button-primary">' . esc_html__( 'שמירת הגדרות', 'pizza-hut-slice-game' ) . '</button></p>';
+		echo '</form>';
+
+		$status = ( '' !== $user && '' !== $token )
+			? __( 'פעיל – משתתפים חדשים נשלחים לרשימת התפוצה.', 'pizza-hut-slice-game' )
+			: __( 'כבוי – חסרים שם משתמש ו/או טוקן.', 'pizza-hut-slice-game' );
+		echo '<p><strong>' . esc_html__( 'מצב החיבור:', 'pizza-hut-slice-game' ) . '</strong> ' . esc_html( $status ) . '</p>';
+
+		echo '</div>';
 	}
 
 	/**
