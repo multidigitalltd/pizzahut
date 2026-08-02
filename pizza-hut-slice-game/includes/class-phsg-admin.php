@@ -1,0 +1,618 @@
+<?php
+/**
+ * מסך ניהול – צפייה בתוצאות ובלידים וייצוא CSV.
+ *
+ * @package PizzaHutSliceGame
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * מחלקת PHSG_Admin – ממשק ניהול למנהלי הקמפיין.
+ */
+class PHSG_Admin {
+
+	const CAPABILITY = 'manage_options';
+	const MENU_SLUG  = 'phsg-scores';
+
+	/**
+	 * מיפוי מקור (utm_source) לתווית קמפיין קריאה.
+	 *
+	 * @param string $source utm_source.
+	 * @return string תווית מקור בעברית.
+	 */
+	public static function source_label( $source ) {
+		$s = strtolower( trim( (string) $source ) );
+
+		$map = array(
+			'jdn'     => __( 'אתר JDN', 'pizza-hut-slice-game' ),
+			'prog'    => __( 'אתר פרוג', 'pizza-hut-slice-game' ),
+			'kikar'   => __( 'כיכר השבת', 'pizza-hut-slice-game' ),
+			'wa'      => __( 'ווטסאפ', 'pizza-hut-slice-game' ),
+			'hafsaka' => __( 'הפסקת קפה', 'pizza-hut-slice-game' ),
+		);
+
+		if ( isset( $map[ $s ] ) ) {
+			return $map[ $s ];
+		}
+		if ( '' === $s ) {
+			return __( 'ישיר / לא ידוע', 'pizza-hut-slice-game' );
+		}
+		return $source;
+	}
+
+	/**
+	 * רישום ה-hooks.
+	 *
+	 * @return void
+	 */
+	public function register() {
+		add_action( 'admin_menu', array( $this, 'add_menu' ) );
+		add_action( 'admin_post_phsg_export_csv', array( $this, 'export_csv' ) );
+		add_action( 'admin_post_phsg_export_winners', array( $this, 'export_winners' ) );
+	}
+
+	/**
+	 * דירוג המשתתפים – השיא הטוב ביותר לכל משתתף (dedup לפי אימייל), בסדר הזכייה.
+	 *
+	 * @param int $limit מספר משתתפים מרבי להחזרה.
+	 * @return array מערך שורות ARRAY_A מדורגות.
+	 */
+	public static function get_ranked_participants( $limit = 100 ) {
+		global $wpdb;
+		$table = PHSG_DB::table_name();
+		$limit = max( 1, min( 1000, (int) $limit ) );
+		$fetch = min( 10000, $limit * 50 );
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, full_name, phone, email, score, clicks, duration, avg_reaction, utm_source, created_at
+				 FROM {$table}
+				 ORDER BY score DESC, avg_reaction ASC, created_at ASC, id ASC
+				 LIMIT %d", // phpcs:ignore WordPress.DB
+				$fetch
+			),
+			ARRAY_A
+		);
+
+		if ( ! is_array( $rows ) ) {
+			return array();
+		}
+
+		$seen = array();
+		$out  = array();
+		foreach ( $rows as $r ) {
+			$key = strtolower( (string) $r['email'] );
+			if ( '' === $key ) {
+				$key = 'id:' . $r['id']; // ללא אימייל – כל רשומה ייחודית.
+			}
+			if ( isset( $seen[ $key ] ) ) {
+				continue;
+			}
+			$seen[ $key ] = true;
+			$out[]        = $r;
+			if ( count( $out ) >= $limit ) {
+				break;
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * הוספת פריט תפריט.
+	 *
+	 * @return void
+	 */
+	public function add_menu() {
+		add_menu_page(
+			__( 'Pizza Hut – תוצאות המשחק', 'pizza-hut-slice-game' ),
+			__( 'משחק פיצה האט', 'pizza-hut-slice-game' ),
+			self::CAPABILITY,
+			self::MENU_SLUG,
+			array( $this, 'render_page' ),
+			'dashicons-star-filled',
+			26
+		);
+
+		// תת-עמוד: הגדרות חיבור למערכת הדיוור (InforU).
+		add_submenu_page(
+			self::MENU_SLUG,
+			__( 'הגדרות דיוור (InforU)', 'pizza-hut-slice-game' ),
+			__( 'הגדרות דיוור', 'pizza-hut-slice-game' ),
+			self::CAPABILITY,
+			'phsg-inforu',
+			array( $this, 'render_inforu_page' )
+		);
+	}
+
+	/**
+	 * מסך הגדרות חיבור ל-InforU (רשימת תפוצה).
+	 *
+	 * @return void
+	 */
+	public function render_inforu_page() {
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_die( esc_html__( 'אין לך הרשאה לצפות בעמוד זה.', 'pizza-hut-slice-game' ) );
+		}
+
+		$saved = false;
+		$test  = null;
+		if ( isset( $_POST['phsg_inforu_save'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			check_admin_referer( 'phsg_inforu_settings' );
+			// trim – רווח נסתר בהדבקה הוא גורם נפוץ לכשל אימות.
+			update_option( 'phsg_inforu_user', isset( $_POST['phsg_inforu_user'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['phsg_inforu_user'] ) ) ) : '' );
+			update_option( 'phsg_inforu_token', isset( $_POST['phsg_inforu_token'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['phsg_inforu_token'] ) ) ) : '' );
+			update_option( 'phsg_inforu_group', isset( $_POST['phsg_inforu_group'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['phsg_inforu_group'] ) ) ) : '' );
+			$saved = true;
+		}
+
+		// בדיקת חיבור אמיתית – שולחת איש קשר לדוגמה ומציגה את תשובת InforU.
+		if ( isset( $_POST['phsg_inforu_test'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			check_admin_referer( 'phsg_inforu_settings' );
+			$test_email = isset( $_POST['phsg_test_email'] ) ? sanitize_email( wp_unslash( $_POST['phsg_test_email'] ) ) : '';
+			$test_phone = isset( $_POST['phsg_test_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_test_phone'] ) ) : '';
+			if ( '' === $test_email && '' === $test_phone ) {
+				$test = array( 'ok' => false, 'message' => __( 'יש להזין אימייל או טלפון לבדיקה.', 'pizza-hut-slice-game' ) );
+			} else {
+				$ajax = new PHSG_Ajax();
+				$test = $ajax->push_to_inforu( __( 'בדיקה מהמשחק', 'pizza-hut-slice-game' ), $test_phone, $test_email );
+				if ( null === $test ) {
+					$test = array( 'ok' => false, 'message' => __( 'לא נשלח – בדקו שהוזנו שם משתמש וטוקן ושיש אימייל או טלפון.', 'pizza-hut-slice-game' ) );
+				}
+			}
+		}
+
+		$user  = get_option( 'phsg_inforu_user', '' );
+		$token = get_option( 'phsg_inforu_token', '' );
+		$group = get_option( 'phsg_inforu_group', '' );
+
+		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'הגדרות דיוור – InforU', 'pizza-hut-slice-game' ) . '</h1>';
+
+		if ( $saved ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'ההגדרות נשמרו.', 'pizza-hut-slice-game' ) . '</p></div>';
+		}
+
+		echo '<p class="description">' . esc_html__( 'כל משתתף מתווסף אוטומטית לרשימת התפוצה ב-InforU מיד עם שליחת טופס ההשתתפות (אישור התקנון). אם השדות ריקים – החיבור כבוי והמשחק עובד רגיל.', 'pizza-hut-slice-game' ) . '</p>';
+
+		echo '<form method="post">';
+		wp_nonce_field( 'phsg_inforu_settings' );
+		echo '<table class="form-table"><tbody>';
+
+		echo '<tr><th scope="row"><label for="phsg_inforu_user">' . esc_html__( 'שם משתמש (API User)', 'pizza-hut-slice-game' ) . '</label></th>';
+		echo '<td><input name="phsg_inforu_user" id="phsg_inforu_user" type="text" class="regular-text" value="' . esc_attr( $user ) . '"></td></tr>';
+
+		echo '<tr><th scope="row"><label for="phsg_inforu_token">' . esc_html__( 'טוקן (API Token)', 'pizza-hut-slice-game' ) . '</label></th>';
+		echo '<td><input name="phsg_inforu_token" id="phsg_inforu_token" type="password" class="regular-text" value="' . esc_attr( $token ) . '" autocomplete="new-password"></td></tr>';
+
+		echo '<tr><th scope="row"><label for="phsg_inforu_group">' . esc_html__( 'שם הקבוצה בדיוור', 'pizza-hut-slice-game' ) . '</label></th>';
+		echo '<td><input name="phsg_inforu_group" id="phsg_inforu_group" type="text" class="regular-text" value="' . esc_attr( $group ) . '">';
+		echo '<p class="description">' . esc_html__( 'אם הקבוצה אינה קיימת ב-InforU – היא תיווצר אוטומטית עם השם הזה. אפשר להשאיר ריק (אנשי הקשר יתווספו בלי קבוצה).', 'pizza-hut-slice-game' ) . '</p></td></tr>';
+
+		echo '</tbody></table>';
+		echo '<p><button type="submit" name="phsg_inforu_save" value="1" class="button button-primary">' . esc_html__( 'שמירת הגדרות', 'pizza-hut-slice-game' ) . '</button></p>';
+
+		// ===== בדיקת חיבור =====
+		echo '<hr><h2>' . esc_html__( 'בדיקת חיבור', 'pizza-hut-slice-game' ) . '</h2>';
+		echo '<p class="description">' . esc_html__( 'שולח איש קשר לדוגמה ל-InforU ומציג את התשובה המדויקת. שימו לב: הקבוצה נוצרת רק כשמתווסף אליה איש הקשר הראשון — לכן בדיקה זו גם תיצור את הקבוצה.', 'pizza-hut-slice-game' ) . '</p>';
+
+		$srv_ip = PHSG_Ajax::outbound_ip();
+		if ( '' !== $srv_ip ) {
+			echo '<p><strong>' . esc_html__( 'כתובת ה-IP של השרת:', 'pizza-hut-slice-game' ) . '</strong> <code style="font-size:15px">' . esc_html( $srv_ip ) . '</code> — ' .
+				esc_html__( 'ל-InforU יש הגבלת IP: אם האימות נכשל, יש למסור להם את הכתובת הזו ולבקש להוסיף אותה לרשימת ההיתר של החשבון.', 'pizza-hut-slice-game' ) . '</p>';
+		}
+		echo '<table class="form-table"><tbody>';
+		echo '<tr><th scope="row"><label for="phsg_test_email">' . esc_html__( 'אימייל לבדיקה', 'pizza-hut-slice-game' ) . '</label></th>';
+		echo '<td><input name="phsg_test_email" id="phsg_test_email" type="email" class="regular-text" value="' . esc_attr( isset( $_POST['phsg_test_email'] ) ? sanitize_email( wp_unslash( $_POST['phsg_test_email'] ) ) : '' ) . '" placeholder="test@example.co.il"></td></tr>'; // phpcs:ignore WordPress.Security.NonceVerification
+		echo '<tr><th scope="row"><label for="phsg_test_phone">' . esc_html__( 'טלפון לבדיקה', 'pizza-hut-slice-game' ) . '</label></th>';
+		echo '<td><input name="phsg_test_phone" id="phsg_test_phone" type="text" class="regular-text" value="' . esc_attr( isset( $_POST['phsg_test_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_test_phone'] ) ) : '' ) . '" placeholder="0501234567"></td></tr>'; // phpcs:ignore WordPress.Security.NonceVerification
+		echo '</tbody></table>';
+		echo '<p><button type="submit" name="phsg_inforu_test" value="1" class="button">' . esc_html__( 'שליחת בדיקה ל-InforU', 'pizza-hut-slice-game' ) . '</button></p>';
+		echo '</form>';
+
+		if ( null !== $test ) {
+			$ok    = ! empty( $test['ok'] );
+			$class = $ok ? 'notice notice-success' : 'notice notice-error';
+			echo '<div class="' . esc_attr( $class ) . '"><p><strong>' .
+				esc_html( $ok ? __( '✔ הבדיקה עברה בהצלחה — איש הקשר נוסף ל-InforU.', 'pizza-hut-slice-game' ) : __( '✖ הבדיקה נכשלה.', 'pizza-hut-slice-game' ) ) .
+				'</strong></p>';
+			echo '<p>' . esc_html__( 'תשובת InforU:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $test['message'] ) ? $test['message'] : '' ) . '</code>';
+			if ( isset( $test['http'] ) ) {
+				echo ' | HTTP: <code>' . esc_html( $test['http'] ) . '</code>';
+			}
+			if ( isset( $test['status_id'] ) ) {
+				echo ' | StatusId: <code>' . esc_html( $test['status_id'] ) . '</code>';
+			}
+			echo '</p>';
+			if ( isset( $test['new'] ) || isset( $test['existing'] ) ) {
+				echo '<p>' . esc_html__( 'אנשי קשר חדשים:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $test['new'] ) ? $test['new'] : '-' ) . '</code> | ' .
+					esc_html__( 'קיימים (עודכנו):', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $test['existing'] ) ? $test['existing'] : '-' ) . '</code> | ' .
+					esc_html__( 'נכשלו:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $test['failed'] ) ? $test['failed'] : '-' ) . '</code></p>';
+			}
+			if ( ! empty( $test['errors'] ) ) {
+				echo '<p>' . esc_html__( 'שגיאות:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( $test['errors'] ) . '</code></p>';
+			}
+			if ( ! $ok ) {
+				if ( ! empty( $test['hint'] ) ) {
+					echo '<p><strong>' . esc_html__( 'מה זה אומר:', 'pizza-hut-slice-game' ) . '</strong> ' . esc_html( $test['hint'] ) . '</p>';
+				}
+				$ip = PHSG_Ajax::outbound_ip();
+				if ( '' !== $ip ) {
+					echo '<p><strong>' . esc_html__( 'כתובת ה-IP של השרת (למסירה ל-InforU לצורך רשימת היתר):', 'pizza-hut-slice-game' ) .
+						'</strong> <code style="font-size:15px">' . esc_html( $ip ) . '</code></p>';
+				}
+				echo '<p>' . esc_html__( 'ודאו גם שאלו פרטי ה-API (שם משתמש וטוקן), ולא שם המשתמש והסיסמה של הכניסה למערכת.', 'pizza-hut-slice-game' ) . '</p>';
+			}
+			echo '</div>';
+		}
+
+		// ===== סטטוס השליחה האחרונה מהמשחק =====
+		$last = get_option( 'phsg_inforu_last', array() );
+		echo '<hr><h2>' . esc_html__( 'השליחה האחרונה מהמשחק', 'pizza-hut-slice-game' ) . '</h2>';
+		if ( empty( $last ) ) {
+			echo '<p>' . esc_html__( 'עדיין לא בוצעה שליחה. אם משתתפים נרשמו ולא מופיע כאן דבר — ייתכן שהתוסף לא עודכן או שההגדרות ריקות.', 'pizza-hut-slice-game' ) . '</p>';
+		} else {
+			$lok = ! empty( $last['ok'] );
+			echo '<p><strong>' . esc_html( $lok ? __( '✔ הצליחה', 'pizza-hut-slice-game' ) : __( '✖ נכשלה', 'pizza-hut-slice-game' ) ) . '</strong> — ' .
+				esc_html__( 'זמן:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $last['time'] ) ? $last['time'] : '' ) . '</code>';
+			if ( ! empty( $last['group'] ) ) {
+				echo ' | ' . esc_html__( 'קבוצה:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( $last['group'] ) . '</code>';
+			}
+			echo '</p>';
+			echo '<p>' . esc_html__( 'תשובה:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $last['message'] ) ? $last['message'] : '' ) . '</code></p>';
+		}
+
+		$status = ( '' !== $user && '' !== $token )
+			? __( 'הוגדרו פרטי התחברות. לאימות בפועל — הריצו "שליחת בדיקה ל-InforU" למעלה.', 'pizza-hut-slice-game' )
+			: __( 'כבוי – חסרים שם משתמש ו/או טוקן.', 'pizza-hut-slice-game' );
+		echo '<hr><p><strong>' . esc_html__( 'מצב ההגדרות:', 'pizza-hut-slice-game' ) . '</strong> ' . esc_html( $status ) . '</p>';
+
+		echo '</div>';
+	}
+
+	/**
+	 * רינדור מסך התוצאות.
+	 *
+	 * @return void
+	 */
+	public function render_page() {
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_die( esc_html__( 'אין לך הרשאה לצפות בעמוד זה.', 'pizza-hut-slice-game' ) );
+		}
+
+		global $wpdb;
+		$table = PHSG_DB::table_name();
+
+		// סינון לפי מקור (utm_source) – מהקישור בדשבורד.
+		$source_filter = isset( $_GET['source'] ) ? sanitize_text_field( wp_unslash( $_GET['source'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+
+		// פילוח לפי מקור – ספירת לידים לכל utm_source.
+		$breakdown = $wpdb->get_results(
+			"SELECT utm_source AS src, COUNT(*) AS cnt
+			 FROM {$table}
+			 GROUP BY utm_source
+			 ORDER BY cnt DESC", // phpcs:ignore WordPress.DB
+			ARRAY_A
+		);
+
+		$total = PHSG_DB::total_players();
+
+		// עימוד בסיסי.
+		$per_page = 30;
+		$paged    = isset( $_GET['paged'] ) ? max( 1, absint( wp_unslash( $_GET['paged'] ) ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification
+		$offset   = ( $paged - 1 ) * $per_page;
+
+		// WHERE לפי מקור (אם נבחר).
+		$where     = '';
+		$where_cnt = $total;
+		if ( '' !== $source_filter ) {
+			$where     = $wpdb->prepare( ' WHERE utm_source = %s', $source_filter );
+			$where_cnt = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" . $where ); // phpcs:ignore WordPress.DB
+		}
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, full_name, phone, email, score, clicks, duration, avg_reaction,
+						utm_source, utm_medium, utm_campaign, created_at
+				 FROM {$table}{$where}
+				 ORDER BY score DESC, avg_reaction ASC, created_at ASC
+				 LIMIT %d OFFSET %d", // phpcs:ignore WordPress.DB
+				$per_page,
+				$offset
+			)
+		);
+
+		$base_url = admin_url( 'admin.php?page=' . self::MENU_SLUG );
+
+		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'Pizza Hut – תוצאות המשחק', 'pizza-hut-slice-game' ) . '</h1>';
+		echo '<p>' . sprintf(
+			/* translators: %d: total participants. */
+			esc_html__( 'סה"כ משתתפים: %d', 'pizza-hut-slice-game' ),
+			(int) $total
+		) . '</p>';
+
+		// ===== דירוג משתתפים / זוכים =====
+		$ranked        = self::get_ranked_participants( 100 );
+		$winners_url   = wp_nonce_url(
+			admin_url( 'admin-post.php?action=phsg_export_winners' ),
+			'phsg_export_winners'
+		);
+
+		echo '<h2>' . esc_html__( 'דירוג משתתפים (רשימת זוכים)', 'pizza-hut-slice-game' ) . '</h2>';
+		echo '<p class="description">' . esc_html__( 'דירוג לפי הניקוד הטוב ביותר של כל משתתף. שובר-שוויון: זמן תגובה ממוצע קצר יותר ואז ההגשה המוקדמת. 3 המקומות הראשונים מודגשים.', 'pizza-hut-slice-game' ) . '</p>';
+		echo '<p><a href="' . esc_url( $winners_url ) . '" class="button button-primary">' .
+			esc_html__( 'ייצוא דירוג/זוכים ל-CSV', 'pizza-hut-slice-game' ) . '</a></p>';
+
+		echo '<table class="widefat striped">';
+		echo '<thead><tr>';
+		echo '<th>' . esc_html__( 'מקום', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'שם', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'טלפון', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'אימייל', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'מקור', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'ניקוד', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'תגובה ממוצעת (מ"ש)', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'תאריך', 'pizza-hut-slice-game' ) . '</th>';
+		echo '</tr></thead><tbody>';
+
+		if ( empty( $ranked ) ) {
+			echo '<tr><td colspan="8">' . esc_html__( 'אין עדיין משתתפים.', 'pizza-hut-slice-game' ) . '</td></tr>';
+		} else {
+			$rank = 0;
+			foreach ( $ranked as $r ) {
+				$rank++;
+				$medal = 1 === $rank ? '🥇 ' : ( 2 === $rank ? '🥈 ' : ( 3 === $rank ? '🥉 ' : '' ) );
+				$style = $rank <= 3 ? ' style="background:#fff6d5;font-weight:bold"' : '';
+				echo '<tr' . $style . '>';
+				echo '<td>' . $medal . (int) $rank . '</td>';
+				echo '<td>' . esc_html( $r['full_name'] ) . '</td>';
+				echo '<td>' . esc_html( $r['phone'] ) . '</td>';
+				echo '<td>' . esc_html( $r['email'] ) . '</td>';
+				echo '<td>' . esc_html( self::source_label( $r['utm_source'] ) ) . '</td>';
+				echo '<td>' . esc_html( $r['score'] ) . '</td>';
+				echo '<td>' . esc_html( $r['avg_reaction'] ) . '</td>';
+				echo '<td>' . esc_html( $r['created_at'] ) . '</td>';
+				echo '</tr>';
+			}
+		}
+		echo '</tbody></table>';
+
+		// ===== פילוח לידים לפי מקור =====
+		echo '<h2>' . esc_html__( 'פילוח לפי מקור', 'pizza-hut-slice-game' ) . '</h2>';
+		echo '<table class="widefat striped" style="max-width:640px">';
+		echo '<thead><tr><th>' . esc_html__( 'מקור', 'pizza-hut-slice-game' ) . '</th><th>utm_source</th><th>' .
+			esc_html__( 'כמות לידים', 'pizza-hut-slice-game' ) . '</th><th>' . esc_html__( 'פעולה', 'pizza-hut-slice-game' ) . '</th></tr></thead><tbody>';
+
+		$all_active = '' === $source_filter ? ' style="font-weight:bold"' : '';
+		echo '<tr' . $all_active . '><td>' . esc_html__( 'כל המקורות', 'pizza-hut-slice-game' ) . '</td><td>—</td><td>' .
+			(int) $total . '</td><td><a href="' . esc_url( $base_url ) . '">' . esc_html__( 'הצג הכל', 'pizza-hut-slice-game' ) . '</a></td></tr>';
+
+		if ( ! empty( $breakdown ) ) {
+			foreach ( $breakdown as $b ) {
+				$src        = (string) $b['src'];
+				$is_active  = ( $src === $source_filter ) ? ' style="font-weight:bold"' : '';
+				$filter_url = add_query_arg( 'source', rawurlencode( $src ), $base_url );
+				$export_src = wp_nonce_url(
+					admin_url( 'admin-post.php?action=phsg_export_csv&source=' . rawurlencode( $src ) ),
+					'phsg_export_csv'
+				);
+				echo '<tr' . $is_active . '>';
+				echo '<td>' . esc_html( self::source_label( $src ) ) . '</td>';
+				echo '<td>' . ( '' === $src ? '—' : esc_html( $src ) ) . '</td>';
+				echo '<td>' . (int) $b['cnt'] . '</td>';
+				echo '<td><a href="' . esc_url( $filter_url ) . '">' . esc_html__( 'סנן', 'pizza-hut-slice-game' ) . '</a> · ' .
+					'<a href="' . esc_url( $export_src ) . '">' . esc_html__( 'ייצוא CSV', 'pizza-hut-slice-game' ) . '</a></td>';
+				echo '</tr>';
+			}
+		}
+		echo '</tbody></table>';
+
+		// ===== רשימת הלידים =====
+		$export_all = wp_nonce_url(
+			admin_url( 'admin-post.php?action=phsg_export_csv' ),
+			'phsg_export_csv'
+		);
+		$export_filtered = '' === $source_filter ? $export_all : wp_nonce_url(
+			admin_url( 'admin-post.php?action=phsg_export_csv&source=' . rawurlencode( $source_filter ) ),
+			'phsg_export_csv'
+		);
+
+		echo '<h2 style="margin-top:24px">' . esc_html__( 'לידים', 'pizza-hut-slice-game' );
+		if ( '' !== $source_filter ) {
+			echo ' — ' . esc_html( self::source_label( $source_filter ) ) . ' (' . (int) $where_cnt . ')';
+		}
+		echo '</h2>';
+		echo '<p><a href="' . esc_url( $export_filtered ) . '" class="button button-primary">' .
+			esc_html__( 'ייצוא CSV', 'pizza-hut-slice-game' ) . ( '' !== $source_filter ? ' (' . esc_html( self::source_label( $source_filter ) ) . ')' : '' ) . '</a></p>';
+
+		echo '<table class="widefat striped">';
+		echo '<thead><tr>';
+		echo '<th>#</th><th>' . esc_html__( 'שם', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'טלפון', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'אימייל', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'מקור', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'ניקוד', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'לחיצות', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'משך', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>' . esc_html__( 'תגובה ממוצעת (מ"ש)', 'pizza-hut-slice-game' ) . '</th>';
+		echo '<th>UTM</th>';
+		echo '<th>' . esc_html__( 'תאריך', 'pizza-hut-slice-game' ) . '</th>';
+		echo '</tr></thead><tbody>';
+
+		if ( empty( $rows ) ) {
+			echo '<tr><td colspan="11">' . esc_html__( 'אין עדיין תוצאות.', 'pizza-hut-slice-game' ) . '</td></tr>';
+		} else {
+			foreach ( $rows as $r ) {
+				$utm = array_filter( array( $r->utm_source, $r->utm_medium, $r->utm_campaign ) );
+				echo '<tr>';
+				echo '<td>' . esc_html( $r->id ) . '</td>';
+				echo '<td>' . esc_html( $r->full_name ) . '</td>';
+				echo '<td>' . esc_html( $r->phone ) . '</td>';
+				echo '<td>' . esc_html( $r->email ) . '</td>';
+				echo '<td><strong>' . esc_html( self::source_label( $r->utm_source ) ) . '</strong></td>';
+				echo '<td>' . esc_html( $r->score ) . '</td>';
+				echo '<td>' . esc_html( $r->clicks ) . '</td>';
+				echo '<td>' . esc_html( $r->duration ) . '</td>';
+				echo '<td>' . esc_html( $r->avg_reaction ) . '</td>';
+				echo '<td>' . esc_html( implode( ' / ', $utm ) ) . '</td>';
+				echo '<td>' . esc_html( $r->created_at ) . '</td>';
+				echo '</tr>';
+			}
+		}
+
+		echo '</tbody></table>';
+
+		// עימוד.
+		$total_pages = (int) ceil( $where_cnt / $per_page );
+		if ( $total_pages > 1 ) {
+			echo '<div class="tablenav"><div class="tablenav-pages">';
+			echo wp_kses_post(
+				paginate_links(
+					array(
+						'base'    => add_query_arg( 'paged', '%#%' ),
+						'format'  => '',
+						'current' => $paged,
+						'total'   => $total_pages,
+					)
+				)
+			);
+			echo '</div></div>';
+		}
+
+		echo '</div>';
+	}
+
+	/**
+	 * ייצוא כל התוצאות ל-CSV.
+	 *
+	 * @return void
+	 */
+	public function export_csv() {
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_die( esc_html__( 'אין לך הרשאה.', 'pizza-hut-slice-game' ) );
+		}
+		check_admin_referer( 'phsg_export_csv' );
+
+		global $wpdb;
+		$table = PHSG_DB::table_name();
+
+		// סינון אופציונלי לפי מקור (utm_source).
+		$source_filter = isset( $_GET['source'] ) ? sanitize_text_field( wp_unslash( $_GET['source'] ) ) : '';
+		$where         = '';
+		if ( '' !== $source_filter ) {
+			$where = $wpdb->prepare( ' WHERE utm_source = %s', $source_filter );
+		}
+
+		$rows = $wpdb->get_results(
+			"SELECT id, full_name, phone, email, consent, score, clicks, duration, avg_reaction,
+					utm_source, utm_medium, utm_campaign, utm_term, utm_content, created_at
+			 FROM {$table}{$where}
+			 ORDER BY score DESC, avg_reaction ASC, created_at ASC", // phpcs:ignore WordPress.DB
+			ARRAY_A
+		);
+
+		$suffix = '' !== $source_filter ? '-' . sanitize_file_name( $source_filter ) : '';
+
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename=pizza-hut-leads' . $suffix . '-' . gmdate( 'Y-m-d' ) . '.csv' );
+
+		$output = fopen( 'php://output', 'w' );
+		// BOM לתמיכה בעברית ב-Excel.
+		fwrite( $output, "\xEF\xBB\xBF" );
+
+		fputcsv(
+			$output,
+			array(
+				'ID', 'Full Name', 'Phone', 'Email', 'Consent', 'Source', 'Score', 'Clicks', 'Duration',
+				'Avg Reaction (ms)', 'UTM Source', 'UTM Medium', 'UTM Campaign',
+				'UTM Term', 'UTM Content', 'Created At',
+			)
+		);
+
+		if ( $rows ) {
+			foreach ( $rows as $r ) {
+				// הוספת תווית מקור קריאה מיד לאחר Consent.
+				$out = array(
+					$r['id'], $r['full_name'], $r['phone'], $r['email'], $r['consent'],
+					self::source_label( $r['utm_source'] ),
+					$r['score'], $r['clicks'], $r['duration'], $r['avg_reaction'],
+					$r['utm_source'], $r['utm_medium'], $r['utm_campaign'],
+					$r['utm_term'], $r['utm_content'], $r['created_at'],
+				);
+				fputcsv( $output, array_map( array( $this, 'neutralize_csv_value' ), $out ) );
+			}
+		}
+
+		fclose( $output );
+		exit;
+	}
+
+	/**
+	 * ייצוא דירוג המשתתפים (זוכים) ל-CSV – שיא לכל משתתף, ממוספר לפי מקום.
+	 *
+	 * @return void
+	 */
+	public function export_winners() {
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_die( esc_html__( 'אין לך הרשאה.', 'pizza-hut-slice-game' ) );
+		}
+		check_admin_referer( 'phsg_export_winners' );
+
+		$ranked = self::get_ranked_participants( 1000 );
+
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename=pizza-hut-winners-' . gmdate( 'Y-m-d' ) . '.csv' );
+
+		$output = fopen( 'php://output', 'w' );
+		fwrite( $output, "\xEF\xBB\xBF" );
+
+		fputcsv(
+			$output,
+			array(
+				'Rank', 'Full Name', 'Phone', 'Email', 'Source', 'Score',
+				'Avg Reaction (ms)', 'Duration', 'UTM Source', 'Created At',
+			)
+		);
+
+		$rank = 0;
+		foreach ( $ranked as $r ) {
+			$rank++;
+			$row = array(
+				$rank, $r['full_name'], $r['phone'], $r['email'],
+				self::source_label( $r['utm_source'] ), $r['score'],
+				$r['avg_reaction'], $r['duration'], $r['utm_source'], $r['created_at'],
+			);
+			fputcsv( $output, array_map( array( $this, 'neutralize_csv_value' ), $row ) );
+		}
+
+		fclose( $output );
+		exit;
+	}
+
+	/**
+	 * נטרול הזרקת נוסחאות ב-CSV (CSV Formula Injection).
+	 *
+	 * ערכים בשליטת משתמש (שם, UTM) שמתחילים ב-=, +, -, @ או תווי בקרה
+	 * עלולים להתפרש כנוסחה ב-Excel/Sheets. מוסיפים גרש מוביל לנטרול.
+	 *
+	 * @param mixed $value ערך התא.
+	 * @return mixed
+	 */
+	private function neutralize_csv_value( $value ) {
+		if ( ! is_string( $value ) || '' === $value ) {
+			return $value;
+		}
+
+		if ( preg_match( '/^[=+\-@\t\r]/', $value ) ) {
+			return "'" . $value;
+		}
+
+		return $value;
+	}
+}
