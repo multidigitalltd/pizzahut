@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.20.0
+Stable tag: 12.20.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,11 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.20.1 =
+* אבחון מדויק לכשל אימות מול InforU: קוד StatusId -2 פירושו "אימות נכשל או כתובת IP לא מורשית" — ל-InforU יש הגבלת IP, ולכן גם פרטים נכונים ייכשלו אם ה-IP של השרת אינו ברשימת ההיתר.
+* מסך הגדרות הדיוור מציג עכשיו את כתובת ה-IP היוצאת של השרת, למסירה לתמיכת InforU לצורך הוספה לרשימת ההיתר.
+* שם המשתמש והטוקן עוברים trim בשמירה ובשליחה — רווח נסתר בהדבקה היה עלול להכשיל אימות.
 
 = 12.20.0 =
 * נוסף כפתור "שליחת בדיקה ל-InforU" במסך הגדרות הדיוור: שולח איש קשר לדוגמה ומציג את תשובת ה-API המדויקת (StatusId, HTTP, כמה אנשי קשר נוספו/עודכנו/נכשלו). כך אפשר לוודא בוודאות שהחיבור עובד — והבדיקה גם יוצרת את הקבוצה.

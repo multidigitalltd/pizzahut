@@ -142,9 +142,10 @@ class PHSG_Admin {
 		$test  = null;
 		if ( isset( $_POST['phsg_inforu_save'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			check_admin_referer( 'phsg_inforu_settings' );
-			update_option( 'phsg_inforu_user', isset( $_POST['phsg_inforu_user'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_inforu_user'] ) ) : '' );
-			update_option( 'phsg_inforu_token', isset( $_POST['phsg_inforu_token'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_inforu_token'] ) ) : '' );
-			update_option( 'phsg_inforu_group', isset( $_POST['phsg_inforu_group'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_inforu_group'] ) ) : '' );
+			// trim – רווח נסתר בהדבקה הוא גורם נפוץ לכשל אימות.
+			update_option( 'phsg_inforu_user', isset( $_POST['phsg_inforu_user'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['phsg_inforu_user'] ) ) ) : '' );
+			update_option( 'phsg_inforu_token', isset( $_POST['phsg_inforu_token'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['phsg_inforu_token'] ) ) ) : '' );
+			update_option( 'phsg_inforu_group', isset( $_POST['phsg_inforu_group'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['phsg_inforu_group'] ) ) ) : '' );
 			$saved = true;
 		}
 
@@ -197,6 +198,12 @@ class PHSG_Admin {
 		// ===== בדיקת חיבור =====
 		echo '<hr><h2>' . esc_html__( 'בדיקת חיבור', 'pizza-hut-slice-game' ) . '</h2>';
 		echo '<p class="description">' . esc_html__( 'שולח איש קשר לדוגמה ל-InforU ומציג את התשובה המדויקת. שימו לב: הקבוצה נוצרת רק כשמתווסף אליה איש הקשר הראשון — לכן בדיקה זו גם תיצור את הקבוצה.', 'pizza-hut-slice-game' ) . '</p>';
+
+		$srv_ip = PHSG_Ajax::outbound_ip();
+		if ( '' !== $srv_ip ) {
+			echo '<p><strong>' . esc_html__( 'כתובת ה-IP של השרת:', 'pizza-hut-slice-game' ) . '</strong> <code style="font-size:15px">' . esc_html( $srv_ip ) . '</code> — ' .
+				esc_html__( 'ל-InforU יש הגבלת IP: אם האימות נכשל, יש למסור להם את הכתובת הזו ולבקש להוסיף אותה לרשימת ההיתר של החשבון.', 'pizza-hut-slice-game' ) . '</p>';
+		}
 		echo '<table class="form-table"><tbody>';
 		echo '<tr><th scope="row"><label for="phsg_test_email">' . esc_html__( 'אימייל לבדיקה', 'pizza-hut-slice-game' ) . '</label></th>';
 		echo '<td><input name="phsg_test_email" id="phsg_test_email" type="email" class="regular-text" value="' . esc_attr( isset( $_POST['phsg_test_email'] ) ? sanitize_email( wp_unslash( $_POST['phsg_test_email'] ) ) : '' ) . '" placeholder="test@example.co.il"></td></tr>'; // phpcs:ignore WordPress.Security.NonceVerification
@@ -229,7 +236,15 @@ class PHSG_Admin {
 				echo '<p>' . esc_html__( 'שגיאות:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( $test['errors'] ) . '</code></p>';
 			}
 			if ( ! $ok ) {
-				echo '<p>' . esc_html__( 'טיפ: StatusId -1 עם "Missing Authorization" = שם משתמש או טוקן שגויים. ודאו שאלו פרטי ה-API (לא סיסמת הכניסה למערכת).', 'pizza-hut-slice-game' ) . '</p>';
+				if ( ! empty( $test['hint'] ) ) {
+					echo '<p><strong>' . esc_html__( 'מה זה אומר:', 'pizza-hut-slice-game' ) . '</strong> ' . esc_html( $test['hint'] ) . '</p>';
+				}
+				$ip = PHSG_Ajax::outbound_ip();
+				if ( '' !== $ip ) {
+					echo '<p><strong>' . esc_html__( 'כתובת ה-IP של השרת (למסירה ל-InforU לצורך רשימת היתר):', 'pizza-hut-slice-game' ) .
+						'</strong> <code style="font-size:15px">' . esc_html( $ip ) . '</code></p>';
+				}
+				echo '<p>' . esc_html__( 'ודאו גם שאלו פרטי ה-API (שם משתמש וטוקן), ולא שם המשתמש והסיסמה של הכניסה למערכת.', 'pizza-hut-slice-game' ) . '</p>';
 			}
 			echo '</div>';
 		}

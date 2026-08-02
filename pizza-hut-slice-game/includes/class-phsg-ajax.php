@@ -345,9 +345,10 @@ class PHSG_Ajax {
 	 * @return void
 	 */
 	public function push_to_inforu( $full_name, $phone, $email ) {
-		$user  = defined( 'PHSG_INFORU_USER' ) ? PHSG_INFORU_USER : get_option( 'phsg_inforu_user', '' );
-		$token = defined( 'PHSG_INFORU_TOKEN' ) ? PHSG_INFORU_TOKEN : get_option( 'phsg_inforu_token', '' );
-		$group = defined( 'PHSG_INFORU_GROUP' ) ? PHSG_INFORU_GROUP : get_option( 'phsg_inforu_group', '' );
+		// trim – רווחים נסתרים בהדבקה הם גורם נפוץ לכשל אימות.
+		$user  = trim( defined( 'PHSG_INFORU_USER' ) ? PHSG_INFORU_USER : get_option( 'phsg_inforu_user', '' ) );
+		$token = trim( defined( 'PHSG_INFORU_TOKEN' ) ? PHSG_INFORU_TOKEN : get_option( 'phsg_inforu_token', '' ) );
+		$group = trim( defined( 'PHSG_INFORU_GROUP' ) ? PHSG_INFORU_GROUP : get_option( 'phsg_inforu_group', '' ) );
 
 		// ללא פרטי התחברות – מדלגים בשקט (התוסף עובד רגיל).
 		if ( '' === $user || '' === $token ) {
@@ -425,9 +426,43 @@ class PHSG_Ajax {
 			}
 		}
 
+		// פירוש קודי השגיאה של InforU להסבר מעשי בעברית.
+		if ( ! $log['ok'] ) {
+			if ( -2 === $status_id ) {
+				$log['hint'] = __( 'אימות נכשל או כתובת IP לא מורשית. שתי אפשרויות: (1) שם המשתמש/הטוקן שגויים; (2) כתובת ה-IP של השרת אינה ברשימת ההיתר ב-InforU — יש לפנות לתמיכת InforU ולבקש להתיר את ה-IP המוצג למטה.', 'pizza-hut-slice-game' );
+			} elseif ( -1 === $status_id ) {
+				$log['hint'] = __( 'כותרת ההרשאה לא התקבלה או לא פוענחה. בדקו שאין רווחים או תווים חריגים בשם המשתמש/טוקן.', 'pizza-hut-slice-game' );
+			}
+		}
+
 		update_option( 'phsg_inforu_last', $log, false );
 
 		return $log;
+	}
+
+	/**
+	 * כתובת ה-IP היוצאת של השרת (כפי ש-InforU רואה אותה) – לצורך רשימת היתר.
+	 *
+	 * @return string
+	 */
+	public static function outbound_ip() {
+		$cached = get_transient( 'phsg_outbound_ip' );
+		if ( $cached ) {
+			return $cached;
+		}
+
+		$res = wp_remote_get( 'https://api.ipify.org', array( 'timeout' => 6 ) );
+		if ( is_wp_error( $res ) ) {
+			return '';
+		}
+
+		$ip = trim( wp_remote_retrieve_body( $res ) );
+		if ( ! filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+			return '';
+		}
+
+		set_transient( 'phsg_outbound_ip', $ip, DAY_IN_SECONDS );
+		return $ip;
 	}
 
 	private function hash_value( $value ) {
