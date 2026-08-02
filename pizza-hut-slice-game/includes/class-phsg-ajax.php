@@ -37,6 +37,42 @@ class PHSG_Ajax {
 		// רענון nonce – פותר nonce שפג בגלל קאש עמודים (דף נחיתה מקושש).
 		add_action( 'wp_ajax_phsg_refresh_nonce', array( $this, 'refresh_nonce' ) );
 		add_action( 'wp_ajax_nopriv_phsg_refresh_nonce', array( $this, 'refresh_nonce' ) );
+
+		// הרשמה לרשימת התפוצה מיד עם שליחת הטופס (לפני תחילת המשחק).
+		add_action( 'wp_ajax_phsg_subscribe', array( $this, 'subscribe' ) );
+		add_action( 'wp_ajax_nopriv_phsg_subscribe', array( $this, 'subscribe' ) );
+	}
+
+	/**
+	 * הרשמה לרשימת התפוצה (InforU) מיד עם שליחת טופס ההשתתפות.
+	 *
+	 * ההסכמה לדיוור ניתנת ברגע אישור התקנון, ולכן ההרשמה מתבצעת כאן ולא
+	 * מחכה לסיום המשחק. מחזיר תמיד הצלחה – זהו ערוץ צדדי שלא אמור לחסום
+	 * את תחילת המשחק בשום מצב.
+	 *
+	 * @return void
+	 */
+	public function subscribe() {
+		$this->verify_nonce();
+
+		$full_name = isset( $_POST['full_name'] ) ? sanitize_text_field( wp_unslash( $_POST['full_name'] ) ) : '';
+		$phone     = isset( $_POST['phone'] ) ? $this->sanitize_phone( wp_unslash( $_POST['phone'] ) ) : '';
+		$email     = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+		$consent   = isset( $_POST['consent'] ) && in_array( wp_unslash( $_POST['consent'] ), array( '1', 'true', 'on', 'yes' ), true ) ? 1 : 0;
+
+		// בלי הסכמה מפורשת – לא נרשמים לדיוור.
+		if ( ! $consent ) {
+			wp_send_json_success( array( 'subscribed' => false ) );
+		}
+
+		$ip_hash = $this->hash_value( $this->get_client_ip() );
+		if ( ! $this->check_rate_limit( 'subscribe_' . $ip_hash, 60 ) ) {
+			wp_send_json_success( array( 'subscribed' => false ) );
+		}
+
+		$this->push_to_inforu( $full_name, $phone, $email );
+
+		wp_send_json_success( array( 'subscribed' => true ) );
 	}
 
 	/**
@@ -224,8 +260,13 @@ class PHSG_Ajax {
 			wp_send_json_error( array( 'message' => __( 'שמירת התוצאה נכשלה. נסו שוב.', 'pizza-hut-slice-game' ) ), 500 );
 		}
 
-		// דחיפת הליד לרשימת התפוצה (InforU) – fire-and-forget, לעולם לא חוסם את המשחק.
-		$this->push_to_inforu( $full_name, $phone, $email );
+		// רשת ביטחון: ההרשמה לדיוור מתבצעת כבר בשליחת הטופס (phsg_subscribe).
+		// שולחים כאן שוב רק אם ההרשמה המוקדמת לא הצליחה (כשל רשת רגעי).
+		// InforU מבצע Create-or-Update לפי אימייל/טלפון – ולכן אין כפילויות.
+		$already_subscribed = isset( $_POST['subscribed'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['subscribed'] ) );
+		if ( ! $already_subscribed && $consent ) {
+			$this->push_to_inforu( $full_name, $phone, $email );
+		}
 
 		$rank  = PHSG_DB::get_rank( $row_id );
 		$total = PHSG_DB::total_players();
@@ -292,8 +333,8 @@ class PHSG_Ajax {
 	/**
 	 * הוספת המשתתף לרשימת התפוצה ב-InforU (Create or Update Contact).
 	 *
-	 * שליחה לא חוסמת (blocking=false): גם אם ה-API איטי או נופל, השחקן מקבל
-	 * את מסך הסיום כרגיל. פועל רק אם הוגדרו שם משתמש וטוקן בהגדרות.
+	 * שליחה לא חוסמת (blocking=false): גם אם ה-API איטי או נופל, השחקן ממשיך
+	 * כרגיל. פועל רק אם הוגדרו שם משתמש וטוקן בהגדרות.
 	 *
 	 * הגדרות (wp_options): phsg_inforu_user, phsg_inforu_token, phsg_inforu_group.
 	 * אפשר גם דרך wp-config.php: PHSG_INFORU_USER / PHSG_INFORU_TOKEN / PHSG_INFORU_GROUP.

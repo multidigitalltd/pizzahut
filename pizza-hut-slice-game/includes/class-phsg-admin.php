@@ -158,7 +158,7 @@ class PHSG_Admin {
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'ההגדרות נשמרו.', 'pizza-hut-slice-game' ) . '</p></div>';
 		}
 
-		echo '<p class="description">' . esc_html__( 'כל משתתף שנרשם למשחק יתווסף אוטומטית לרשימת התפוצה ב-InforU (Create or Update Contact). אם השדות ריקים – החיבור כבוי והמשחק עובד רגיל.', 'pizza-hut-slice-game' ) . '</p>';
+		echo '<p class="description">' . esc_html__( 'כל משתתף מתווסף אוטומטית לרשימת התפוצה ב-InforU מיד עם שליחת טופס ההשתתפות (אישור התקנון). אם השדות ריקים – החיבור כבוי והמשחק עובד רגיל.', 'pizza-hut-slice-game' ) . '</p>';
 
 		echo '<form method="post">';
 		wp_nonce_field( 'phsg_inforu_settings' );

@@ -481,7 +481,45 @@
 
 		this._hideFormError();
 		this.participant = { full_name: name, phone: phone, email: email, consent: consent };
+		// הרשמה לרשימת התפוצה מיד עם אישור התקנון – לא מחכה לסיום המשחק
+		// ולא מעכבת את תחילתו (נשלח ברקע).
+		this._subscribe();
 		this._startCountdown();
+	};
+
+	/**
+	 * הרשמה לרשימת התפוצה (InforU) מיד עם שליחת הטופס.
+	 * רץ ברקע; כישלון לא משפיע על המשחק (יש רשת ביטחון בהגשת התוצאה).
+	 */
+	Game.prototype._subscribe = function () {
+		var self = this;
+		var p = this.participant;
+		if (!p || !p.consent) {
+			return;
+		}
+		this.subscribed = false;
+
+		var body = new URLSearchParams();
+		body.append('action', 'phsg_subscribe');
+		body.append('nonce', CFG.nonce);
+		body.append('full_name', p.full_name);
+		body.append('phone', p.phone);
+		body.append('email', p.email);
+		body.append('consent', '1');
+
+		fetch(CFG.ajaxUrl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+			body: body.toString(),
+			credentials: 'same-origin'
+		})
+			.then(function (res) { return res.json(); })
+			.then(function (json) {
+				if (json && json.success && json.data && json.data.subscribed) {
+					self.subscribed = true;
+				}
+			})
+			.catch(function () { /* רשת ביטחון בהגשת התוצאה */ });
 	};
 
 	Game.prototype._showFormError = function (msg) {
@@ -1328,6 +1366,7 @@
 		body.append('phone', this.participant.phone);
 		body.append('email', this.participant.email);
 		body.append('consent', this.participant.consent ? '1' : '0');
+		body.append('subscribed', this.subscribed ? '1' : '0');
 		body.append('score', result.score);
 		body.append('clicks', result.clicks);
 		body.append('duration', result.duration);

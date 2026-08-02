@@ -4,7 +4,7 @@ Tags: game, campaign, leaderboard, pizza-hut, landing-page
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 12.19.0
+Stable tag: 12.19.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 טבלת המובילים הציבורית אינה חושפת טלפון או אימייל – רק שם תצוגה מקוצר.
 
 == Changelog ==
+
+= 12.19.1 =
+* ההרשמה לרשימת התפוצה מתבצעת עכשיו מיד עם שליחת טופס ההשתתפות (ברגע אישור התקנון) ולא בסיום המשחק — כך גם מי שלא סיים לשחק נכנס לרשימה. השליחה ברקע ואינה מעכבת את תחילת המשחק, ובסיום המשחק פועלת רשת ביטחון שמנסה שוב רק אם ההרשמה המוקדמת נכשלה (ללא כפילויות).
 
 = 12.19.0 =
 * נוספה התממשקות למערכת הדיוור InforU: כל משתתף שנרשם נוסף אוטומטית לרשימת התפוצה (Create or Update Contact), כולל הוספה לקבוצה לפי שם (AddToGroupName) — אם הקבוצה אינה קיימת היא נוצרת אוטומטית.
