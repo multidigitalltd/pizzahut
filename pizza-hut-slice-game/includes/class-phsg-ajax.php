@@ -344,7 +344,7 @@ class PHSG_Ajax {
 	 * @param string $email     אימייל.
 	 * @return void
 	 */
-	private function push_to_inforu( $full_name, $phone, $email ) {
+	public function push_to_inforu( $full_name, $phone, $email ) {
 		$user  = defined( 'PHSG_INFORU_USER' ) ? PHSG_INFORU_USER : get_option( 'phsg_inforu_user', '' );
 		$token = defined( 'PHSG_INFORU_TOKEN' ) ? PHSG_INFORU_TOKEN : get_option( 'phsg_inforu_token', '' );
 		$group = defined( 'PHSG_INFORU_GROUP' ) ? PHSG_INFORU_GROUP : get_option( 'phsg_inforu_group', '' );
@@ -379,18 +379,55 @@ class PHSG_Ajax {
 
 		$body = wp_json_encode( array( 'Data' => array( 'List' => array( $contact ) ) ) );
 
-		wp_remote_post(
+		// שליחה חוסמת (8 שנ') – כדי שנוכל לקרוא את התשובה ולתעד תקלות.
+		// אינה מעכבת את השחקן: המשחק מתחיל בצד הדפדפן בלי להמתין לתשובה.
+		$res = wp_remote_post(
 			'https://capi.inforu.co.il/api/v2/Contact/CreateOrUpdateContacts',
 			array(
-				'timeout'  => 5,
-				'blocking' => false, // לא מחכים לתשובה – לא מעכב את השחקן.
-				'headers'  => array(
+				'timeout' => 8,
+				'headers' => array(
 					'Content-Type'  => 'application/json',
 					'Authorization' => 'Basic ' . base64_encode( $user . ':' . $token ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 				),
-				'body'     => $body,
+				'body'    => $body,
 			)
 		);
+
+		$log = array(
+			'time'  => current_time( 'mysql' ),
+			'email' => $email,
+			'group' => $group,
+		);
+
+		if ( is_wp_error( $res ) ) {
+			$log['ok']      = false;
+			$log['message'] = $res->get_error_message();
+			update_option( 'phsg_inforu_last', $log, false );
+			return $log;
+		}
+
+		$code = (int) wp_remote_retrieve_response_code( $res );
+		$raw  = wp_remote_retrieve_body( $res );
+		$json = json_decode( $raw, true );
+
+		$status_id = isset( $json['StatusId'] ) ? (int) $json['StatusId'] : 0;
+		$log['ok']        = ( 200 === $code && 1 === $status_id );
+		$log['http']      = $code;
+		$log['status_id'] = $status_id;
+		$log['message']   = isset( $json['StatusDescription'] ) ? (string) $json['StatusDescription'] : substr( (string) $raw, 0, 300 );
+
+		if ( isset( $json['Data'] ) && is_array( $json['Data'] ) ) {
+			$log['new']      = isset( $json['Data']['ContactsNew'] ) ? (int) $json['Data']['ContactsNew'] : null;
+			$log['existing'] = isset( $json['Data']['ContactsExisting'] ) ? (int) $json['Data']['ContactsExisting'] : null;
+			$log['failed']   = isset( $json['Data']['RowsFailed'] ) ? (int) $json['Data']['RowsFailed'] : null;
+			if ( ! empty( $json['Data']['Errors'] ) ) {
+				$log['errors'] = wp_json_encode( $json['Data']['Errors'] );
+			}
+		}
+
+		update_option( 'phsg_inforu_last', $log, false );
+
+		return $log;
 	}
 
 	private function hash_value( $value ) {

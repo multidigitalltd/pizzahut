@@ -139,12 +139,29 @@ class PHSG_Admin {
 		}
 
 		$saved = false;
+		$test  = null;
 		if ( isset( $_POST['phsg_inforu_save'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			check_admin_referer( 'phsg_inforu_settings' );
 			update_option( 'phsg_inforu_user', isset( $_POST['phsg_inforu_user'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_inforu_user'] ) ) : '' );
 			update_option( 'phsg_inforu_token', isset( $_POST['phsg_inforu_token'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_inforu_token'] ) ) : '' );
 			update_option( 'phsg_inforu_group', isset( $_POST['phsg_inforu_group'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_inforu_group'] ) ) : '' );
 			$saved = true;
+		}
+
+		// בדיקת חיבור אמיתית – שולחת איש קשר לדוגמה ומציגה את תשובת InforU.
+		if ( isset( $_POST['phsg_inforu_test'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			check_admin_referer( 'phsg_inforu_settings' );
+			$test_email = isset( $_POST['phsg_test_email'] ) ? sanitize_email( wp_unslash( $_POST['phsg_test_email'] ) ) : '';
+			$test_phone = isset( $_POST['phsg_test_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_test_phone'] ) ) : '';
+			if ( '' === $test_email && '' === $test_phone ) {
+				$test = array( 'ok' => false, 'message' => __( 'יש להזין אימייל או טלפון לבדיקה.', 'pizza-hut-slice-game' ) );
+			} else {
+				$ajax = new PHSG_Ajax();
+				$test = $ajax->push_to_inforu( __( 'בדיקה מהמשחק', 'pizza-hut-slice-game' ), $test_phone, $test_email );
+				if ( null === $test ) {
+					$test = array( 'ok' => false, 'message' => __( 'לא נשלח – בדקו שהוזנו שם משתמש וטוקן ושיש אימייל או טלפון.', 'pizza-hut-slice-game' ) );
+				}
+			}
 		}
 
 		$user  = get_option( 'phsg_inforu_user', '' );
@@ -176,12 +193,67 @@ class PHSG_Admin {
 
 		echo '</tbody></table>';
 		echo '<p><button type="submit" name="phsg_inforu_save" value="1" class="button button-primary">' . esc_html__( 'שמירת הגדרות', 'pizza-hut-slice-game' ) . '</button></p>';
+
+		// ===== בדיקת חיבור =====
+		echo '<hr><h2>' . esc_html__( 'בדיקת חיבור', 'pizza-hut-slice-game' ) . '</h2>';
+		echo '<p class="description">' . esc_html__( 'שולח איש קשר לדוגמה ל-InforU ומציג את התשובה המדויקת. שימו לב: הקבוצה נוצרת רק כשמתווסף אליה איש הקשר הראשון — לכן בדיקה זו גם תיצור את הקבוצה.', 'pizza-hut-slice-game' ) . '</p>';
+		echo '<table class="form-table"><tbody>';
+		echo '<tr><th scope="row"><label for="phsg_test_email">' . esc_html__( 'אימייל לבדיקה', 'pizza-hut-slice-game' ) . '</label></th>';
+		echo '<td><input name="phsg_test_email" id="phsg_test_email" type="email" class="regular-text" value="' . esc_attr( isset( $_POST['phsg_test_email'] ) ? sanitize_email( wp_unslash( $_POST['phsg_test_email'] ) ) : '' ) . '" placeholder="test@example.co.il"></td></tr>'; // phpcs:ignore WordPress.Security.NonceVerification
+		echo '<tr><th scope="row"><label for="phsg_test_phone">' . esc_html__( 'טלפון לבדיקה', 'pizza-hut-slice-game' ) . '</label></th>';
+		echo '<td><input name="phsg_test_phone" id="phsg_test_phone" type="text" class="regular-text" value="' . esc_attr( isset( $_POST['phsg_test_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phsg_test_phone'] ) ) : '' ) . '" placeholder="0501234567"></td></tr>'; // phpcs:ignore WordPress.Security.NonceVerification
+		echo '</tbody></table>';
+		echo '<p><button type="submit" name="phsg_inforu_test" value="1" class="button">' . esc_html__( 'שליחת בדיקה ל-InforU', 'pizza-hut-slice-game' ) . '</button></p>';
 		echo '</form>';
 
+		if ( null !== $test ) {
+			$ok    = ! empty( $test['ok'] );
+			$class = $ok ? 'notice notice-success' : 'notice notice-error';
+			echo '<div class="' . esc_attr( $class ) . '"><p><strong>' .
+				esc_html( $ok ? __( '✔ הבדיקה עברה בהצלחה — איש הקשר נוסף ל-InforU.', 'pizza-hut-slice-game' ) : __( '✖ הבדיקה נכשלה.', 'pizza-hut-slice-game' ) ) .
+				'</strong></p>';
+			echo '<p>' . esc_html__( 'תשובת InforU:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $test['message'] ) ? $test['message'] : '' ) . '</code>';
+			if ( isset( $test['http'] ) ) {
+				echo ' | HTTP: <code>' . esc_html( $test['http'] ) . '</code>';
+			}
+			if ( isset( $test['status_id'] ) ) {
+				echo ' | StatusId: <code>' . esc_html( $test['status_id'] ) . '</code>';
+			}
+			echo '</p>';
+			if ( isset( $test['new'] ) || isset( $test['existing'] ) ) {
+				echo '<p>' . esc_html__( 'אנשי קשר חדשים:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $test['new'] ) ? $test['new'] : '-' ) . '</code> | ' .
+					esc_html__( 'קיימים (עודכנו):', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $test['existing'] ) ? $test['existing'] : '-' ) . '</code> | ' .
+					esc_html__( 'נכשלו:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $test['failed'] ) ? $test['failed'] : '-' ) . '</code></p>';
+			}
+			if ( ! empty( $test['errors'] ) ) {
+				echo '<p>' . esc_html__( 'שגיאות:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( $test['errors'] ) . '</code></p>';
+			}
+			if ( ! $ok ) {
+				echo '<p>' . esc_html__( 'טיפ: StatusId -1 עם "Missing Authorization" = שם משתמש או טוקן שגויים. ודאו שאלו פרטי ה-API (לא סיסמת הכניסה למערכת).', 'pizza-hut-slice-game' ) . '</p>';
+			}
+			echo '</div>';
+		}
+
+		// ===== סטטוס השליחה האחרונה מהמשחק =====
+		$last = get_option( 'phsg_inforu_last', array() );
+		echo '<hr><h2>' . esc_html__( 'השליחה האחרונה מהמשחק', 'pizza-hut-slice-game' ) . '</h2>';
+		if ( empty( $last ) ) {
+			echo '<p>' . esc_html__( 'עדיין לא בוצעה שליחה. אם משתתפים נרשמו ולא מופיע כאן דבר — ייתכן שהתוסף לא עודכן או שההגדרות ריקות.', 'pizza-hut-slice-game' ) . '</p>';
+		} else {
+			$lok = ! empty( $last['ok'] );
+			echo '<p><strong>' . esc_html( $lok ? __( '✔ הצליחה', 'pizza-hut-slice-game' ) : __( '✖ נכשלה', 'pizza-hut-slice-game' ) ) . '</strong> — ' .
+				esc_html__( 'זמן:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $last['time'] ) ? $last['time'] : '' ) . '</code>';
+			if ( ! empty( $last['group'] ) ) {
+				echo ' | ' . esc_html__( 'קבוצה:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( $last['group'] ) . '</code>';
+			}
+			echo '</p>';
+			echo '<p>' . esc_html__( 'תשובה:', 'pizza-hut-slice-game' ) . ' <code>' . esc_html( isset( $last['message'] ) ? $last['message'] : '' ) . '</code></p>';
+		}
+
 		$status = ( '' !== $user && '' !== $token )
-			? __( 'פעיל – משתתפים חדשים נשלחים לרשימת התפוצה.', 'pizza-hut-slice-game' )
+			? __( 'הוגדרו פרטי התחברות. לאימות בפועל — הריצו "שליחת בדיקה ל-InforU" למעלה.', 'pizza-hut-slice-game' )
 			: __( 'כבוי – חסרים שם משתמש ו/או טוקן.', 'pizza-hut-slice-game' );
-		echo '<p><strong>' . esc_html__( 'מצב החיבור:', 'pizza-hut-slice-game' ) . '</strong> ' . esc_html( $status ) . '</p>';
+		echo '<hr><p><strong>' . esc_html__( 'מצב ההגדרות:', 'pizza-hut-slice-game' ) . '</strong> ' . esc_html( $status ) . '</p>';
 
 		echo '</div>';
 	}
